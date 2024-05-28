@@ -1,23 +1,44 @@
-#include <cstdio>
 #include <cstring>
 #include <unistd.h>
 #include <poll.h>
 #include <iostream>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+
+typedef struct User 
+{
+	char name[256];
+	int number;
+}User;
 
 int main(void) {
-	char name[265];
+	int	socketServer = socket(AF_INET, SOCK_STREAM, 0);
+	struct sockaddr_in adress;
 
-	struct pollfd mypoll;
-	
-	memset(&mypoll, 0, sizeof(mypoll));
-	mypoll.fd = 0;
-	mypoll.events = POLLIN;
+	adress.sin_addr.s_addr = inet_addr("127.0.0.1");
+	adress.sin_family = AF_INET;
+	adress.sin_port = htons(30000);
 
-	std::cout << "Type in your name\n";
+	bind(socketServer, (const struct sockaddr *)&adress, sizeof(adress));
 
-	if (poll(&mypoll, 1, 1000) == 1) {
-		read(0, name, sizeof(name));
-		std::cout << "Hello, " << name << "\n";
-	}
-	std::cout << "It took you ms to type in your name\n";
+	listen(socketServer, 5);
+
+	struct sockaddr_in client;
+	socklen_t csize = sizeof(client);
+	int	socketClient = accept(socketServer, (struct sockaddr *)&client, &csize);
+	std::cout << "Server says : client accepted\n";
+	User user {
+		.name = "test",
+		.number = 1
+	};
+
+	// recv(socketClient, test, sizeof(test), 0);
+	// std::cout << "Server says : We recieved " << (std::string)*test << std::endl;
+	send(socketClient, &user, sizeof(User), 0);
+
+	close(socketServer);
+	close(socketClient);
+	return 0;
 }
