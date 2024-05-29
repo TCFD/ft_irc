@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <string.h>
 
 char *substr(char *str, int start, int end)
 {
@@ -43,10 +44,13 @@ int main(void) {
 	memset(test, 256, 0);
 	int bytes = recv(socketClient, test, 256, 0);
 	while (bytes != 0 && bytes != -1) {
-		std::cout << "Server says : We recieved " << substr(test, 0, bytes) << std::endl;
-		send(socketClient, test, bytes, 0);
-		memset(test, 256, 0); 	
-		bytes = recv(socketClient, test, 256, 0);
+		char *result = substr(test, 0, bytes);
+			std::cout << "Server recieved : " << substr(test, 0, bytes) << std::endl;
+			send(socketClient, test, bytes, 0);
+			memset(test, 256, 0); 	
+			bytes = recv(socketClient, test, 256, 0);
+			send(socketClient, "CAP * LS :multi-prefix sasl\r\n", 28, 0);
+			send(socketClient, "CAP * ACK multi-prefix\r\n", 23, 0);
 	}
 
 	close(socketServer);
