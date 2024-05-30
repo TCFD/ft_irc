@@ -1,5 +1,7 @@
 #include "Irc.hpp"
 
+Socket test;
+
 char *substr(char *str, int start, int end)
 {
 	char *buf;
@@ -70,7 +72,6 @@ int main(int ac, char **av) {
 
 	std::cout << "Server is running on port " << port << std::endl;
 
-	Socket test;
 	while (true) {
 		int poll_count = poll(poll_fds.data(), poll_fds.size(), -1);
 

@@ -18,6 +18,7 @@
 
 class Socket;
 
+
 // UTILS
 void send_response(int client_fd, const std::string& response);
 
