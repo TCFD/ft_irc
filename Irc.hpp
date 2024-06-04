@@ -25,15 +25,6 @@ struct User {
     std::string userName;
 };
 
-class Users
-{
-    public:
-        Users(void) {};
-        ~Users(void) {};
-
-        std::vector<User> tab;
-};
-
 class Polls
 {
     private:
@@ -44,7 +35,11 @@ class Polls
         int pollCount;
 
         std::map<int, std::string> clientsBuffer;
+		std::vector<User> tab;
 
+		void	clientDisconnected(int bytes_received, int index);
+		void	handle_client_command(int client_fd, const std::string& command, int index);
+		void	send_response(int client_fd, const std::string& response);
     public:
         Polls(void) {};
         Polls(int fd);

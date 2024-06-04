@@ -15,8 +15,8 @@ int Client::parseNickname(std::string name)
     return 0;
 }
 
-ClientPoll::ClientPoll(int clientFd) : Poll()
+/* Client::ClientPoll(int clientFd) : Poll()
 {
     clientPollFds.fd = clientFd;
     clientPollFds.events = POLLIN;
-}
+} */

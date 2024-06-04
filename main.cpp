@@ -9,7 +9,8 @@ int main(int ac, char **av)
         Server server(atoi(av[1]));
         std::cout << "Server is running on port " << server.getPort() << std::endl;
         // ServerPoll serverPoll(server.getPort());
-        Polls poll;
+        Polls poll(server.getServerSocket());
+		poll.mainPoll();
     }
     catch (const StrerrorException& e)
     { std::cout << e.what() << std::endl; exit(EXIT_FAILURE); }
