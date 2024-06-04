@@ -2,8 +2,6 @@
 
 int main(int argc, char **argv)
 {
-	// KICK #channel1
-
 	std::string cmdtest = (argc > 1) ? std::string(argv[1]) : "";
 	
 	Parsing	parsingtools;

@@ -1,7 +1,5 @@
 #include "../includes/Parsing.hpp"
 
-
-
 /*
 
 	Default Constructor
@@ -28,18 +26,12 @@
 		it's optional
 
 		'-' operator = OR between two options
-		'|' operator = OR between two uses. (syntax)
+		',' operator = OR between two uses. (syntax)
 
 		So "UU-##" = Mandatory: Username OR Channel
 
 
 */
-
-template <typename TA, typename TB>
-static std::pair<TA, TB> pair_it(TA a, TB b)
-{
-	return (std::pair<TA, TB>(a, b));
-}
 
 Parsing::Parsing()
 {
@@ -56,7 +48,7 @@ Parsing::Parsing()
 	_cmd["TOPIC"]		= pair_it(0, "// ## MM");			// Modifier ou afficher le thème du channel
 	_cmd["NAMES"]		= pair_it(0, "// ##");
 	_cmd["KICK"]		= pair_it(0, "// ## UU MM");		// Ejecter un client du channel
-	_cmd["MODE"]		= pair_it(0, "// UU OO|// ## OO");	// Changer le mode du channel
+	_cmd["MODE"]		= pair_it(0, "// UU OO,// ## OO");	// Changer le mode du channel
 	_cmd["JOIN"]		= pair_it(0, "// ## PP");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");
 	_cmd["PASS"]		= pair_it(0, "// PP");
@@ -70,14 +62,26 @@ Parsing::Parsing()
 
 	std::cout << "_cmd's map Set up." << std::endl;
 
-	_infos["Username"]	= ""; 	// Pour le username
-	_infos["Channel"]	= ""; 	// Pour le Channel ID
+	_infos["username"]	= ""; 	// Pour le username
+	_infos["password"]	= "";
+	_infos["message"]	= "";
+	_infos["channel"]	= ""; 	// Pour le Channel ID
+	_infos["option"]	= "";
 	_infos["Status"]	= ""; 	// Pour le status (admin, etc)
 
 	std::cout << "_info's map Set up." << std::endl;
+
+	_err_map["U"] = std::string(HELP_USERNAME);
+	_err_map["P"] = std::string(HELP_PASSWORD);
+	_err_map["O"] = std::string(HELP_OPTION);
+	_err_map["M"] = std::string(HELP_MESSAGE);
+	_err_map["/"] = std::string(HELP_COMMAND);
+	_err_map["#"] = std::string(HELP_CHANNEL);
+
+	std::cout << "_err_map's map Set up." << std::endl;
+
 	std::cout << "End of Parsing prv var set up." << std::endl;
 };
-
 
 
 /*
@@ -88,82 +92,18 @@ Parsing::Parsing()
 
 Parsing::~Parsing(){};
 
-////////////////////////////////////////////////////////////////////
-
-template <typename M>
-static std::string const& check_if_valid(M& map_used, std::string err_msg)
-{
-	(void)err_msg;
-
-	std::string const* opt = NULL;
-	int total = 0;
-
-	typename M::iterator it = map_used.begin();
-	while (it != map_used.end())
-	{
-		if (it->second)
-		{
-			if (total)
-				throw std::invalid_argument(std::string(PARSING_ERR) + err_msg);
-			total++;
-			opt = &(it->first);
-		}
-		it++ ;
-	}
-
-	if (opt == NULL)
-        throw std::invalid_argument(std::string(PARSING_ERR) + "Invalid option.");
-	
-	return (*opt);
-}
-
-
-
-
-
-template <typename M>
-static std::string const check_infos(M& map_used, std::string keyword)
-{
-	if (!map_used[keyword].empty())
-		return (map_used[keyword]);
-	return (NULL);
-}
-
-
-////////////////////////////////////////////////////////////////////
-
-
 
 /*
 
-template <typename M, typename K, typename V>
-void Parsing::parsing_map_insert(M& map_used, K key, V value)
-{
-	typename M::iterator it = map_used.insert(std::pair<K, V>(key, value)).first;
-}
-
-
-template <typename M, typename K, typename V>
-void Parsing::parsing_map_insert(M& map_used, K key_id, V value)
-{
-	typename map_used[key_id] = value;
-	return ;
-}
+		Utilisé pour savoir si la commande passée et valide et si oui,
+		Renvoyer son ID et sa Forme d'utilisation.
 
 */
 
-
-// get option used
-std::string const Parsing::parsing_get_option(void)
-{
-	return (check_if_valid(_options, "Only one option is required."));
-}
-
-// get command
 std::pair<std::string, std::string> Parsing::parsing_get_cmd(void)
 {
-	std::string cmd_title = "";
-	std::string cmd_form = "";
+	std::string cmd_title	= "";
+	std::string cmd_form	= "";
 	
 	int total = 0;
 
@@ -172,61 +112,30 @@ std::pair<std::string, std::string> Parsing::parsing_get_cmd(void)
 		if (it->second.first)
 		{
 			if (total)
-				throw std::invalid_argument(std::string(PARSING_ERR) + "Only one command at time.");
+				throw Parsing::ParsingInvalidSyntax(std::string(PARSING_ERR) + "Only one command at time.");
 			total++ ;
-			cmd_form = it->second.second;
+
+			cmd_form  = it->second.second;
 			cmd_title = it->first;
 		}
     }
 
     if (cmd_form.empty() || cmd_title.empty())
-        throw std::invalid_argument(std::string(PARSING_ERR) + "Invalid command field.");
+        throw Parsing::ParsingInvalidSyntax(std::string(PARSING_ERR) + "Invalid command field.");
 
     return (pair_it(cmd_title, cmd_form));
 }
 
 
-// get username
-std::string const Parsing::parsing_get_username(void)
-{
-	return (check_infos(_infos, "Username"));
-}
+/*
 
+		Permet de reset à 0 tous les status actifs associées aux commandes.
+		Exemple:
 
-// get channel
-std::string const Parsing::parsing_get_channel(void)
-{
-	return (check_infos(_infos, "Channel"));
-}
+			Si /KICK a été utilisé, alors son status est égal à 1 car actif.
+			Quand on reset, toutes valeurs confondues repassent à 0.
 
-
-// -> Dans UTILS.CPP
-std::vector<std::string> split(const std::string &str, char delimiter) {
-    std::vector<std::string> result;
-    std::string token;
-    for (std::string::const_iterator it = str.begin(); it != str.end(); ++it) {
-        if (*it != delimiter) {
-            token += *it;
-        } else {
-            if (!token.empty()) {
-                result.push_back(token);
-                token.clear();
-            }
-        }
-    }
-    if (!token.empty()) {
-        result.push_back(token);
-    }
-    return result;
-}
-
-static std::string const& byidx(std::vector<std::string>& v, int index)
-{
-    if (index < 0 || (unsigned int)index >= v.size())
-    	throw std::invalid_argument("Index out of range.");
-    return v[index];
-}
-
+*/
 
 void	Parsing::_cmd_reset_status(void)
 {
@@ -238,60 +147,23 @@ void	Parsing::_cmd_reset_status(void)
 	}
 }
 
+/*
 
-template <typename M>
-static bool find_it(M& map_used, std::string key)
-{
-	typename M::iterator it = map_used.find(key);
-	return (it != map_used.end());
-}
+		Permet de traiter la commande de son état brut et procède à toutes les vérifications
+		et initialisations nécessaires pour la suite.
 
-void	Parsing::_check_form(std::vector<std::string> cmd_split, std::vector<std::string> form_split)
-{
-	int optional=0;
-
-	std::map<std::string, std::string> keyparing;
-
-	for (unsigned int i=0; i < form_split.size(); i++)
-	{
-		if (form_split[i].size() == 1)
-			optional++ ;
-
-		if (form_split[i][0] == '#' && cmd_split[i][0] != '#')
-			throw std::invalid_argument(std::string(FORM_ERR) + "Not correct cmd form. (channel)");
-
-		std::string letter(1, form_split[i][0]);
-		if (i != cmd_split.size())
-			keyparing.insert(pair_it(letter, cmd_split[i]));
-
-		std::cout << form_split[i] << std::endl;
-	}
-
-	if (cmd_split.size() == form_split.size() || cmd_split.size() == form_split.size() - optional)
-	{
-		if (find_it(keyparing, "U"))
-			_infos["Username"] = keyparing["U"];
-		if (find_it(keyparing, "#"))
-			_infos["Channel"] = keyparing["#"];
-	}
-	else
-		throw std::invalid_argument(std::string(FORM_ERR) + "Not correct cmd form.");
-
-
-}
-
-
+*/
 
 void	Parsing::cmd_treat_test(std::string brut_cmd)
 {
 	std::cout << "\n\tOriginal input : [ " << brut_cmd << " ]" << std::endl;
-	std::vector<std::string> string_split = split(brut_cmd, ' ');
+	PARSING_VECTOR_SPLIT string_split = split(brut_cmd, ' ');
 
 	std::string const command = byidx(string_split, 0).substr(1);
 
 	_cmd_reset_status();
 
-	if (_cmd.find(command) != _cmd.end())
+	if (find_key_in_container(_cmd, command))
 	{
 		_cmd[command].first = 1;
 
@@ -302,14 +174,17 @@ void	Parsing::cmd_treat_test(std::string brut_cmd)
 
 		//:::::: TEST ::::::://
 
-		std::vector<std::string> form_split = split(result.second, ' ');
-		_check_form(string_split, form_split);
-
+		if (_any_duplicates(string_split, result.second).empty())
+		{
+			PARSING_VECTOR_SPLIT form_split = split(result.second, ' ');
+			_actual_split_form = form_split;
+			form_verification(string_split, form_split);
+		}
 		//::::::::::::::::::://
 
 		return ;
 	}
 
-	throw std::invalid_argument(std::string(CMD_ERR) + "Command not found.");
+	throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Command not found.");
 }
 
