@@ -4,6 +4,8 @@ int main(int argc, char **argv)
 {
 	std::string cmdtest = (argc > 1) ? std::string(argv[1]) : "";
 	
+	std::cout << cmdtest << std::endl;
+
 	Parsing	parsingtools;
 
 	try
@@ -14,6 +16,7 @@ int main(int argc, char **argv)
 	catch (std::exception &e)
 	{
 		std::cout << e.what() << std::endl;
+		parsingtools.err_write_correct_form();
 	}
 
 	return (0);

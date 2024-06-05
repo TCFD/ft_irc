@@ -1,4 +1,4 @@
-#include "../../includes/Parsing.hpp"
+#include "Parsing.hpp"
 
 /*
     ID: 1
@@ -88,7 +88,7 @@ bool	find_one_of_them(std::string cara_search, std::string& str_origin)
 {
 	for (long unsigned int i=0; i < cara_search.size(); i++)
 	{
-		if (str_origin.find(cara_search[i]))
+		if (str_origin.find(cara_search[i]) != std::string::npos)
 			return (true);
 	}
 	return (false);

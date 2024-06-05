@@ -43,8 +43,9 @@
 			std::string const parsing_get_username(void);
 			std::string const parsing_get_channel(void);
 
-			void	cmd_treat_test(std::string brut_cmd);
+			void	err_miss_elmt(PARSING_VECTOR_SPLIT& cmd_split);
 			void	err_write_correct_form();
+			void	cmd_treat_test(std::string brut_cmd);
 
 			bool	form_verification(PARSING_VECTOR_SPLIT& cmd_split,
 						PARSING_VECTOR_SPLIT& form_split);
@@ -59,9 +60,6 @@
 
 			  		virtual const char* what() const throw()
 			  		{
-						Parsing tmp;
-						
-						tmp.err_write_correct_form();
 			    		return (_m_msg.c_str());
 			  		}
 
@@ -75,17 +73,24 @@
 		private:
 
 			std::string		_any_duplicates(PARSING_VECTOR_SPLIT& cmd_split, std::string& cmd_form);
+			std::string		_actual_cmd;
+			std::string		_actual_brut_form;
 
+
+			void 	_err_form_writing(PARSING_VECTOR_SPLIT& form);
 
 			void	_check_form(PARSING_VECTOR_SPLIT cmd_split, PARSING_VECTOR_SPLIT form_split);
 			void	_cmd_reset_status(void);
 
-			void	_elmt_attribution(char identifier, std::string& CMDSplit_value);
+			void	_elmt_attribution(char identifier, std::string CMDSplit_value);
 			void	_attribution_info_channel(std::string& CMDSplit_value);
 			void	_attribution_info_option(std::string& CMDSplit_value);
 			void	_attribution_info_message(std::string& CMDSplit_value);
 			void	_attribution_info_username(std::string& CMDSplit_value);
 			void	_attribution_info_password(std::string& CMDSplit_value);
+
+
+			bool	_duplicates_found;
 
 			PARSING_VECTOR_SPLIT	_actual_split_form;
 			PARSING_MAP_ERR			_err_map;
@@ -100,11 +105,27 @@
 	std::string const&		byidx(PARSING_VECTOR_SPLIT& v, int index);
 	bool					find_one_of_them(std::string cara_search, std::string& str_origin);
 
-	template <typename M>
-	bool    find_key_in_container(M& map_used, std::string key);
+	//////////// TEMPLATES ////////////
 
 	template <typename M>
-	std::string const check_infos(M& map_used, std::string keyword);
+	bool find_key_in_container(M& map_used, std::string key)
+	{
+		if (map_used.find(key) != map_used.end())
+			return (true);
+	    return (false);
+	}
+
+	template <typename M>
+	std::string const check_infos(M& map_used, std::string keyword)
+	{
+	    typename M::iterator it = map_used.find(keyword);
+	    if (it != map_used.end())
+	        return it->second;
+	    return "";
+	}
 
 	template <typename TA, typename TB>
-	std::pair<TA, TB> pair_it(TA a, TB b);
+	std::pair<TA, TB> pair_it(TA a, TB b)
+	{
+	    return std::make_pair(a, b);
+	}

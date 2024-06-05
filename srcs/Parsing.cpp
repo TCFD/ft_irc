@@ -1,4 +1,4 @@
-#include "../includes/Parsing.hpp"
+#include "Parsing.hpp"
 
 /*
 
@@ -35,6 +35,9 @@
 
 Parsing::Parsing()
 {
+
+	_duplicates_found = 0;	// Pour identifier si on est sur une piste de commande a syntaxe multiple.
+
 	_options["-i"] = 0;		// Définir/supprimer le canal sur invitation uniquement
 	_options["-t"] = 0;		// Définir/supprimer les restrictions de la commande TOPIC pour les opérateurs de canaux
 	_options["-k"] = 0;		// Définir/supprimer la clé du canal (mot de passe)
@@ -44,6 +47,9 @@ Parsing::Parsing()
 	std::cout << "_option's map Set up." << std::endl;
 
 	_cmd["PRIVMSG"]		= pair_it(0, "// UU-## M");			// Message privé
+	
+	_cmd["TEST"]	= pair_it(0, "// UU M");
+
 	_cmd["INVITE"]		= pair_it(0, "// UU ##");			// Inviter un client au channel
 	_cmd["TOPIC"]		= pair_it(0, "// ## MM");			// Modifier ou afficher le thème du channel
 	_cmd["NAMES"]		= pair_it(0, "// ##");
@@ -139,11 +145,20 @@ std::pair<std::string, std::string> Parsing::parsing_get_cmd(void)
 
 void	Parsing::_cmd_reset_status(void)
 {
+	// Pour les commandes
 	PARSING_MAP_CMD::iterator it = _cmd.begin();
 	while (it != _cmd.end())
 	{
 		(*it).second.first = 0;
 		it++;
+	}
+
+	// Pour les options
+	PARSING_MAP_OPT::iterator optit = _options.begin();
+	while (optit != _options.end())
+	{
+		(*it).second.first = 0;
+		optit++;
 	}
 }
 
@@ -159,6 +174,8 @@ void	Parsing::cmd_treat_test(std::string brut_cmd)
 	std::cout << "\n\tOriginal input : [ " << brut_cmd << " ]" << std::endl;
 	PARSING_VECTOR_SPLIT string_split = split(brut_cmd, ' ');
 
+	err_miss_elmt(string_split);
+
 	std::string const command = byidx(string_split, 0).substr(1);
 
 	_cmd_reset_status();
@@ -172,10 +189,14 @@ void	Parsing::cmd_treat_test(std::string brut_cmd)
 		std::cout << std::endl;
 
 
+		_actual_cmd = result.first;
+		_actual_brut_form = result.second;
+
 		//:::::: TEST ::::::://
 
 		if (_any_duplicates(string_split, result.second).empty())
 		{
+			_duplicates_found = 0;
 			PARSING_VECTOR_SPLIT form_split = split(result.second, ' ');
 			_actual_split_form = form_split;
 			form_verification(string_split, form_split);
