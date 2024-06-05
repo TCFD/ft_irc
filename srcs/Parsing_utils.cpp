@@ -9,20 +9,21 @@
 
 //////////////// INFO CHANNEL ////////////////
 
-void	Parsing::_attribution_info_channel(std::string& CMDSplit_value)
+bool	Parsing::_attribution_info_channel(std::string& CMDSplit_value)
 {
 	if (CMDSplit_value[0] == '#')
 	{
 		_infos["channel"] = CMDSplit_value;
-		return ;
+		return (true);
 	}
 	if (!_duplicates_found)
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <channel> form.");
+	return (false);
 }
 
 //////////////// INFO OPTION ////////////////
 
-void	Parsing::_attribution_info_option(std::string& CMDSplit_value)
+bool	Parsing::_attribution_info_option(std::string& CMDSplit_value)
 {
 	if (CMDSplit_value[0] == '-')
 	{
@@ -32,49 +33,53 @@ void	Parsing::_attribution_info_option(std::string& CMDSplit_value)
 		_infos["option"] = CMDSplit_value;
 		_options[CMDSplit_value] = 1;
 
-		return ;
+		return (true);
 	}
 	if (!_duplicates_found)
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <option> form.");
+	return (false);
 }
 
 //////////////// INFO MESSAGE ////////////////
 
-void	Parsing::_attribution_info_message(std::string& CMDSplit_value)
+bool	Parsing::_attribution_info_message(std::string& CMDSplit_value)
 {
 	if (CMDSplit_value[0] == ':')
 	{
 		_infos["message"] = CMDSplit_value;
-		return ;
+		return (true);
 	}
 	if (!_duplicates_found)
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <message> form.");
+	return (false);
 }
 
 //////////////// INFO USERNAME ////////////////
 
-void	Parsing::_attribution_info_username(std::string& CMDSplit_value)
+bool	Parsing::_attribution_info_username(std::string& CMDSplit_value)
 {
-	if (!find_one_of_them("/#:", CMDSplit_value))
+	if (!find_one_of_them("/#:-", CMDSplit_value))
 	{
 		_infos["Username"] = CMDSplit_value;
-		return;
+		return (true);
 	}
 	if (!_duplicates_found)
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <username> form.");
+	return (false);
 }
 
 //////////////// INFO PASSWORD ////////////////
 
-void	Parsing::_attribution_info_password(std::string& CMDSplit_value)
+bool	Parsing::_attribution_info_password(std::string& CMDSplit_value)
 {
-	if (!find_one_of_them("/#:", CMDSplit_value))
+	if (!find_one_of_them("/#:-", CMDSplit_value))
 	{
 		_infos["Password"] = CMDSplit_value;
-		return ;
+		return (true);
 	}
 	if (!_duplicates_found)
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <password> form.");
+	return (false);
 }
 
 /*
@@ -84,26 +89,22 @@ void	Parsing::_attribution_info_password(std::string& CMDSplit_value)
 
 */
 
-void	Parsing::_elmt_attribution(char identifier, std::string CMDSplit_value)
+bool	Parsing::_elmt_attribution(char identifier, std::string CMDSplit_value)
 {
 	switch (identifier)
 	{
 		case '#':
-			_attribution_info_channel(CMDSplit_value);
-			break;
+			return (_attribution_info_channel(CMDSplit_value));
 		case 'U':
-			_attribution_info_username(CMDSplit_value);
-			break;		
+			return (_attribution_info_username(CMDSplit_value));
 		case 'M':
-			_attribution_info_message(CMDSplit_value);
-			break;
+			return (_attribution_info_message(CMDSplit_value));
 		case 'P':
-			_attribution_info_password(CMDSplit_value);
-			break;
+			return (_attribution_info_password(CMDSplit_value));
 		case 'O':
-			_attribution_info_option(CMDSplit_value);
-			break;
+			return (_attribution_info_option(CMDSplit_value));
 	}
+	return (false);
 }
 
 /*
@@ -122,7 +123,7 @@ bool	Parsing::form_verification(PARSING_VECTOR_SPLIT& cmd_split,
 	std::string	str;
 
 	if (cmd_split.size() > form_split.size())
-		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax. Too much elements.");
+		return (false);
 
 	for (long unsigned int i=1; i < form_split.size(); i++)
 	{
@@ -131,7 +132,13 @@ bool	Parsing::form_verification(PARSING_VECTOR_SPLIT& cmd_split,
 			c = form_split[i][0];
 			str = cmd_split[i];
 
-			_elmt_attribution(c, str);
+			if (!_elmt_attribution(c, str))
+				return (false);
+		}
+		else
+		{
+			if (byidx(form_split, i).size() == 2)
+				return (false);
 		}
 
 		if (byidx(form_split, i).size() == 2)

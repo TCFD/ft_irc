@@ -81,13 +81,13 @@
 
 			void	_check_form(PARSING_VECTOR_SPLIT cmd_split, PARSING_VECTOR_SPLIT form_split);
 			void	_cmd_reset_status(void);
-
-			void	_elmt_attribution(char identifier, std::string CMDSplit_value);
-			void	_attribution_info_channel(std::string& CMDSplit_value);
-			void	_attribution_info_option(std::string& CMDSplit_value);
-			void	_attribution_info_message(std::string& CMDSplit_value);
-			void	_attribution_info_username(std::string& CMDSplit_value);
-			void	_attribution_info_password(std::string& CMDSplit_value);
+			
+			bool	_elmt_attribution(char identifier, std::string CMDSplit_value);
+			bool	_attribution_info_channel(std::string& CMDSplit_value);
+			bool	_attribution_info_option(std::string& CMDSplit_value);
+			bool	_attribution_info_message(std::string& CMDSplit_value);
+			bool	_attribution_info_username(std::string& CMDSplit_value);
+			bool	_attribution_info_password(std::string& CMDSplit_value);
 
 
 			bool	_duplicates_found;

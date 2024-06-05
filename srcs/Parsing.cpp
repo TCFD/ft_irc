@@ -25,7 +25,6 @@
 
 		it's optional
 
-		'-' operator = OR between two options
 		',' operator = OR between two uses. (syntax)
 
 		So "UU-##" = Mandatory: Username OR Channel
@@ -46,14 +45,14 @@ Parsing::Parsing()
 
 	std::cout << "_option's map Set up." << std::endl;
 
-	_cmd["PRIVMSG"]		= pair_it(0, "// UU-## M");			// Message privé
+	_cmd["PRIVMSG"]		= pair_it(0, "// UU MM,// ## MM");			// Message privé
 	
-	_cmd["TEST"]	= pair_it(0, "// UU M");
+	_cmd["TEST"]		= pair_it(0, "// UU M,// ## O MM,// ## UU");
 
 	_cmd["INVITE"]		= pair_it(0, "// UU ##");			// Inviter un client au channel
 	_cmd["TOPIC"]		= pair_it(0, "// ## MM");			// Modifier ou afficher le thème du channel
 	_cmd["NAMES"]		= pair_it(0, "// ##");
-	_cmd["KICK"]		= pair_it(0, "// ## UU MM");		// Ejecter un client du channel
+	_cmd["KICK"]		= pair_it(0, "// ## UU M");		// Ejecter un client du channel
 	_cmd["MODE"]		= pair_it(0, "// UU OO,// ## OO");	// Changer le mode du channel
 	_cmd["JOIN"]		= pair_it(0, "// ## PP");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");
@@ -171,7 +170,6 @@ void	Parsing::_cmd_reset_status(void)
 
 void	Parsing::cmd_treat_test(std::string brut_cmd)
 {
-	std::cout << "\n\tOriginal input : [ " << brut_cmd << " ]" << std::endl;
 	PARSING_VECTOR_SPLIT string_split = split(brut_cmd, ' ');
 
 	err_miss_elmt(string_split);
@@ -199,7 +197,8 @@ void	Parsing::cmd_treat_test(std::string brut_cmd)
 			_duplicates_found = 0;
 			PARSING_VECTOR_SPLIT form_split = split(result.second, ' ');
 			_actual_split_form = form_split;
-			form_verification(string_split, form_split);
+			if(!form_verification(string_split, form_split))
+				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");
 		}
 		//::::::::::::::::::://
 
