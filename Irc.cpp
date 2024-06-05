@@ -8,23 +8,23 @@ Polls::Polls(int fd) : serverFd(fd)
 }
 
 void Polls::send_response(int client_fd, const std::string& response) {
-	std::cout << "Server sent : " << response << std::endl;
+	std::cout << "Server sent " << response << std::endl;
 	send(client_fd, response.c_str(), response.size(), 0);
 }
 
-void Polls::clientDisconnected(int bytes_received, int index) {
+void Polls::clientDisconnected(int bytes_received) {
 	if (bytes_received == 0)
 		std::cout << "Client disconnected" << std::endl;
 	else
 		perror("recv");
-	clientsBuffer.erase(pollFds[index].fd); // clear user's buffer
-	close(pollFds[index].fd);
-	pollFds[index].fd = -1; 
-	//? User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.              
-	//? Jpense que c'est plus simple que de decaller tous les indexs
+	clientsBuffer.erase(pollFds[currentIndex].fd); //? clear user's buffer
+	close(pollFds[currentIndex].fd);
+	//// pollFds[currentIndex].fd = -1; 
+	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
+	//// Jpense que c'est plus simple que de decaller tous les indexs
 }
 
-void	Polls::handle_client_command(int fd, const std::string& command, int index) {
+void	Polls::handle_client_command(int fd, const std::string& command) {
 	std::string response;
 	std::string prefix = ":server ";
 	
@@ -32,24 +32,29 @@ void	Polls::handle_client_command(int fd, const std::string& command, int index)
 		response = "CAP * LS :\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
 	else if (command.rfind("NICK", 0) == 0) { //TODO Il n'y a pas encore de sécurité. A faire.
-		response = prefix + "001 ";
-		if (tab[index].userName.empty())
-			response += command.substr(5) + " Welcome to the IRC server!\r\n";
-		else
-			response += "You changed your username to " + command.substr(5);
-		tab[index].userName = command.substr(5);
+		nick(response, command, prefix);
 	}
 
 	else if (command.rfind("USER", 0) == 0) {
-		response = prefix + "001 " + tab[index].userName + " Welcome, your user information is received.\r\n";
+		response = prefix + "001 " + tab[currentIndex].userName + " Welcome, your user information is received.\r\n";
 	}
 
 	else if (command.rfind("MODE", 0) == 0) {} //TODO On ignore MODE pour l'instant
 
 	else if (command.rfind("PING", 0) == 0) {
-		response = "PONG :" + command.substr(5) + "\r\n";
+		response = prefix + "PONG :" + command.substr(5) + "\r\n"; //? Done.
 	}
 
+	else if (command.rfind("WHOIS", 0) == 0) {
+/* 		std::string user = command.substr(6);
+		try {
+			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
+				if (it->userName == user)
+					throw std::invalid_argument("");
+			}
+		}
+		reponse = prefix + "311 " + user + " " */
+	}
 	else {
 		response = prefix + "421 " + command.substr(0, command.find(' ')) + " :Unknown command\r\n";
 	}
@@ -73,7 +78,7 @@ void Polls::mainPoll(void)
 					int bytes_received = recv(pollFds[i].fd, buffer, sizeof(buffer), 0);
 
 					if (bytes_received <= 0)
-						clientDisconnected(bytes_received, i);
+						clientDisconnected(bytes_received);
 					else {
 						//? Ajouter les données reçues au buffer du client
 						clientsBuffer[pollFds[i].fd].append(buffer, bytes_received);
@@ -85,7 +90,8 @@ void Polls::mainPoll(void)
 							clientsBuffer[pollFds[i].fd].erase(0, pos + 2);
 
 							std::cout << "Received command: " << command << std::endl;
-							handle_client_command(pollFds[i].fd, command, i - 1);
+							currentIndex = i - 1;
+							handle_client_command(pollFds[i].fd, command);
 						}
 					}
 				}

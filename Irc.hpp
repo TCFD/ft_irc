@@ -33,13 +33,14 @@ class Polls
         struct pollfd serverPollFds;
         int serverFd;
         int pollCount;
-
+		int	currentIndex;
         std::map<int, std::string> clientsBuffer;
 		std::vector<User> tab;
 
-		void	clientDisconnected(int bytes_received, int index);
-		void	handle_client_command(int client_fd, const std::string& command, int index);
+		void	clientDisconnected(int bytes_received);
+		void	handle_client_command(int client_fd, const std::string& command);
 		void	send_response(int client_fd, const std::string& response);
+		void	nick(std::string & response, const std::string & command, std::string & prefix);
     public:
         Polls(void) {};
         Polls(int fd);
