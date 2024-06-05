@@ -1,9 +1,9 @@
 NAME = ircserv
 CXX = c++
-CXXFLAGS = -Wall -Werror -Wextra -std=c++98
-LIBS = Socket.hpp
+CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -g
+LIBS = Irc.hpp Server.hpp Client.hpp 
 
-SRCS = main.cpp client.cpp
+SRCS = main.cpp Server.cpp Irc.cpp Client.cpp
 OBJS_DIR = obj
 OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))
 
