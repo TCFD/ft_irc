@@ -15,10 +15,11 @@
 
 class Server
 {
-    private:
+    protected:
         int port;
         int serverSocket;
         struct sockaddr_in serverAddr;
+        int limitUsers;
     
     public:
         Server(void) {};

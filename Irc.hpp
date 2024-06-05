@@ -26,7 +26,7 @@ struct User {
     std::string nickName;
 };
 
-class Polls
+class Polls : public Server
 {
     private:
         std::vector<struct pollfd> pollFds;
@@ -34,9 +34,11 @@ class Polls
         struct pollfd serverPollFds;
         int serverFd;
         int pollCount;
+        std::string currentChannel;
 
         std::map<int, std::string> clientsBuffer;
 		std::vector<User> tab;
+        std::map<std::string, std::string> channels;
 
     public:
         Polls(void) {};
@@ -48,7 +50,9 @@ class Polls
    		void	clientDisconnected(int bytes_received, int index);
 		void	handleClientCommand(int client_fd, const std::string& command, int index);
 		void	sendResponse(int client_fd, const std::string& response);
-        void    modesHandle(int index, const std::string& command);
+        
+        std::string     channelHandle(int index, std::string command);
+        int             modesHandle(int index, std::string command, std::string chann);
 
 };
 

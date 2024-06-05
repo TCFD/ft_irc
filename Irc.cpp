@@ -19,24 +19,10 @@ void Polls::clientDisconnected(int bytes_received, int index) {
 		perror("recv");
 	clientsBuffer.erase(pollFds[index].fd); // clear user's buffer
 	close(pollFds[index].fd);
-	pollFds[index].fd = -1; 
+	pollFds[index].fd = -1;
 	//? User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.              
 	//? Jpense que c'est plus simple que de decaller tous les indexs
 }
-
-// void	Polls::modesHandle(int index, const std::string& command)
-// {
-// 	(void) index;
-// 	std::string delim = " ";
-// 	std::vector<std::string> split;
-// 	for (int j=0; j < split.size(); j++)
-// 	{
-// 		split.push_back(command.substr(0, command.find(delim)));
-// 		std::cout << ">>" << split[0] << std::endl;
-// 		command.erase(0, );
-// 	}
-// 	std::cout << "on y est !!!" << std::endl;
-// }
 
 void	Polls::handleClientCommand(int fd, const std::string& command, int index) {
 	std::string response;
@@ -60,16 +46,17 @@ void	Polls::handleClientCommand(int fd, const std::string& command, int index) {
 
 	else if (command.rfind("MODE", 0) == 0) {
 
-		// modesHandle(index, command);
-
-
-
+		modesHandle(index, command, currentChannel);
 	} //TODO On ignore MODE pour l'instant
+	else if (command.rfind("JOIN", 0) == 0) {
+		currentChannel = channelHandle(index, command); }
 
 	else if (command.rfind("PING", 0) == 0) {
 		response = "PONG :" + command.substr(5) + "\r\n";
 	}
 
+	else if (command.rfind("QUIT", 0) == 0)
+		currentChannel = "";
 	else {
 		response = prefix + "421 " + command.substr(0, command.find(' ')) + " :Unknown command\r\n";
 	}
@@ -84,6 +71,7 @@ void Polls::mainPoll(void)
 
         if (pollCount == -1) throw StrerrorException("Poll Error");
 
+		currentChannel = "";
         for (size_t i = 0; i < pollFds.size(); i++){
             if (pollFds[i].revents & POLLIN) {
                 if (pollFds[i].fd == serverFd)	//? Si quelqu'un essaie de se connecter

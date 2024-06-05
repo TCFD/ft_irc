@@ -47,6 +47,8 @@
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
 		"typeinfo": "cpp",
-		"ranges": "cpp"
+		"ranges": "cpp",
+		"optional": "cpp",
+		"span": "cpp"
 	}
 }
