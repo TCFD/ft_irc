@@ -7,7 +7,7 @@ Polls::Polls(int fd) : serverFd(fd)
     pollFds.push_back(serverPollFds);
 }
 
-void Polls::send_response(int client_fd, const std::string& response) {
+void Polls::sendResponse(int client_fd, const std::string& response) {
 	std::cout << "Server sent : " << response << std::endl;
 	send(client_fd, response.c_str(), response.size(), 0);
 }
@@ -24,7 +24,21 @@ void Polls::clientDisconnected(int bytes_received, int index) {
 	//? Jpense que c'est plus simple que de decaller tous les indexs
 }
 
-void	Polls::handle_client_command(int fd, const std::string& command, int index) {
+// void	Polls::modesHandle(int index, const std::string& command)
+// {
+// 	(void) index;
+// 	std::string delim = " ";
+// 	std::vector<std::string> split;
+// 	for (int j=0; j < split.size(); j++)
+// 	{
+// 		split.push_back(command.substr(0, command.find(delim)));
+// 		std::cout << ">>" << split[0] << std::endl;
+// 		command.erase(0, );
+// 	}
+// 	std::cout << "on y est !!!" << std::endl;
+// }
+
+void	Polls::handleClientCommand(int fd, const std::string& command, int index) {
 	std::string response;
 	std::string prefix = ":server ";
 	
@@ -33,18 +47,24 @@ void	Polls::handle_client_command(int fd, const std::string& command, int index)
 
 	else if (command.rfind("NICK", 0) == 0) { //TODO Il n'y a pas encore de sécurité. A faire.
 		response = prefix + "001 ";
-		if (tab[index].userName.empty())
+		if (tab[index].nickName.empty())
 			response += command.substr(5) + " Welcome to the IRC server!\r\n";
 		else
 			response += "You changed your username to " + command.substr(5);
-		tab[index].userName = command.substr(5);
+		tab[index].nickName = command.substr(5);
 	}
 
 	else if (command.rfind("USER", 0) == 0) {
 		response = prefix + "001 " + tab[index].userName + " Welcome, your user information is received.\r\n";
 	}
 
-	else if (command.rfind("MODE", 0) == 0) {} //TODO On ignore MODE pour l'instant
+	else if (command.rfind("MODE", 0) == 0) {
+
+		// modesHandle(index, command);
+
+
+
+	} //TODO On ignore MODE pour l'instant
 
 	else if (command.rfind("PING", 0) == 0) {
 		response = "PONG :" + command.substr(5) + "\r\n";
@@ -54,7 +74,7 @@ void	Polls::handle_client_command(int fd, const std::string& command, int index)
 		response = prefix + "421 " + command.substr(0, command.find(' ')) + " :Unknown command\r\n";
 	}
 
-	send_response(fd, response);
+	sendResponse(fd, response);
 }
 
 void Polls::mainPoll(void)
@@ -85,7 +105,7 @@ void Polls::mainPoll(void)
 							clientsBuffer[pollFds[i].fd].erase(0, pos + 2);
 
 							std::cout << "Received command: " << command << std::endl;
-							handle_client_command(pollFds[i].fd, command, i - 1);
+							handleClientCommand(pollFds[i].fd, command, i - 1);
 						}
 					}
 				}
@@ -113,6 +133,7 @@ void    Polls::createClientPoll(void)
 	User temp;
     temp.indexInPollFd = pollFds.size() - 1;
 	temp.userName = "";
+	temp.nickName = "";
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
 }

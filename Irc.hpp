@@ -23,6 +23,7 @@
 struct User {
     int indexInPollFd;
     std::string userName;
+    std::string nickName;
 };
 
 class Polls
@@ -37,9 +38,6 @@ class Polls
         std::map<int, std::string> clientsBuffer;
 		std::vector<User> tab;
 
-		void	clientDisconnected(int bytes_received, int index);
-		void	handle_client_command(int client_fd, const std::string& command, int index);
-		void	send_response(int client_fd, const std::string& response);
     public:
         Polls(void) {};
         Polls(int fd);
@@ -47,6 +45,11 @@ class Polls
 
         void    mainPoll(void);
         void    createClientPoll(void);
+   		void	clientDisconnected(int bytes_received, int index);
+		void	handleClientCommand(int client_fd, const std::string& command, int index);
+		void	sendResponse(int client_fd, const std::string& response);
+        void    modesHandle(int index, const std::string& command);
+
 };
 
 #endif
