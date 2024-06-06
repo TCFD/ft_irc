@@ -24,6 +24,13 @@ void Polls::clientDisconnected(int bytes_received) {
 	//// Jpense que c'est plus simple que de decaller tous les indexs
 }
 
+/* User	Polls::findUser(std::string name) {
+	for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++)
+		if (name == it->userName)
+			return *it;
+	return NULL;
+} */
+
 void	Polls::handle_client_command(int fd, const std::string& command) {
 	std::string response;
 	std::string prefix = ":server ";
@@ -46,14 +53,12 @@ void	Polls::handle_client_command(int fd, const std::string& command) {
 	}
 
 	else if (command.rfind("WHOIS", 0) == 0) {
-/* 		std::string user = command.substr(6);
-		try {
-			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
-				if (it->userName == user)
-					throw std::invalid_argument("");
-			}
-		}
-		reponse = prefix + "311 " + user + " " */
+ 		// std::string user = command.substr(6);
+		/* User temp = findUser(user);
+		if (temp != NULL)
+
+		else */
+
 	}
 	else {
 		response = prefix + "421 " + command.substr(0, command.find(' ')) + " :Unknown command\r\n";
@@ -119,6 +124,7 @@ void    Polls::createClientPoll(void)
 	User temp;
     temp.indexInPollFd = pollFds.size() - 1;
 	temp.userName = "";
+	// temp.nickName = ""
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
 }

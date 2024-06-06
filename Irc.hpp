@@ -21,8 +21,8 @@
 # include "Client.hpp"
 
 struct User {
-    int indexInPollFd;
-    std::string userName;
+	int indexInPollFd;
+	std::string userName;
 };
 
 class Polls
@@ -41,6 +41,8 @@ class Polls
 		void	handle_client_command(int client_fd, const std::string& command);
 		void	send_response(int client_fd, const std::string& response);
 		void	nick(std::string & response, const std::string & command, std::string & prefix);
+		User	findUser(std::string name);
+		std::string returnZeroOneEnd(User user);
     public:
         Polls(void) {};
         Polls(int fd);
