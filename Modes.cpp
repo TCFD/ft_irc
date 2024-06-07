@@ -1,9 +1,9 @@
 #include "Irc.hpp"
 
-int	Polls::modesHandle(int index, std::string command, std::string chann)
+int	Polls::modesHandle(std::string& response, int index, std::string command, std::string chann)
 {
 	std::string delim = " ";
-	std::vector<std::string> split;
+	std::vector<std::string> split; 
 	for (size_t j=0; command.length() > 0; j++)
 	{
 		split.push_back(command.substr(0, command.find(delim)));

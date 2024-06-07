@@ -52,7 +52,7 @@ class Polls : public Server
 		void	sendResponse(int client_fd, const std::string& response);
         
         std::string     channelHandle(int index, std::string command);
-        int             modesHandle(int index, std::string command, std::string chann);
+        int             modesHandle(std::string& response, int index, std::string command, std::string chann);
 
 };
 

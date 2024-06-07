@@ -46,7 +46,7 @@ void	Polls::handleClientCommand(int fd, const std::string& command, int index) {
 
 	else if (command.rfind("MODE", 0) == 0) {
 
-		modesHandle(index, command, currentChannel);
+		response = modesHandle(response, index, command, currentChannel); // faire la reponse du serveur vers le client
 	} //TODO On ignore MODE pour l'instant
 	else if (command.rfind("JOIN", 0) == 0) {
 		currentChannel = channelHandle(index, command); }
