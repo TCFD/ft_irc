@@ -1,6 +1,22 @@
 #pragma once
 
-# include "Irc.hpp"
+# include <cstdlib>
+# include <cstdio>
+# include <fcntl.h>
+# include <poll.h>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <iostream>
+# include <cstring>
+# include <unistd.h>
+# include <map>
+# include <vector>
+# include <exception>
+# include <errno.h>
+# include <algorithm>
+// # include "Irc.hpp"
 
 // class ServerPoll
 // {
