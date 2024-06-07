@@ -62,7 +62,7 @@ PARSING_VECTOR_SPLIT split(const std::string &str, char delimiter)
 std::string const& byidx(PARSING_VECTOR_SPLIT& v, int index)
 {
     if (index < 0 || (unsigned int)index >= v.size())
-    	throw Parsing::ParsingInvalidSyntax(std::string("[Vector Error]: ") + std::string("Index out of range."));
+    	throw Parsing::ParsingInvalidSyntax(std::string("[Vector Error]: ") + std::string("Index out of range baby."));
     return v[index];
 }
 
@@ -92,4 +92,56 @@ bool	find_one_of_them(std::string cara_search, std::string& str_origin)
 			return (true);
 	}
 	return (false);
+}
+
+
+std::string str_cut(std::string str, int start_idx, int end_idx)
+{
+    return (str.substr(start_idx, (end_idx - start_idx)));
+}
+
+int tab_idx_elmt(PARSING_VECTOR_SPLIT tab, char cara)
+{
+    for (long unsigned int i=0; i < tab.size(); i++)
+    {
+        if (byidx(tab, i).find(cara) != std::string::npos)
+            return (i);
+    }
+    return (-1);
+}
+
+int len_of_tab_with_intervals(PARSING_VECTOR_SPLIT tab, char cara1, char cara2)
+{
+    int sidx = tab_idx_elmt(tab, cara1);
+    int eidx = tab_idx_elmt(tab, cara2);
+
+    if (sidx == eidx)
+        return (tab.size());
+
+    return (tab.size() - (eidx - sidx));
+}
+
+PARSING_VECTOR_SPLIT removeBetweenAngles(const PARSING_VECTOR_SPLIT& input)
+{
+    PARSING_VECTOR_SPLIT result;
+    bool inAngleBrackets = false;
+    bool done = false;
+
+    for (size_t i = 0; i < input.size(); ++i)
+    {
+        const std::string& element = input[i];
+
+        if (element.find('[') != std::string::npos && done == false)
+            inAngleBrackets = true;
+
+        if (!inAngleBrackets)
+            result.push_back(element);
+
+        if (element.find(']') != std::string::npos && done == false)
+        {
+            inAngleBrackets = false;
+            done = true;
+        }
+    }
+    return (result);
 }

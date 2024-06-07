@@ -46,14 +46,11 @@ Parsing::Parsing()
 	std::cout << "_option's map Set up." << std::endl;
 
 	_cmd["PRIVMSG"]		= pair_it(0, "// UU MM,// ## MM");			// Message privé
-	
-	_cmd["TEST"]		= pair_it(0, "// UU M,// ## O MM,// ## UU");
-
-	_cmd["INVITE"]		= pair_it(0, "// UU ##");			// Inviter un client au channel
-	_cmd["TOPIC"]		= pair_it(0, "// ## MM");			// Modifier ou afficher le thème du channel
+	_cmd["INVITE"]		= pair_it(0, "// UU ##");					// Inviter un client au channel
+	_cmd["TOPIC"]		= pair_it(0, "// ## MM");					// Modifier ou afficher le thème du channel
 	_cmd["NAMES"]		= pair_it(0, "// ##");
-	_cmd["KICK"]		= pair_it(0, "// ## UU M");		// Ejecter un client du channel
-	_cmd["MODE"]		= pair_it(0, "// UU OO,// ## OO");	// Changer le mode du channel
+	_cmd["KICK"]		= pair_it(0, "// ## UU M");					// Ejecter un client du channel
+	_cmd["MODE"]		= pair_it(0, "// UU OO,// ## OO");			// Changer le mode du channel
 	_cmd["JOIN"]		= pair_it(0, "// ## PP");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");
 	_cmd["PASS"]		= pair_it(0, "// PP");
@@ -72,7 +69,7 @@ Parsing::Parsing()
 	_infos["message"]	= "";
 	_infos["channel"]	= ""; 	// Pour le Channel ID
 	_infos["option"]	= "";
-	_infos["Status"]	= ""; 	// Pour le status (admin, etc)
+	//_infos["status"]	= ""; 	// Pour le status (admin, etc)
 
 	std::cout << "_info's map Set up." << std::endl;
 
@@ -86,6 +83,7 @@ Parsing::Parsing()
 	std::cout << "_err_map's map Set up." << std::endl;
 
 	std::cout << "End of Parsing prv var set up." << std::endl;
+	std::cout << std::endl;
 };
 
 
@@ -170,6 +168,8 @@ void	Parsing::_cmd_reset_status(void)
 
 void	Parsing::cmd_treat_test(std::string brut_cmd)
 {
+	_brut_cmd = brut_cmd;
+
 	PARSING_VECTOR_SPLIT string_split = split(brut_cmd, ' ');
 
 	err_miss_elmt(string_split);
@@ -198,8 +198,16 @@ void	Parsing::cmd_treat_test(std::string brut_cmd)
 			PARSING_VECTOR_SPLIT form_split = split(result.second, ' ');
 			_actual_split_form = form_split;
 			if(!form_verification(string_split, form_split))
-				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");
+				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");		
 		}
+
+		std::cout << "Command  : "  << parsing_get_command()  << std::endl;
+		std::cout << "Channel  : "  << parsing_get_channel()  << std::endl;
+		std::cout << "Username : "  << parsing_get_username() << std::endl;
+		std::cout << "Msg      : "  << parsing_get_message()  << std::endl;
+		std::cout << "Option   : "  << parsing_get_option()   << std::endl;
+		std::cout << "Password : "  << parsing_get_password() << std::endl;
+
 		//::::::::::::::::::://
 
 		return ;

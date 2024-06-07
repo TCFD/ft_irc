@@ -44,9 +44,13 @@ bool	Parsing::_attribution_info_option(std::string& CMDSplit_value)
 
 bool	Parsing::_attribution_info_message(std::string& CMDSplit_value)
 {
-	if (CMDSplit_value[0] == ':')
+	int end_idx   = _brut_cmd.find(']');
+
+	if (CMDSplit_value[0] == ':' && CMDSplit_value[1] == '[' && (long unsigned int)end_idx != std::string::npos)
 	{
-		_infos["message"] = CMDSplit_value;
+		int start_idx = _brut_cmd.find('[') + 1;
+
+		_infos["message"] = str_cut(_brut_cmd, start_idx, end_idx);;
 		return (true);
 	}
 	if (!_duplicates_found)
@@ -60,7 +64,7 @@ bool	Parsing::_attribution_info_username(std::string& CMDSplit_value)
 {
 	if (!find_one_of_them("/#:-", CMDSplit_value))
 	{
-		_infos["Username"] = CMDSplit_value;
+		_infos["username"] = CMDSplit_value;
 		return (true);
 	}
 	if (!_duplicates_found)
@@ -74,7 +78,7 @@ bool	Parsing::_attribution_info_password(std::string& CMDSplit_value)
 {
 	if (!find_one_of_them("/#:-", CMDSplit_value))
 	{
-		_infos["Password"] = CMDSplit_value;
+		_infos["password"] = CMDSplit_value;
 		return (true);
 	}
 	if (!_duplicates_found)
@@ -118,22 +122,31 @@ bool	Parsing::form_verification(PARSING_VECTOR_SPLIT& cmd_split,
 {
 	int t_min = 1;
 	int t_max = 1;
+	int msg_found = 0;
 
 	char		c;
 	std::string	str;
 
-	if (cmd_split.size() > form_split.size())
+	long unsigned int cmd_len = len_of_tab_with_intervals(cmd_split, '[', ']');
+
+	if (cmd_len > form_split.size())
 		return (false);
 
 	for (long unsigned int i=1; i < form_split.size(); i++)
 	{
-		if (i < cmd_split.size())
+		if (i - msg_found < cmd_split.size())
 		{
 			c = form_split[i][0];
-			str = cmd_split[i];
+			str = cmd_split[i - msg_found];
 
 			if (!_elmt_attribution(c, str))
 				return (false);
+
+			if (c == 'M')
+			{
+				cmd_split = removeBetweenAngles(cmd_split);
+				msg_found++ ;
+			}
 		}
 		else
 		{
@@ -146,7 +159,7 @@ bool	Parsing::form_verification(PARSING_VECTOR_SPLIT& cmd_split,
 		t_max++ ;
 	}
 
-	if (!((long unsigned int)t_min <= cmd_split.size() && cmd_split.size() <= (long unsigned int)t_max))
+	if (!((long unsigned int)t_min <= cmd_len && cmd_len <= (long unsigned int)t_max))
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax.");
 	
 	return (true);
@@ -162,7 +175,11 @@ void Parsing::_err_form_writing(PARSING_VECTOR_SPLIT& form)
 {
 	std::string	cara;
 
-	std::cout << "\n\t";
+	std::cout << "\n";
+
+	if (_duplicates_found)
+		std::cout << "\t";
+	
 	for (long unsigned int i=0; i < form.size(); i++)
 	{
 		cara = byidx(form, i)[0];
@@ -172,26 +189,30 @@ void Parsing::_err_form_writing(PARSING_VECTOR_SPLIT& form)
 	std::cout << std::endl;
 }
 
-void	Parsing::err_write_correct_form()
+void	Parsing::err_write_correct_form(std::string gap)
 {
 
 	if (_actual_cmd.empty())
 		return ;
 
-	std::cout << "\nform required :\n" << std::endl;
 
-	_err_map["/"] = "/" + _actual_cmd;
+	_err_map["/"] = "🔸 /" + _actual_cmd + gap;
 
 	if (_duplicates_found)
 	{
 		PARSING_VECTOR_SPLIT cmd_all_form = split(_actual_brut_form, ',');
 		
+		std::cout << "\n\033[35m// Multiple syntaxe\033[0m" << std::endl;
+
 		for (long unsigned int i=0; i < cmd_all_form.size(); i++)
 		{
-			std::cout << "   " << (i+1) << ".";
+			std::cout << (i+1) << ".";
 			PARSING_VECTOR_SPLIT cmd_all_form_split = split(byidx(cmd_all_form, i), ' ');
 			_err_form_writing(cmd_all_form_split);
 		}
+
+		std::cout << "\n\033[35m-------------------\033[0m" << std::endl;
+
 		return ;
 	}
 	

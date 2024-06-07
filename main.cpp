@@ -10,14 +10,15 @@ int main(int argc, char **argv)
 
 	try
 	{
-
+		if (std::string(argv[1]) == "/HELP")
+			return (parsingtools.parsing_help(), 0);
 		parsingtools.cmd_treat_test(cmdtest);
 	}
 	catch (std::exception &e)
 	{
 		std::cout << e.what() << std::endl;
-		parsingtools.err_write_correct_form();
+		parsingtools.err_write_correct_form("");
 	}
 
-	return (0);
+	return (1);
 }

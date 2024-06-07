@@ -39,12 +39,16 @@
 
 			std::pair<std::string, std::string> parsing_get_cmd(void);
 
-			std::string const parsing_get_option(void);
-			std::string const parsing_get_username(void);
-			std::string const parsing_get_channel(void);
+			std::string parsing_get_command(void);
+			std::string parsing_get_message(void);
+			std::string parsing_get_password(void);
+			std::string parsing_get_option(void);
+			std::string parsing_get_username(void);
+			std::string parsing_get_channel(void);
 
+			void    parsing_help();
 			void	err_miss_elmt(PARSING_VECTOR_SPLIT& cmd_split);
-			void	err_write_correct_form();
+			void	err_write_correct_form(std::string gap);
 			void	cmd_treat_test(std::string brut_cmd);
 
 			bool	form_verification(PARSING_VECTOR_SPLIT& cmd_split,
@@ -75,6 +79,7 @@
 			std::string		_any_duplicates(PARSING_VECTOR_SPLIT& cmd_split, std::string& cmd_form);
 			std::string		_actual_cmd;
 			std::string		_actual_brut_form;
+			std::string		_brut_cmd;
 
 
 			void 	_err_form_writing(PARSING_VECTOR_SPLIT& form);
@@ -102,8 +107,11 @@
 
 
 	PARSING_VECTOR_SPLIT	split(const std::string &str, char delimiter);
+	PARSING_VECTOR_SPLIT	removeBetweenAngles(const PARSING_VECTOR_SPLIT& input);
 	std::string const&		byidx(PARSING_VECTOR_SPLIT& v, int index);
+	std::string				str_cut(std::string str, int start_idx, int end_idx);
 	bool					find_one_of_them(std::string cara_search, std::string& str_origin);
+	int						len_of_tab_with_intervals(PARSING_VECTOR_SPLIT tab, char cara1, char cara2);
 
 	//////////// TEMPLATES ////////////
 
