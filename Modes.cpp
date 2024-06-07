@@ -12,7 +12,7 @@ int	Polls::modesHandle(Msg& msg)
 		msg.command.erase(0, (int)split[j].size() +1);
 	}
 
-    //Error handling
+    //Error handling, a rearranger !!
 
     //MODE USER
     if (split.size() == 2 && std::find(tab.begin(), tab.end(), split[1]) == tab.end() && split[1] == tab[msg.currentIndex].nickName) {
