@@ -21,35 +21,39 @@
 # include "Client.hpp"
 
 struct User {
-	int indexInPollFd;
-	std::string userName;
+	int			indexInPollFd;
+	std::string	userName;
+	std::string	nickName;
+	std::string	realName;
+	bool		newUser;
+	bool		nickDone;
 };
 
 class Polls
 {
     private:
-        std::vector<struct pollfd> pollFds;
-        struct pollfd clientPollFds;
-        struct pollfd serverPollFds;
-        int serverFd;
-        int pollCount;
-		int	currentIndex;
-        std::map<int, std::string> clientsBuffer;
-		std::vector<User> tab;
+        std::vector<struct pollfd>		pollFds;
+        struct pollfd					clientPollFds;
+        struct pollfd					serverPollFds;
+        int								serverFd;
+        int								pollCount;
+		int								currentIndex;
+        std::map<int, std::string>		clientsBuffer;
+		std::vector<User>				tab;
 
-		void	clientDisconnected(int bytes_received);
-		void	handle_client_command(int client_fd, const std::string& command);
-		void	send_response(int client_fd, const std::string& response);
-		void	nick(std::string & response, const std::string & command, std::string & prefix);
-		User	findUser(std::string name);
-		std::string returnZeroOneEnd(User user);
+		void							clientDisconnected(int bytes_received);
+		void							handle_client_command(int client_fd, const std::string& command);
+		void							send_response(int client_fd, const std::string& response);
+		void							nick(std::string & response, const std::string & command, std::string & prefix);
+		User							findUser(std::string name);
+		std::string						returnZeroOneEnd(User user);
     public:
-        Polls(void) {};
+        Polls(void)						{};
         Polls(int fd);
-        ~Polls(void) {};
+        ~Polls(void)					{};
 
-        void    mainPoll(void);
-        void    createClientPoll(void);
+        void    						mainPoll(void);
+        void    						createClientPoll(void);
 };
 
 #endif

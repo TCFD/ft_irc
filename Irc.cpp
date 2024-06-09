@@ -18,7 +18,7 @@ void Polls::clientDisconnected(int bytes_received) {
 	else
 		perror("recv");
 	clientsBuffer.erase(pollFds[currentIndex].fd); //? clear user's buffer
-	close(pollFds[currentIndex].fd);
+	// close(pollFds[currentIndex].fd);
 	//// pollFds[currentIndex].fd = -1; 
 	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
 	//// Jpense que c'est plus simple que de decaller tous les indexs
@@ -34,16 +34,22 @@ void Polls::clientDisconnected(int bytes_received) {
 void	Polls::handle_client_command(int fd, const std::string& command) {
 	std::string response;
 	std::string prefix = ":server ";
-	
+	User	*currentUser = &tab[currentIndex];
+
 	if (command.rfind("CAP", 0) == 0)
-		response = "CAP * LS :\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
+		response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
 	else if (command.rfind("NICK", 0) == 0) { //TODO Il n'y a pas encore de sécurité. A faire.
 		nick(response, command, prefix);
 	}
 
 	else if (command.rfind("USER", 0) == 0) {
-		response = prefix + "001 " + tab[currentIndex].userName + " Welcome, your user information is received.\r\n";
+		currentUser->userName = command.substr(5, command.find(" ", 5) - 5);
+		currentUser->realName = command.substr(command.find(":"));
+		if (currentUser->newUser && currentUser->nickDone) {
+			currentUser->newUser = false;
+			response = prefix + "001 " + currentUser->userName +  " Welcome to the Internet Relay Network\r\n";
+		}
 	}
 
 	else if (command.rfind("MODE", 0) == 0) {} //TODO On ignore MODE pour l'instant
@@ -124,6 +130,7 @@ void    Polls::createClientPoll(void)
 	User temp;
     temp.indexInPollFd = pollFds.size() - 1;
 	temp.userName = "";
+	temp.newUser = true;
 	// temp.nickName = ""
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
