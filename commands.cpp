@@ -3,18 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: raphael <raphael@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rciaze <rciaze@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:26:55 by raphael           #+#    #+#             */
-/*   Updated: 2024/06/09 17:37:40 by raphael          ###   ########.fr       */
+/*   Updated: 2024/06/10 11:26:52 by rciaze           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Irc.hpp"
-
-std::string Polls::returnZeroOneEnd(User user) {
-	return (user.nickName + "!" + user.userName + "@127.0.0.1\r\n"); //! Attention, une fois integeree, le premier "username" devra etre le NICK, pas le USERNAME
-}
 
 void	Polls::nick(std::string & response, const std::string & command, std::string & prefix) {
 	std::string name = command.substr(5);

@@ -46,7 +46,6 @@ class Polls
 		void							send_response(int client_fd, const std::string& response);
 		void							nick(std::string & response, const std::string & command, std::string & prefix);
 		User							findUser(std::string name);
-		std::string						returnZeroOneEnd(User user);
     public:
         Polls(void)						{};
         Polls(int fd);
