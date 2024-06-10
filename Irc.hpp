@@ -4,6 +4,13 @@
 # include "Server.hpp"
 # include "Client.hpp"
 
+
+# define VEC_LIST           std::vector<std::string>
+# define CHAN_VECTOR        std::vector<Channel>
+# define USER_VECTOR        std::vector<User>
+# define CHAN_ITERATOR      std::vector<Channel>::iterator
+# define USER_ITERATOR      std::vector<User>::iterator
+
 struct User {
 	int			indexInPollFd;
 	std::string	userName;
@@ -12,26 +19,31 @@ struct User {
 	bool		newUser;
 	bool		nickDone;
     int         operators;
+    VEC_LIST modes;
 };
 
 struct Msg {
-    std::string response;
     int	        currentIndex;
+    int         currentChan;
+    std::string response;
     std::string command;
-    std::string currentChan;
-    std::string prefix;
+    std::string prefixServer;
+    std::string prefixNick;
+};
+
+struct Channel {
+    std::string                 name;
+    std::string                 pwd;
+    VEC_LIST                    modes;
+    VEC_LIST                    usersInChan;
 };
 
 class Polls : public Server
 {
     private:
         Msg msg;
-        // std::string currentChannel;
+        // std::map<std::string, std::string> channels;
 
-		// int	currentIndex;
-        std::map<std::string, std::string> channels;
-
-		
 		std::string returnZeroOneEnd(User user);
 
         std::vector<struct pollfd>		pollFds;
@@ -40,7 +52,8 @@ class Polls : public Server
         int								serverFd;
         int								pollCount;
         std::map<int, std::string>		clientsBuffer;
-		std::vector<User>				tab;
+		USER_VECTOR     				tab;
+        CHAN_VECTOR                     tabChan;
 
 		User							findUser(std::string name);
     public:
@@ -56,8 +69,15 @@ class Polls : public Server
         void    createClientPoll(void);
    		void	clientDisconnected(int bytes_received);
         
-        int     channelHandle();
-        int     modesHandle();
+        int             channelHandle();
+        int             modesHandle();
+        void            errorModes(VEC_LIST split);
+        void            errorLenModes(VEC_LIST split);
+
+        //Useful MODE
+        bool            isChanExists(std::string target);
+        bool            isUserExists(std::string target);
+        VEC_LIST        cutModeCommand();
 
 };
 

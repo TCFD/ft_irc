@@ -34,6 +34,7 @@ void Polls::clientDisconnected(int bytes_received) {
 void	Polls::handle_client_command(int client_fd) {
 	User	*currentUser = &tab[msg.currentIndex];
 
+	msg.prefixNick = currentUser->nickName;
 	if (msg.command.rfind("CAP", 0) == 0)
 		msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
@@ -46,7 +47,7 @@ void	Polls::handle_client_command(int client_fd) {
 		currentUser->realName = msg.command.substr(msg.command.find(":"));
 		if (currentUser->newUser && currentUser->nickDone) {
 			currentUser->newUser = false;
-			msg.response = msg.prefix + "001 " + currentUser->userName +  " Welcome to the Internet Relay Network\r\n";
+			msg.response = msg.prefixNick + "001 " + currentUser->userName +  " Welcome to the Internet Relay Network\r\n";
 		}
 	}
 
@@ -55,14 +56,14 @@ void	Polls::handle_client_command(int client_fd) {
 		modesHandle(); // faire la reponse du serveur vers le client
 	} //TODO On ignore MODE pour l'instant
 	else if (msg.command.rfind("JOIN", 0) == 0) {
-		channelHandle(); std::cout << "Current channel is : " << msg.currentChan << std::endl; }
+		channelHandle(); std::cout << "Current channel is : " << tabChan[msg.currentChan].name << std::endl; }
 
 	else if (msg.command.rfind("PING", 0) == 0) {
-		msg.response = msg.prefix + "PONG :" + msg.command.substr(5) + "\r\n"; //? Done.
+		msg.response = msg.prefixNick + "PONG :" + msg.command.substr(5) + "\r\n"; //? Done.
 	}
 
 	else if (msg.command.rfind("QUIT", 0) == 0)
-		msg.currentChan = "";
+		msg.currentChan = 0;
 	else if (msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);
@@ -72,7 +73,7 @@ void	Polls::handle_client_command(int client_fd) {
 
 	}
 	else {
-		msg.response = msg.prefix + "421 " + msg.command.substr(0, msg.command.find(' ')) + " :Unknown command\r\n";
+		msg.response = msg.prefixNick + "421 " + msg.command.substr(0, msg.command.find(' ')) + " :Unknown command\r\n";
 	}
 
 	send_response(client_fd);
@@ -85,8 +86,8 @@ void Polls::mainPoll(void)
 
         if (pollCount == -1) throw StrerrorException("Poll Error");
 
-		msg.currentChan = "";
-		msg.prefix = ":server ";
+		msg.currentChan = 0;
+		msg.prefixServer = ":server ";
         for (size_t i = 0; i < pollFds.size(); i++){
             if (pollFds[i].revents & POLLIN) {
                 if (pollFds[i].fd == serverFd)	//? Si quelqu'un essaie de se connecter

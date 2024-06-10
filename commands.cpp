@@ -6,7 +6,7 @@
 /*   By: asalic <asalic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 17:26:55 by raphael           #+#    #+#             */
-/*   Updated: 2024/06/10 11:48:51 by asalic           ###   ########.fr       */
+/*   Updated: 2024/06/10 13:24:41 by asalic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	Polls::nick() {
 			msg.response = oldname + " NICK " + name + " You changed your NickName to " + name + "\r\n";
 		}
 	} catch (const std::invalid_argument& e) {
-		msg.response = msg.prefix + "433 * " + name + " :Nickname is already in use\r\n";
+		msg.response = msg.prefixServer + "433 * " + name + " :Nickname is already in use\r\n";
 	}
 }
 
