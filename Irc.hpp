@@ -43,6 +43,7 @@ class Polls : public Server
 		std::vector<User>				tab;
 
 		User							findUser(std::string name);
+		bool							isValidNick(const std::string& nick);
     public:
         Polls(void)						{};
         Polls(int fd);

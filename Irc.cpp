@@ -37,7 +37,7 @@ void	Polls::handle_client_command(int client_fd) {
 	if (msg.command.rfind("CAP", 0) == 0)
 		msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
-	else if (msg.command.rfind("NICK", 0) == 0) { //TODO Il n'y a pas encore de sécurité. A faire.
+	else if (msg.command.rfind("NICK", 0) == 0) { /////TODO Il n'y a pas encore de sécurité. A faire.
 		nick();
 	}
 
@@ -53,12 +53,12 @@ void	Polls::handle_client_command(int client_fd) {
 	else if (msg.command.rfind("MODE", 0) == 0) {
 
 		modesHandle(); // faire la reponse du serveur vers le client
-	} //TODO On ignore MODE pour l'instant
+	}
 	else if (msg.command.rfind("JOIN", 0) == 0) {
 		channelHandle(); std::cout << "Current channel is : " << msg.currentChan << std::endl; }
 
 	else if (msg.command.rfind("PING", 0) == 0) {
-		msg.response = msg.prefix + "PONG :" + msg.command.substr(5) + "\r\n"; //? Done.
+		msg.response = msg.prefix + "PONG :" + msg.command.substr(5) + "\r\n";
 	}
 
 	else if (msg.command.rfind("QUIT", 0) == 0)
@@ -137,8 +137,8 @@ void    Polls::createClientPoll(void)
 	User temp;
     temp.indexInPollFd = pollFds.size() - 1;
 	temp.userName = "";
+	// temp.nickName = "";
 	temp.newUser = true;
-	// temp.nickName = ""
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
 }
