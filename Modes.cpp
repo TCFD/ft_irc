@@ -1,6 +1,6 @@
 #include "Irc.hpp"
 
-int	Polls::modesHandle(Msg& msg)
+int	Polls::modesHandle()
 {
 	std::string delim = " ";
 	std::vector<std::string> split;
@@ -53,7 +53,7 @@ int	Polls::modesHandle(Msg& msg)
 	return(0);
 }
 
-int  Polls::channelHandle(Msg& msg)
+int  Polls::channelHandle()
 {
     std::string delim = " ";
 	std::vector<std::string> split;

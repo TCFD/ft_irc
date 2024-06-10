@@ -7,7 +7,7 @@ Polls::Polls(int fd) : serverFd(fd)
     pollFds.push_back(serverPollFds);
 }
 
-void Polls::send_response(int client_fd, Msg& msg) {
+void Polls::send_response(int client_fd) {
 	std::cout << "Server sent " << msg.response << std::endl;
 	send(client_fd, msg.response.c_str(), msg.response.size(), 0);
 }
@@ -31,25 +31,31 @@ void Polls::clientDisconnected(int bytes_received) {
 	return NULL;
 } */
 
-void	Polls::handle_client_command(int fd) {
-	
+void	Polls::handle_client_command(int client_fd) {
+	User	*currentUser = &tab[msg.currentIndex];
+
 	if (msg.command.rfind("CAP", 0) == 0)
-		msg.response = "CAP * LS :\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
+		msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
 	else if (msg.command.rfind("NICK", 0) == 0) { //TODO Il n'y a pas encore de sécurité. A faire.
-		nick(msg);
+		nick();
 	}
 
 	else if (msg.command.rfind("USER", 0) == 0) {
-		msg.response = msg.prefix + "001 " + tab[msg.currentIndex].userName + " Welcome, your user information is received.\r\n";
+		currentUser->userName = msg.command.substr(5, msg.command.find(" ", 5) - 5);
+		currentUser->realName = msg.command.substr(msg.command.find(":"));
+		if (currentUser->newUser && currentUser->nickDone) {
+			currentUser->newUser = false;
+			msg.response = msg.prefix + "001 " + currentUser->userName +  " Welcome to the Internet Relay Network\r\n";
+		}
 	}
 
 	else if (msg.command.rfind("MODE", 0) == 0) {
 
-		modesHandle(msg); // faire la reponse du serveur vers le client
+		modesHandle(); // faire la reponse du serveur vers le client
 	} //TODO On ignore MODE pour l'instant
 	else if (msg.command.rfind("JOIN", 0) == 0) {
-		channelHandle(msg); std::cout << "Current channel is : " << msg.currentChan << std::endl; }
+		channelHandle(); std::cout << "Current channel is : " << msg.currentChan << std::endl; }
 
 	else if (msg.command.rfind("PING", 0) == 0) {
 		msg.response = msg.prefix + "PONG :" + msg.command.substr(5) + "\r\n"; //? Done.
@@ -69,7 +75,7 @@ void	Polls::handle_client_command(int fd) {
 		msg.response = msg.prefix + "421 " + msg.command.substr(0, msg.command.find(' ')) + " :Unknown command\r\n";
 	}
 
-	send_response(fd, msg);
+	send_response(client_fd);
 }
 
 void Polls::mainPoll(void)
@@ -131,6 +137,7 @@ void    Polls::createClientPoll(void)
 	User temp;
     temp.indexInPollFd = pollFds.size() - 1;
 	temp.userName = "";
+	temp.newUser = true;
 	// temp.nickName = ""
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
