@@ -39,27 +39,31 @@ void	Polls::nick() {
 
 	if (name.empty())
 		msg.response = oldname + " 431 " + name + "\r\n";
-	if (!isValidNick(name))
+	else if (!isValidNick(name))
 		msg.response = oldname + " 432 " + name + "\r\n";
-	try {
-
-		for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++)
-			if (it->nickName == name)
-				throw std::invalid_argument("");
-		
-		std::cout << "changing name\n";
-		currentUser->nickName = name;
-
-		if (currentUser->newUser == true)
-			currentUser->nickDone = true;
-		else
-			msg.response = oldname + " NICK " + name + "\r\n";
-
-	} catch (const std::invalid_argument& e) {
-		msg.response = msg.prefix + "433 * " + name + "\r\n";
-		exitLevel++;
-		if (exitLevel == 5)
-			std::exit(0);
+	else {
+		try {
+				
+			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
+				std::cout << "Compraing requested name :" << name << " to this user's name :" << it->nickName << " result = " << (bool)(it->nickName == name) << std::endl;
+				if (it->nickName == name)
+					throw std::invalid_argument("");
+			}
+			
+			std::cout << "changing name\n";
+			currentUser->nickName = name;
+	
+			if (currentUser->newUser == true)
+				currentUser->nickDone = true;
+			else
+				msg.response = oldname + " NICK " + name + "\r\n";
+	
+		} catch (const std::invalid_argument& e) {
+			msg.response = msg.prefix + "433 * " + name + "\r\n";
+			exitLevel++;
+			if (exitLevel == 5)
+				std::exit(0);
+		}
 	}
 }
 
