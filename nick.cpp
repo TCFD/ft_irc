@@ -31,11 +31,19 @@ bool Polls::isValidNick(const std::string& nick) {
 	return true;
 }
 
+std::string	_printMessage(std::string num, std::string nickname, std::string message)
+{
+	if (nickname.empty())
+		nickname = "*";
+	std::string response = ":server " + num + " " + nickname + " " + message + "\n";
+	return (response);
+}
+
 void	Polls::nick() {
 	std::string	name			=	msg.command.substr(5);
 	User		*currentUser	=	&tab[msg.currentIndex];
 	std::string	oldname			=	":" + currentUser->nickName;
-	static int exitLevel = 0;
+	static int exitcount = 0;
 
 	if (name.empty())
 		msg.response = oldname + " 431 " + name + "\r\n";
@@ -44,9 +52,9 @@ void	Polls::nick() {
 	else {
 		try {
 				
-			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
-				std::cout << "Compraing requested name :" << name << " to this user's name :" << it->nickName << " result = " << (bool)(it->nickName == name) << std::endl;
-				if (it->nickName == name)
+			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); ++it) {
+				std::cout << it->nickName << "--" << name << " is equal :" << bool(it->nickName == name) << std::endl;
+				if (it->nickName == name && it->newUser == false)
 					throw std::invalid_argument("");
 			}
 			
@@ -59,10 +67,13 @@ void	Polls::nick() {
 				msg.response = oldname + " NICK " + name + "\r\n";
 	
 		} catch (const std::invalid_argument& e) {
-			msg.response = msg.prefix + "433 * " + name + "\r\n";
-			exitLevel++;
-			if (exitLevel == 5)
+			exitcount++;
+			if (exitcount == 60)
 				std::exit(0);
+			if (currentUser->newUser == true)
+				msg.response = ":server 433 * " + name + " " +  name + ":Name already in use.\r\n";
+			else
+				msg.response = ":server 433 " + oldname + " " + name + " :Name already in use.\r\n";
 		}
 	}
 }

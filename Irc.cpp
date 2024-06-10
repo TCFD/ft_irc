@@ -71,6 +71,7 @@ void	Polls::handle_client_command(int client_fd) {
 		else */
 
 	}
+	else if (msg.command.rfind("PONG", 0) == 0) {}
 	else {
 		msg.response = msg.prefix + "421 " + msg.command.substr(0, msg.command.find(' ')) + " :Unknown command\r\n";
 	}
@@ -137,7 +138,8 @@ void    Polls::createClientPoll(void)
 	User temp;
     temp.indexInPollFd = pollFds.size() - 1;
 	temp.userName = "";
-	// temp.nickName = "";
+	
+	temp.nickName = "";
 	temp.newUser = true;
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
