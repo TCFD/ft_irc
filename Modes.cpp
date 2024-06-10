@@ -13,24 +13,26 @@ int	Polls::modesHandle(Msg& msg)
 	}
 
     //Error handling, a rearranger !!
+    int codon=0;
+    for (std::vector<User>::iterator it=tab.begin(); it != tab.end(); ++it) { std::cout << "Name: " << it->nickName << std::endl; if (split[1] == it->nickName) codon = 1;}
 
     //MODE USER
-    if (split.size() == 2 && std::find(tab.begin(), tab.end(), split[1]) == tab.end() && split[1] == tab[msg.currentIndex].nickName) {
+    if (split.size() == 2 && codon == 1 && split[1] == tab[msg.currentIndex].nickName) {
         msg.response = msg.prefix + " 221 " + split[1] + " " + split[0] + " :Modes activated: \r\n"; } //Afficher les modes actifs de nick: RPL_UMODEIS 221
     else if (split[1] != tab[msg.currentIndex].nickName) {
         msg.response = msg.prefix + " 502 " + split[1] + " " + split[0] + " :Cant change mode for other users\r\n"; } //ERR_USERSDONTMATCH 502
     else if (tab[msg.currentIndex].operators == 0 && split[1].rfind("#", 0)) {
         msg.response = msg.prefix + " 482 " + tab[msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
-
-    //BOTH
+// 
+    // BOTH
 	else if (((split[2] == "+k" || split [2] == "+l") && split.size() < 4) || split.size() < 3 || split[2].length() < 2) {
         msg.response = msg.prefix + " 461 " + split[1] + " " + split[0] + " :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
     else if (((split[2] == "+k" || split [2] == "+l") && split.size() > 4) || split.size() > 3 || split[2].length() > 2) {
         msg.response = msg.prefix + " 407 " + split[1] + " " + split[0] + " :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407
-    else if (channels.find(split[1]) == channels.end() && std::find(tab.begin(), tab.end(), split[1]) == tab.end()) {
+    else if (channels.find(split[1]) == channels.end() || codon == 1) {
         if (channels.find(split[1]) == channels.end()) {
             msg.response = msg.prefix + " 403 " + split[1] + " " + split[0] + " :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
-        else if (std::find(tab.begin(), tab.end(), split[1]) == tab.end()) {
+        else {
             msg.response = msg.prefix + " 401 " + split[1] + " " + split[0] + " :No such nick\r\n"; } }//ERR_NOSUCHNICK 401
     else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
         msg.response = msg.prefix + " 501 " + split[1] + " " + split[0] + " :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
@@ -40,7 +42,7 @@ int	Polls::modesHandle(Msg& msg)
         msg.response = msg.prefix + " 324 " + tab[msg.currentIndex].nickName + " " + split[1] + " " + split[0] + " :Modes activated: \r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
 
     //Modes handling
-    else if (split.size() == 4 && split[2] == "+k")
+    if (split.size() == 4 && split[2] == "+k")
         { channels[msg.currentChan] = split[3]; std::cout << "Key Mode: activated" << std::endl; } //Add a password to access the channel
     else if (split.size() == 3 && split[2] == "-k")
         {channels[msg.currentChan] = ""; std::cout << "Key Mode: desactivated" << std::endl; }
