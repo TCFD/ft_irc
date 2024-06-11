@@ -72,7 +72,7 @@ class Polls : public Server
         int             channelHandle();
         int             modesHandle();
         void            errorModes(VEC_LIST split);
-        void            errorLenModes(VEC_LIST split);
+        void            errorLenModes(VEC_LIST& split);
 
         //Useful MODE
         bool            isChanExists(std::string target);
