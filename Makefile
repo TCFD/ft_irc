@@ -1,35 +1,28 @@
-NAME = ircserv
-CXX = c++
-CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -g
-LIBS = Irc.hpp Server.hpp Client.hpp 
+# Variables
+NAME = ircserver
+CXX = g++
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
-SRCS = main.cpp Server.cpp Irc.cpp Client.cpp commands.cpp Modes.cpp
-OBJS_DIR = obj
-OBJS = $(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))
+SRCDIR = .
+OBJDIR = obj/
+SRC = $(shell find $(SRCDIR) -name '*.cpp')
+OBJ = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)%.o)
 
-RED = "\033[1;31m"
-GREEN = "\033[1;32m"
-YELLOW = "\033[1;33m"
-BLUE = "\033[1;34m"
-CYAN = "\033[1;36m"
-NC = "\033[0m"
+# Règles
+all: $(NAME)
 
-all : $(LIBS) $(NAME)
+$(NAME): $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
-$(OBJS_DIR)/%.o:%.cpp
-	@mkdir -p obj
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(NAME) : $(OBJS) Makefile
-	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
-	@echo $(CYAN) "Compilation Done\n" $(NC)
+$(OBJDIR)%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-clean :
-	@rm -rf $(OBJS) $(OBJS_DIR)
-	@echo $(YELLOW) "Clean Done\n" $(NC)
+clean:
+	rm -rf $(OBJDIR)
 
-fclean : clean
-	@rm $(NAME)
-	@echo $(YELLOW) "FClean Done\n" $(NC)
+fclean: clean
+	rm $(NAME)
 
-re : fclean all
+.PHONY: all fclean

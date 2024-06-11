@@ -1,4 +1,5 @@
 #include "Irc.hpp"
+#include "Parsing/includes/Parsing.hpp"
 
 Polls::Polls(int fd) : serverFd(fd)
 {
@@ -107,6 +108,21 @@ void Polls::mainPoll(void)
 						while ((pos = clientsBuffer[pollFds[i].fd].find("\r\n")) != std::string::npos) {
 							msg.command = clientsBuffer[pollFds[i].fd].substr(0, pos);
 							clientsBuffer[pollFds[i].fd].erase(0, pos + 2);
+							Parsing	parsingtools;
+
+							try
+							{
+
+								std::string concat = "/" + msg.command;
+								if (concat == "/HELP")
+									parsingtools.parsing_help();
+								parsingtools.cmd_treat_test(concat);
+							}
+							catch (std::exception &e)
+							{
+								std::cout << e.what() << std::endl;
+								parsingtools.err_write_correct_form("");
+							}
 
 							std::cout << "Received command: " << msg.command << std::endl;
 							msg.currentIndex = i - 1;
