@@ -39,7 +39,7 @@ void	Polls::handle_client_command(int client_fd) {
 		msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
 	else if (msg.command.rfind("NICK", 0) == 0) { //TODO Il n'y a pas encore de sécurité. A faire.
-		nick();
+		// nick();
 	}
 
 	else if (msg.command.rfind("USER", 0) == 0) {
@@ -56,14 +56,14 @@ void	Polls::handle_client_command(int client_fd) {
 		modesHandle(); // faire la reponse du serveur vers le client
 	} //TODO On ignore MODE pour l'instant
 	else if (msg.command.rfind("JOIN", 0) == 0) {
-		channelHandle(); std::cout << "Current channel is : " << tabChan[msg.currentChan].name << std::endl; }
+		channelHandle(); }
 
 	else if (msg.command.rfind("PING", 0) == 0) {
 		msg.response = msg.prefixNick + "PONG :" + msg.command.substr(5) + "\r\n"; //? Done.
 	}
 
 	else if (msg.command.rfind("QUIT", 0) == 0)
-		msg.currentChan = 0;
+		msg.currentChan = -1;
 	else if (msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);
@@ -86,7 +86,7 @@ void Polls::mainPoll(void)
 
         if (pollCount == -1) throw StrerrorException("Poll Error");
 
-		msg.currentChan = 0;
+		msg.currentChan = -1;
 		msg.prefixServer = ":server ";
         for (size_t i = 0; i < pollFds.size(); i++){
             if (pollFds[i].revents & POLLIN) {

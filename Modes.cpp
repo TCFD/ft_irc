@@ -9,6 +9,7 @@ bool    Polls::isChanExists(std::string target)
         { msg.currentChan = len -1;
             return true; }
     }
+    std::cout << "hey\n";
     return false;
 }
 
@@ -22,7 +23,6 @@ bool    Polls::isUserExists(std::string target)
     return false;
 }
 
-
 /* 
  * Make a message to print channel modes, or not \
 */
@@ -30,7 +30,7 @@ template <typename V>
 std::string    printModes(V& modes)
 {
     std::string currentModes="+";
-    for (V::iterator it=modes.begin(); it != modes.end(); ++it) {
+    for (typename V::iterator it=modes.begin(); it != modes.end(); ++it) {
         currentModes += *it; }
     if (currentModes.length() == 1)
         currentModes = ":No modes are set";
@@ -99,12 +99,16 @@ int	Polls::modesHandle()
 	VEC_LIST split = cutModeCommand();
     msg.prefixNick = ":" + tab[msg.currentIndex].nickName;
     errorModes(split);
+    std::cout << "HELLO IM HERE\n";
     
     //Modes handling
-    if (split.size() == 4 && split[2] == "+k")
-        { tabChan[]= split[3]; std::cout << "Key Mode: activated" << std::endl; } //Add a password to access the channel
-    else if (split.size() == 3 && split[2] == "-k")
-        {tabChan[]= ""; std::cout << "Key Mode: desactivated" << std::endl; }
+    std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
+    if (split.size() == 4) {
+        msg.response = msg.prefixServer + " MODE " + linkPrint + "\r\n"; }
+    // if (split.size() == 4 && split[2] == "+k")
+        // { tabChan[]= split[3]; std::cout << "Key Mode: activated" << std::endl; } //Add a password to access the channel
+    // else if (split.size() == 3 && split[2] == "-k")
+        // {tabChan[]= ""; std::cout << "Key Mode: desactivated" << std::endl; }
     // else if (split.size() == 4 && split[2] == "+l")
     //     { limitUsers = atoi(split[3].c_str()); std::cout << "Limit Users: activated at " << limitUsers << std::endl; } //Gerer encore l'acces au serveur en fonction de ca
     // else if (split.size() == 3 && split[2] == "-l")
@@ -122,21 +126,24 @@ int	Polls::modesHandle()
 int  Polls::channelHandle()
 {
     VEC_LIST split = cutModeCommand();
+    Channel temp;
     if (split.size() != 2 && split.size() != 3)
         return (1);
     // else if (limitUsers != 0 &&  ) // si la limite existe et quelle n'est pas depassee, le client peut join
     else if (!isChanExists(split[1])) {
         msg.currentChan ++;
-        tabChan[msg.currentChan].name = split[1];
+        temp.name = split[1];
         if (split.size() == 2) {
-            tabChan[msg.currentChan].pwd = ""; } // Entree libre dans le channel
+            temp.pwd = ""; } // Entree libre dans le channel
         else {
-            tabChan[msg.currentChan].pwd = split[2]; // Mot de passe pour rentrer dans le channel
+            temp.pwd = split[2]; // Mot de passe pour rentrer dans le channel
         }
-        tabChan[msg.currentChan].usersInChan.push_back(tab[msg.currentIndex].nickName); //Add user into Users channel's list
+        temp.usersInChan.push_back(tab[msg.currentIndex].nickName); //Add user into Users channel's list
+        tabChan.push_back(temp);
     }
     else {
-        tabChan[msg.currentChan].usersInChan.push_back(tab[msg.currentIndex].nickName); }
+        temp.usersInChan.push_back(tab[msg.currentIndex].nickName); 
+        tabChan.push_back(temp); }
     std::cout << "NEW CHANNEL ENTERING . . . " << std::endl;
     return (0);
 }
