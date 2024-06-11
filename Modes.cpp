@@ -48,7 +48,7 @@ void    Polls::errorLenModes(VEC_LIST& split)
     //     split.push_back(split[2].substr(2)); }
     if (((split[2] == "+k" || split [2] == "+l") && split.size() < 4) || split.size() < 3 || split[2].length() < 2) {
         msg.response = msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
-    else if (((split[2] == "+k" || split [2] == "+l") && split.size() > 4) || split.size() > 3 || split[2].length() > 2) { //CHECKER WHY HERE ALWAYS ???????????????????????/
+    else if (((split[2] == "+k" || split [2] == "+l") && split.size() > 4) || split.size() > 3 || split[2].length() > 2) { //CHECK WHY HERE ALWAYS ???????????????????????
         msg.response = msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407
     else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
         msg.response = msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
