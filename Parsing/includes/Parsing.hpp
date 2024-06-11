@@ -25,8 +25,8 @@
 	#define HELP_CHANNEL			"<#channel>"
 	#define HELP_USERNAME			"<username>"
 	#define HELP_PASSWORD			"<password>"
-	#define HELP_MESSAGE			"<:message>"
-	#define HELP_OPTION				"<-option>"
+	#define HELP_MESSAGE			"<:[message]>"
+	#define HELP_OPTION				"<-/+option>"
 
 
 	class Parsing

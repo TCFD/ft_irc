@@ -42,22 +42,27 @@ Parsing::Parsing()
 	_options["-k"] = 0;		// Définir/supprimer la clé du canal (mot de passe)
 	_options["-o"] = 0;		// Donner/retirer le privilège de l’opérateur de canal
 	_options["-l"] = 0;		// Définir/supprimer la limite d’utilisateurs pour le canal
+	_options["+i"] = 0;
+	_options["+t"] = 0;
+	_options["+k"] = 0;
+	_options["+o"] = 0;
+	_options["+l"] = 0;
 
 	std::cout << "_option's map Set up." << std::endl;
 
 	_cmd["PRIVMSG"]		= pair_it(0, "// UU MM,// ## MM");			// Message privé
 	_cmd["INVITE"]		= pair_it(0, "// UU ##");					// Inviter un client au channel
 	_cmd["TOPIC"]		= pair_it(0, "// ## MM");					// Modifier ou afficher le thème du channel
-	_cmd["NAMES"]		= pair_it(0, "// ##");
+	
+	//_cmd["USER"]		= pair_it(0, "// ");
+
 	_cmd["KICK"]		= pair_it(0, "// ## UU M");					// Ejecter un client du channel
 	_cmd["MODE"]		= pair_it(0, "// UU OO,// ## OO");			// Changer le mode du channel
-	_cmd["JOIN"]		= pair_it(0, "// ## PP");
+	_cmd["JOIN"]		= pair_it(0, "// ## P");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");
 	_cmd["PASS"]		= pair_it(0, "// PP");
 	_cmd["QUIT"]		= pair_it(0, "// M");
 
-	//_cmd["USER"]	= pair_it(0, );
-	
 	_cmd["KILL"]		= pair_it(0, "// UU MM");
 	_cmd["NICK"]		= pair_it(0, "// UU");
 	_cmd["LIST"]		= pair_it(0, "// ##");
@@ -183,9 +188,6 @@ void	Parsing::cmd_treat_test(std::string brut_cmd)
 		_cmd[command].first = 1;
 
 		std::pair<std::string, std::string> result = parsing_get_cmd();
-		std::cout << "\n\t\033[32mCommand found\033[0m : [Title: " << result.first << "], [form: " << result.second << "]" << std::endl;
-		std::cout << std::endl;
-
 
 		_actual_cmd = result.first;
 		_actual_brut_form = result.second;

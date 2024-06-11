@@ -8,6 +8,8 @@ int main(int argc, char **argv)
 
 	Parsing	parsingtools;
 
+	// string =  "/KICK sdjsjdk sdjskdjsk" 
+
 	try
 	{
 		if (std::string(argv[1]) == "/HELP")
