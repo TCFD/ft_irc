@@ -32,36 +32,44 @@ bool Polls::isValidNick(const std::string& nick) {
 	}
 	return true;
 }
+
+std::string	printMessage(std::string num, std::string nickname, std::string message)
+{
+	if (nickname.empty())
+		nickname = "*";
+	return (":server " + num + " " + nickname + " " + message + "\n");
+}
+//		return (_printMessage("001", this->_clients[i]->getNickName(), "Welcome to the Internet Relay Network " + this->_clients[i]->getID()));
+
 void	Polls::nick() {
-	std::string	name			=	msg.command.substr(5);
-	User		*currentUser	=	&tab[msg.currentIndex];
-	std::string	oldname			=	":" + currentUser->nickName;
+	std::string	name					=	msg.command.substr(5);
+	User		*currentUser			=	&tab[msg.currentIndex];
+	std::string	oldname					=	":" + currentUser->nickName;
 
 	std::cout << "Verifying name :'" << name << "'\n\n";
 	if (name.empty())
-		msg.response = oldname + " 431 " + name + "\r\n";
+		msg.response = printMessage("431", currentUser->nickName, ":No nickname given");
 	else if (!isValidNick(name)) {
-		if (currentUser->newUser == true)
-			msg.response = ":server 432 * " + name + " " +  name + " :\r\n";
-		else
-			msg.response = ":server 432 " + name + " :\r\n";
+		msg.response = printMessage("432", currentUser->nickName, name + " :Erroneous nickname");
 	}
 	else {
 		try {
 				
 			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); ++it) {
-				if (it->nickName == name && it->newUser == false)
+				if (it->nickName == name)
 					throw std::invalid_argument("");
 			}
 			
 			std::cout << "changing name\n";
 			currentUser->nickName = name;
-			msg.response = oldname + " NICK " + name + "\r\n";
 
-			currentUser->nickDone = true;
-			if (currentUser->nickDone && currentUser->userDone) {
-				currentUser->newUser = false;
-				msg.response = msg.prefix + "001 " + currentUser->nickName +  " Welcome to the Internet Relay Network\r\n";
+			if (currentUser->userName != "") {
+				currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
+				currentUser->registered = true;
+				if (oldname.size() == 1)
+					msg.response = printMessage("001", currentUser->nickName, " Welcome to the Internet Relay Network " + currentUser->id);
+				else
+					msg.response = oldname + " NICK " + name + "\n";
 			}
 
 
@@ -72,10 +80,7 @@ void	Polls::nick() {
 			std::cout << "\n";
 
 		} catch (const std::invalid_argument& e) {
-			if (currentUser->newUser == true)
-				msg.response = ":server 433 * " + name + " " +  name + " :\r\n";
-			else
-				msg.response = ":server 433 " + currentUser->nickName + " " + name + " :Name already in use.\r\n";
+			msg.response = printMessage("443", currentUser->nickName, name + " :Nickname is already in use");
 		}
 	}
 }

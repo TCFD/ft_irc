@@ -10,6 +10,7 @@ Polls::Polls(int fd) : serverFd(fd)
 void Polls::send_response(int client_fd) {
 	std::cout << "Server sent " << msg.response << std::endl;
 	send(client_fd, msg.response.c_str(), msg.response.size(), 0);
+	msg.response.erase();
 }
 
 void Polls::clientDisconnected(int bytes_received) {
@@ -44,12 +45,10 @@ void	Polls::handle_client_command(int client_fd) {
 	else if (msg.command.rfind("USER", 0) == 0) {
 		currentUser->userName = msg.command.substr(5, msg.command.find(" ", 5) - 5);
 		currentUser->realName = msg.command.substr(msg.command.find(":"));
-		if (currentUser->newUser) {
-			currentUser->userDone = true;
-			if (currentUser->nickDone && currentUser->userDone) {
-				currentUser->newUser = false;
-				msg.response = msg.prefix + "001 " + currentUser->nickName +  " Welcome to the Internet Relay Network\r\n";
-			}
+		if (currentUser->nickName != "") {
+			currentUser->registered = true;
+			currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
+			msg.response = printMessage("001", currentUser->nickName, "Welcome to the Internet Relay Network " + currentUser->id);
 		}
 	}
 
@@ -60,7 +59,7 @@ void	Polls::handle_client_command(int client_fd) {
 		channelHandle(); std::cout << "Current channel is : " << msg.currentChan << std::endl; }
 
 	else if (msg.command.rfind("PING", 0) == 0) {
-		msg.response = msg.prefix + "PONG :" + msg.command.substr(5) + "\r\n";
+		msg.response = msg.prefix + "PONG :" + msg.command.substr(5) + "\n";
 	}
 
 	else if (msg.command.rfind("QUIT", 0) == 0)
@@ -75,7 +74,7 @@ void	Polls::handle_client_command(int client_fd) {
 	}
 	else if (msg.command.rfind("PONG", 0) == 0) {}
 	else {
-		msg.response = msg.prefix + "421 " + msg.command.substr(0, msg.command.find(' ')) + " :Unknown command\r\n";
+		msg.response = msg.prefix + "421 " + msg.command.substr(0, msg.command.find(' ')) + " :Unknown command\n";
 	}
 
 	send_response(client_fd);
@@ -106,7 +105,9 @@ void Polls::mainPoll(void)
 
 						//? Traiter chaque commande complète (terminée par "\r\n")
 						size_t pos;
-						while ((pos = clientsBuffer[pollFds[i].fd].find("\r\n")) != std::string::npos) {
+						while ((pos = clientsBuffer[pollFds[i].fd].find("\n")) != std::string::npos) {
+							if (clientsBuffer[pollFds[i].fd].find("\r") != std::string::npos)
+								pos--;
 							msg.command = clientsBuffer[pollFds[i].fd].substr(0, pos);
 							clientsBuffer[pollFds[i].fd].erase(0, pos + 2);
 
@@ -137,14 +138,13 @@ void    Polls::createClientPoll(void)
 
     clientsBuffer[clientFd] = "";
 
-	User temp;
+	User temp; //TODO A decaler dans le constructeur
     temp.indexInPollFd = pollFds.size() - 1;
-	temp.userName = "";
-	
-	temp.nickName = "";
-	temp.newUser = true;
-	temp.nickDone = false;
-	temp.userDone = false;
+	temp.userName	= "";
+	temp.id			= "";
+	temp.nickName	= "";
+	temp.host		= "server";
+	temp.registered = false;
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
 }

@@ -4,14 +4,16 @@
 # include "Server.hpp"
 # include "Client.hpp"
 
+std::string	printMessage(std::string num, std::string nickname, std::string message);
+
 struct User {
 	int			indexInPollFd;
 	std::string	userName;
 	std::string	nickName;
 	std::string	realName;
-	bool		newUser;
-	bool		nickDone;
-	bool		userDone;
+	std::string	id;
+	std::string	host;
+	bool		registered;
     int         operators;
 };
 
