@@ -44,14 +44,15 @@ void	Polls::handle_client_command(int client_fd) {
 	else if (msg.command.rfind("USER", 0) == 0) {
 		currentUser->userName = msg.command.substr(5, msg.command.find(" ", 5) - 5);
 		currentUser->realName = msg.command.substr(msg.command.find(":"));
-		if (currentUser->newUser && currentUser->nickDone) {
-			currentUser->newUser = false;
+		if (currentUser->newUser) {
+			currentUser->userDone = true;
+			if (currentUser->nickDone && currentUser->userDone)
+				currentUser->newUser = false;
 			msg.response = msg.prefix + "001 " + currentUser->userName +  " Welcome to the Internet Relay Network\r\n";
 		}
 	}
 
 	else if (msg.command.rfind("MODE", 0) == 0) {
-
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
 	else if (msg.command.rfind("JOIN", 0) == 0) {
@@ -141,6 +142,8 @@ void    Polls::createClientPoll(void)
 	
 	temp.nickName = "";
 	temp.newUser = true;
+	temp.nickDone = false;
+	temp.userDone = false;
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
 }

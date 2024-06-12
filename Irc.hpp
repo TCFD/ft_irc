@@ -11,6 +11,7 @@ struct User {
 	std::string	realName;
 	bool		newUser;
 	bool		nickDone;
+	bool		userDone;
     int         operators;
 };
 
