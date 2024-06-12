@@ -48,7 +48,7 @@ Parsing::Parsing()
 	_options["+o"] = 0;
 	_options["+l"] = 0;
 
-	std::cout << "_option's map Set up." << std::endl;
+	// std::cout << "_option's map Set up." << std::endl;
 
 	_cmd["PRIVMSG"]		= pair_it(0, "// UU MM,// ## MM");			// Message privé
 	_cmd["INVITE"]		= pair_it(0, "// UU ##");					// Inviter un client au channel
@@ -67,7 +67,7 @@ Parsing::Parsing()
 	_cmd["NICK"]		= pair_it(0, "// UU");
 	_cmd["LIST"]		= pair_it(0, "// ##");
 
-	std::cout << "_cmd's map Set up." << std::endl;
+	// std::cout << "_cmd's map Set up." << std::endl;
 
 	_infos["username"]	= ""; 	// Pour le username
 	_infos["password"]	= "";
@@ -76,7 +76,7 @@ Parsing::Parsing()
 	_infos["option"]	= "";
 	//_infos["status"]	= ""; 	// Pour le status (admin, etc)
 
-	std::cout << "_info's map Set up." << std::endl;
+	// std::cout << "_info's map Set up." << std::endl;
 
 	_err_map["U"] = std::string(HELP_USERNAME);
 	_err_map["P"] = std::string(HELP_PASSWORD);
@@ -85,10 +85,10 @@ Parsing::Parsing()
 	_err_map["/"] = std::string(HELP_COMMAND);
 	_err_map["#"] = std::string(HELP_CHANNEL);
 
-	std::cout << "_err_map's map Set up." << std::endl;
+	// std::cout << "_err_map's map Set up." << std::endl;
 
-	std::cout << "End of Parsing prv var set up." << std::endl;
-	std::cout << std::endl;
+	// std::cout << "End of Parsing prv var set up." << std::endl;
+	// std::cout << std::endl;
 };
 
 
@@ -215,6 +215,6 @@ void	Parsing::cmd_treat_test(std::string brut_cmd)
 		return ;
 	}
 
-	throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Command not found.");
+	// throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Command not found.");
 }
 

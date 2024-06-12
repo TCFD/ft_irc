@@ -5,10 +5,12 @@ bool    Polls::isChanExists(std::string target)
 {
     int len=0;
     for (CHAN_ITERATOR it=tabChan.begin(); it != tabChan.end(); len++, ++it) {
+        std::cout << "target channel= " << target << " and channel's name= " << it->name << std::endl;
         if (target == it->name)
-        { msg.currentChan = len -1;
-            return true; }
+        { msg.currentChan = len; return true; }
     }
+    msg.currentChan = len;
+    std::cout << "chan : " << msg.currentChan << std::endl;
     return false;
 }
 
@@ -48,7 +50,7 @@ void    Polls::errorLenModes(VEC_LIST& split)
     //     split.push_back(split[2].substr(2)); }
     if (((split[2] == "+k" || split [2] == "+l") && split.size() < 4) || split.size() < 3 || split[2].length() < 2) {
         msg.response = msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
-    else if (((split[2] == "+k" || split [2] == "+l") && split.size() > 4) || split.size() > 3 || split[2].length() > 2) { //CHECK WHY HERE ALWAYS ???????????????????????
+    else if (((split[2] == "+k" || split [2] == "+l") && split.size() > 4) || (split[2] != "+k" && split [2] != "+l" && split.size() > 3)) {
         msg.response = msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407
     else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
         msg.response = msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
@@ -85,7 +87,6 @@ VEC_LIST    Polls::cutModeCommand()
         else {
     		split.push_back(msg.command.substr(0, msg.command.find(delim)));
 		    msg.command.erase(0, (int)split[j].size() +1);}
-        std::cout << "split: " << split[j] << "$" << std::endl;
 	}
     return split;
 }
@@ -103,20 +104,26 @@ VEC_LIST    Polls::cutModeCommand()
 */
 int	Polls::modesHandle()
 {
+    msg.response = "";
 	VEC_LIST split = cutModeCommand();
     msg.prefixNick = ":" + tab[msg.currentIndex].nickName;
     std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
     
     //Modes handling
     errorModes(split);
-    std::cout << "bfore response: " << msg.response << std::endl;
-    if (!msg.response.find("MODE"))
+    if (msg.response.find("MODE") == std::string::npos)
     {
-        std::cout << "hey toi\n";
         if (split.size() == 4) {
             msg.response = msg.prefixServer + "MODE " + linkPrint + "\r\n"; }
         else if (split.size() == 3) {
-            msg.response = msg.prefixServer + "MODE " + split[1] + " " + split[2] + "\r\n"; }
+            msg.response = msg.prefixServer + "MODE " + split[1] + " " + split[2] + "\r\n";}
+        if (split[2].find("+") != std::string::npos) {
+            tabChan[msg.currentChan].modes.push_back(split[2].substr(1)); std::cout << "hello\n";}
+        // else {
+            // for (VEC_LIST::iterator it = tabChan[msg.currentChan].modes.begin(); it != tabChan[msg.currentChan].modes.end(); ++it) {
+                // if ()
+            // }
+        // }
     }
     std::cout << "Response MODE: " << msg.response << std::endl;
     // if (split.size() == 4 && split[2] == "+k")
@@ -145,7 +152,7 @@ int  Polls::channelHandle()
         return (1);
     // else if (limitUsers != 0 &&  ) // si la limite existe et quelle n'est pas depassee, le client peut join
     else if (!isChanExists(split[1])) {
-        msg.currentChan ++;
+        std::cout << "je passe par la !!\n";
         temp.name = split[1];
         if (split.size() == 2) {
             temp.pwd = ""; } // Entree libre dans le channel

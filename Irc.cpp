@@ -63,8 +63,8 @@ void	Polls::handle_client_command(int client_fd) {
 		msg.response = msg.prefixNick + "PONG :" + msg.command.substr(5) + "\r\n"; //? Done.
 	}
 
-	else if (msg.command.rfind("QUIT", 0) == 0)
-		msg.currentChan = -1;
+	else if (msg.command.rfind("QUIT", 0) == 0) {
+		msg.currentChan = 0; }
 	else if (msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);
@@ -87,7 +87,7 @@ void Polls::mainPoll(void)
 
         if (pollCount == -1) throw StrerrorException("Poll Error");
 
-		msg.currentChan = -1;
+		msg.currentChan = 0;
 		msg.prefixServer = ":server ";
         for (size_t i = 0; i < pollFds.size(); i++){
             if (pollFds[i].revents & POLLIN) {
@@ -109,10 +109,8 @@ void Polls::mainPoll(void)
 							msg.command = clientsBuffer[pollFds[i].fd].substr(0, pos);
 							clientsBuffer[pollFds[i].fd].erase(0, pos + 2);
 							Parsing	parsingtools;
-
 							try
 							{
-
 								std::string concat = "/" + msg.command;
 								if (concat == "/HELP")
 									parsingtools.parsing_help();
@@ -123,7 +121,6 @@ void Polls::mainPoll(void)
 								std::cout << e.what() << std::endl;
 								parsingtools.err_write_correct_form("");
 							}
-
 							std::cout << "Received command: " << msg.command << std::endl;
 							msg.currentIndex = i - 1;
 							handle_client_command(pollFds[i].fd);
