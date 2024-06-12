@@ -46,9 +46,10 @@ void	Polls::handle_client_command(int client_fd) {
 		currentUser->realName = msg.command.substr(msg.command.find(":"));
 		if (currentUser->newUser) {
 			currentUser->userDone = true;
-			if (currentUser->nickDone && currentUser->userDone)
+			if (currentUser->nickDone && currentUser->userDone) {
 				currentUser->newUser = false;
-			msg.response = msg.prefix + "001 " + currentUser->userName +  " Welcome to the Internet Relay Network\r\n";
+				msg.response = msg.prefix + "001 " + currentUser->nickName +  " Welcome to the Internet Relay Network\r\n";
+			}
 		}
 	}
 

@@ -55,17 +55,22 @@ void	Polls::nick() {
 			}
 			
 			std::cout << "changing name\n";
-			currentUser->nickDone = true;
-			if (currentUser->nickDone && currentUser->userDone)
-				currentUser->newUser = false;
 			currentUser->nickName = name;
 			msg.response = oldname + " NICK " + name + "\r\n";
+
+			currentUser->nickDone = true;
+			if (currentUser->nickDone && currentUser->userDone) {
+				currentUser->newUser = false;
+				msg.response = msg.prefix + "001 " + currentUser->nickName +  " Welcome to the Internet Relay Network\r\n";
+			}
+
+
 			std::cout << "List of known users : ";
 			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
 				std::cout << it->nickName << ",";
 			}
 			std::cout << "\n";
-	
+
 		} catch (const std::invalid_argument& e) {
 			if (currentUser->newUser == true)
 				msg.response = ":server 433 * " + name + " " +  name + " :\r\n";
