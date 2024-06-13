@@ -43,6 +43,9 @@ void	Polls::handle_client_command(int client_fd) {
 		// nick();
 	}
 
+	else if (msg.command.rfind("KICK", 0) == 0) { //TODO Il n'y a pas encore de sécurité. A faire.
+	}
+
 	else if (msg.command.rfind("USER", 0) == 0) {
 		currentUser->userName = msg.command.substr(5, msg.command.find(" ", 5) - 5);
 		currentUser->realName = msg.command.substr(msg.command.find(":"));
@@ -109,6 +112,7 @@ void Polls::mainPoll(void)
 							msg.command = clientsBuffer[pollFds[i].fd].substr(0, pos);
 							clientsBuffer[pollFds[i].fd].erase(0, pos + 2);
 							Parsing	parsingtools;
+
 							try
 							{
 								std::string concat = "/" + msg.command;

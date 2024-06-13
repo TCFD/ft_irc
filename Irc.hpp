@@ -4,7 +4,7 @@
 # include "Server.hpp"
 # include "Client.hpp"
 
-
+# define MAP_TAB            std::map<std::string, int>
 # define VEC_LIST           std::vector<std::string>
 # define CHAN_VECTOR        std::vector<Channel>
 # define USER_VECTOR        std::vector<User>
@@ -18,7 +18,6 @@ struct User {
 	std::string	realName;
 	bool		newUser;
 	bool		nickDone;
-    int         operators;
     VEC_LIST modes;
 };
 
@@ -35,16 +34,14 @@ struct Channel {
     std::string                 name;
     std::string                 pwd;
     VEC_LIST                    modes;
-    VEC_LIST                    usersInChan;
+    MAP_TAB                     usersInChan;
 };
 
 class Polls : public Server
 {
     private:
         Msg msg;
-        // std::map<std::string, std::string> channels;
 
-		std::string returnZeroOneEnd(User user);
 
         std::vector<struct pollfd>		pollFds;
         struct pollfd					clientPollFds;
@@ -56,6 +53,7 @@ class Polls : public Server
         CHAN_VECTOR                     tabChan;
 
 		User							findUser(std::string name);
+
     public:
         Polls(void)						{};
         Polls(int fd);
@@ -71,14 +69,39 @@ class Polls : public Server
         
         int             channelHandle();
         int             modesHandle();
-        void            errorModes(VEC_LIST split);
+        void            modesOptions(VEC_LIST& split);
+        void            errorModes(VEC_LIST& split);
         void            errorLenModes(VEC_LIST& split);
 
         //Useful MODE
+		
+        std::string     returnZeroOneEnd(User user);
         bool            isChanExists(std::string target);
         bool            isUserExists(std::string target);
+        bool            isFourArgs(VEC_LIST& split);
+        bool            isUserInChan(std::string target);
+        bool            foundModeInChan(std::string mod, VEC_LIST modList);
+        
+        
+        void            modeK(VEC_LIST& split);
+        void            modeO(VEC_LIST& split);
+
         VEC_LIST        cutModeCommand();
 
+};
+
+// TEMPLATES
+
+/* Make a message to print channel modes, or not */
+template <typename V>
+std::string    printModes(V& modes)
+{
+    std::string currentModes="+";
+    for (typename V::iterator it=modes.begin(); it != modes.end(); ++it) {
+        currentModes += *it; }
+    if (currentModes.length() == 1)
+        currentModes = ":No modes are set";
+    return (currentModes);
 };
 
 #endif
