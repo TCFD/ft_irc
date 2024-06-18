@@ -8,10 +8,9 @@ void    Polls::errorLenModes(VEC_LIST& split)
 {
     const char* init[] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
     VEC_LIST flags(init, init+ sizeof(init) / sizeof(init[0]));
-    std::cout << "CHECK MODES: " << isFourArgs(split) << " and size : " << split.size() << std::endl;
     if ((isFourArgs(split) && split.size() < 4) || split.size() < 3 || split[2].length() < 2) {
         msg.response = msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
-    else if ((isFourArgs(split) && split.size() > 4) || (isFourArgs(split) == 0 && split.size() > 3)) {
+    else if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
         msg.response = msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407 // BIG PROBLEM dans les conditions je pense !!
     else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
         msg.response = msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
@@ -50,6 +49,7 @@ int	Polls::modesHandle()
 {
     msg.response = "";
 	VEC_LIST split = cutModeCommand();
+    // std::cout << "CHECK MODES: " << split.back() << " and size : " << split.size() << std::endl;
     msg.prefixNick = ":" + tab[msg.currentIndex].nickName;
     std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
     
@@ -68,6 +68,9 @@ int	Polls::modesHandle()
         
     }
     std::cout << "Response MODE: " << msg.response << std::endl;
+    for (VEC_LIST::iterator it=split.begin(); it != split.end();) {
+        it = split.erase(it);
+    }
 	return(0);
 }
 

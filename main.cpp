@@ -14,8 +14,6 @@ int main(int ac, char **av)
     }
     catch (const StrerrorException& e)
     { std::cout << e.what() << std::endl; exit(EXIT_FAILURE); }
-
-   
-
+  
     return 0;
 }

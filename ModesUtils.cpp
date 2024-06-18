@@ -51,7 +51,6 @@ bool    Polls::isFourArgs(VEC_LIST& split)
 {
     if ((split[2] == "+k" || split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
         return true;
-    std::cout << "je susi la bitch\n";
     return false;
 }
 
@@ -63,6 +62,7 @@ VEC_LIST    Polls::cutModeCommand()
 {
     std::string delim = " ";
 	VEC_LIST split;
+    std::cout << "command initiale: " << msg.command << std::endl;
 	for (size_t j=0; msg.command.length() != 0; j++)
 	{
         if (!msg.command.find("-l")) {
@@ -71,7 +71,8 @@ VEC_LIST    Polls::cutModeCommand()
         }
         else {
     		split.push_back(msg.command.substr(0, msg.command.find(delim)));
-		    msg.command.erase(0, (int)split[j].size() +1);}
+		    msg.command.erase(0, (int)split[j].size() +1);
+            std::cout << "split[j] = " << split[j] << std::endl; }
 	}
     return split;
 }

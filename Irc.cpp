@@ -49,7 +49,7 @@ void	Polls::handle_client_command(int client_fd) {
 	else if (msg.command.rfind("USER", 0) == 0) {
 		currentUser->userName = msg.command.substr(5, msg.command.find(" ", 5) - 5);
 		currentUser->realName = msg.command.substr(msg.command.find(":"));
-		if (currentUser->newUser && currentUser->nickDone) {
+		if (currentUser->newUser) {
 			currentUser->newUser = false;
 			msg.response = msg.prefixNick + "001 " + currentUser->userName +  " Welcome to the Internet Relay Network\r\n";
 		}
@@ -103,37 +103,40 @@ void Polls::mainPoll(void)
 					if (bytes_received <= 0)
 						clientDisconnected(bytes_received);
 					else {
+						std::cout << "buffer = " << buffer << std::endl;
 						//? Ajouter les données reçues au buffer du client
 						clientsBuffer[pollFds[i].fd].append(buffer, bytes_received);
-
+						memset(buffer, 0, sizeof(buffer));
 						//? Traiter chaque commande complète (terminée par "\r\n")
 						size_t pos;
 						while ((pos = clientsBuffer[pollFds[i].fd].find("\r\n")) != std::string::npos) {
 							msg.command = clientsBuffer[pollFds[i].fd].substr(0, pos);
 							clientsBuffer[pollFds[i].fd].erase(0, pos + 2);
-							Parsing	parsingtools;
+							// Parsing	parsingtools;
 
-							try
-							{
-								std::string concat = "/" + msg.command;
-								if (concat == "/HELP")
-									parsingtools.parsing_help();
-								parsingtools.cmd_treat_test(concat);
-							}
-							catch (std::exception &e)
-							{
-								std::cout << e.what() << std::endl;
-								parsingtools.err_write_correct_form("");
-							}
+							// try
+							// {
+							// 	std::string concat = "/" + msg.command;
+							// 	if (concat == "/HELP")
+							// 		parsingtools.parsing_help();
+							// 	parsingtools.cmd_treat_test(concat);
+							// }
+							// catch (std::exception &e)
+							// {
+							// 	std::cout << e.what() << std::endl;
+							// 	parsingtools.err_write_correct_form("");
+							// }
 							std::cout << "Received command: " << msg.command << std::endl;
 							msg.currentIndex = i - 1;
 							handle_client_command(pollFds[i].fd);
+								
 						}
 					}
 				}
             }
         }
     }
+	close(serverSocket);
 }
 //Creer classe ClientPoll en lien avec Polls
 void    Polls::createClientPoll(void)
