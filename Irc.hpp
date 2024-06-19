@@ -55,6 +55,7 @@ class Polls : public Server
 		void	handle_client_command(int client_fd);
         void    send_response(int client_fd);
 		void	nick();
+        void	setNick(User* currentUser, std::string name, std::string oldname);
 
         void    mainPoll(void);
         void    createClientPoll(void);

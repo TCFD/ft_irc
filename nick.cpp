@@ -41,6 +41,20 @@ std::string	printMessage(std::string num, std::string nickname, std::string mess
 }
 //		return (_printMessage("001", this->_clients[i]->getNickName(), "Welcome to the Internet Relay Network " + this->_clients[i]->getID()));
 
+void	Polls::setNick(User* currentUser, std::string name, std::string oldname) {
+
+	std::cout << "changing name\n";
+	currentUser->nickName = name;
+	if (currentUser->userName != "") {
+		currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
+		currentUser->registered = true;
+		if (oldname.size() == 1)
+			msg.response = printMessage("001", currentUser->nickName, " :Welcome to the Internet Relay Network " + currentUser->id);
+		else
+			msg.response = oldname + " NICK " + name + "\n";
+	}
+}
+
 void	Polls::nick() {
 	std::string	name					=	msg.command.substr(5);
 	User		*currentUser			=	&tab[msg.currentIndex];
@@ -54,24 +68,15 @@ void	Polls::nick() {
 	}
 	else {
 		try {
-				
+			
 			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); ++it) {
-				if (it->nickName == name)
+				if (currentUser->registered && it->nickName == name)
 					throw std::invalid_argument("");
+				else if (!currentUser->registered && it->nickName == name)
+					{ setNick(currentUser, name, oldname); throw std::invalid_argument(""); }
 			}
 			
-			std::cout << "changing name\n";
-			currentUser->nickName = name;
-
-			if (currentUser->userName != "") {
-				currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
-				currentUser->registered = true;
-				if (oldname.size() == 1)
-					msg.response = printMessage("001", currentUser->nickName, " Welcome to the Internet Relay Network " + currentUser->id);
-				else
-					msg.response = oldname + " NICK " + name + "\n";
-			}
-
+			setNick(currentUser, name, oldname);
 
 			std::cout << "List of known users : ";
 			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
