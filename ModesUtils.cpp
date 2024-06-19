@@ -49,7 +49,7 @@ bool    Polls::foundModeInChan(std::string mod, VEC_LIST modList)
 //probablement un probleme !!
 bool    Polls::isFourArgs(VEC_LIST& split)
 {
-    if ((split[2] == "+k" || split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
+    if ((split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
         return true;
     return false;
 }

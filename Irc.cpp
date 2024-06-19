@@ -126,10 +126,10 @@ void Polls::mainPoll(void)
 							// 	std::cout << e.what() << std::endl;
 							// 	parsingtools.err_write_correct_form("");
 							// }
+							std::cout << "command client buffer: " << clientsBuffer[pollFds[i].fd] << std::endl;
 							std::cout << "Received command: " << msg.command << std::endl;
 							msg.currentIndex = i - 1;
 							handle_client_command(pollFds[i].fd);
-								
 						}
 					}
 				}
