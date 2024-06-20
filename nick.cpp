@@ -37,7 +37,7 @@ std::string	printMessage(std::string num, std::string nickname, std::string mess
 {
 	if (nickname.empty())
 		nickname = "*";
-	return (":server " + num + " " + nickname + " " + message + "\n");
+	return (":server " + num + " " + nickname + " " + message + "\r\n");
 }
 //		return (_printMessage("001", this->_clients[i]->getNickName(), "Welcome to the Internet Relay Network " + this->_clients[i]->getID()));
 
@@ -46,21 +46,23 @@ void	Polls::setNick(User* currentUser, std::string name, std::string oldname) {
 	std::cout << "changing name\n";
 	currentUser->nickName = name;
 	if (currentUser->userName != "") {
+		// if (currentUser->nickName.find("_") != std::string::npos && currentUser->userName.find("_") == std::string::npos)
+		// 	{currentUser->userName += "_";}
 		currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
 		currentUser->registered = true;
 		if (oldname.size() == 1)
-			msg.response = printMessage("001", currentUser->nickName, " :Welcome to the Internet Relay Network " + currentUser->id);
+			msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id); 
 		else
-			msg.response = oldname + " NICK " + name + "\n";
+			msg.response = oldname + " NICK " + name + "\r\n";
 	}
 }
 
-void	Polls::nick() {
+void	Polls::nick(int client_fd) {
 	std::string	name					=	msg.command.substr(5);
 	User		*currentUser			=	&tab[msg.currentIndex];
 	std::string	oldname					=	":" + currentUser->nickName;
 
-	std::cout << "COMMAND === " << msg.command << std::endl;
+	(void) client_fd;
 	std::cout << "Verifying name :'" << name << "'\n\n";
 	if (name.empty())
 		msg.response = printMessage("431", currentUser->nickName, ":No nickname given");
@@ -73,7 +75,7 @@ void	Polls::nick() {
 				if (currentUser->registered && it->nickName == name)
 					throw std::invalid_argument("");
 				else if (!currentUser->registered && it->nickName == name)
-					{setNick(currentUser, name+"_", oldname); msg.command += "_"; throw std::invalid_argument("");}
+					{ throw std::invalid_argument(""); }
 			}
 			
 			setNick(currentUser, name, oldname);
@@ -85,7 +87,7 @@ void	Polls::nick() {
 			std::cout << "\n";
 
 		} catch (const std::invalid_argument& e) {
-			msg.response = printMessage("443", currentUser->nickName, name + " :Nickname is already in use");
+			msg.response = printMessage("433", currentUser->nickName, name + " :Nickname is already in use");
 		}
 	}
 }

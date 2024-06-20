@@ -39,16 +39,19 @@ void	Polls::handle_client_command(int client_fd) {
 		msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
 	else if (msg.command.rfind("NICK", 0) == 0) { /////TODO Il n'y a pas encore de sécurité. A faire.
-		nick();
+		nick(client_fd);
 	}
 
 	else if (msg.command.rfind("USER", 0) == 0) {
+		std::cout << "COMMAND RECEIVED = " << msg.command << std::endl;
 		currentUser->userName = msg.command.substr(5, msg.command.find(" ", 5) - 5);
 		currentUser->realName = msg.command.substr(msg.command.find(":"));
 		if (currentUser->nickName != "") {
+			// if (currentUser->nickName.find("_") != std::string::npos && currentUser->userName.find("_") == std::string::npos)
+			// 	{currentUser->userName += "_";}
 			currentUser->registered = true;
 			currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
-			msg.response = printMessage("001", currentUser->nickName, "Welcome to the Internet Relay Network " + currentUser->id);
+			msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id);
 		}
 	}
 
