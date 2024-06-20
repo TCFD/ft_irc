@@ -14,7 +14,7 @@ int	Polls::modesHandle()
 
     //Error handling, a rearranger !!
     int codon=0;
-    for (std::vector<User>::iterator it=tab.begin(); it != tab.end(); ++it) { std::cout << "Name: " << it->nickName << std::endl; if (split[1] == it->nickName) codon = 1;}
+    // for (std::vector<User>::iterator it=tab.begin(); it != tab.end(); ++it) { std::cout << "Name: " << it->nickName << std::endl; if (split[1] == it->nickName) codon = 1;}
 
     //MODE USER
     if (split.size() == 2 && codon == 1 && split[1] == tab[msg.currentIndex].nickName) {

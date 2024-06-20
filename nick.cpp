@@ -60,6 +60,7 @@ void	Polls::nick() {
 	User		*currentUser			=	&tab[msg.currentIndex];
 	std::string	oldname					=	":" + currentUser->nickName;
 
+	std::cout << "COMMAND === " << msg.command << std::endl;
 	std::cout << "Verifying name :'" << name << "'\n\n";
 	if (name.empty())
 		msg.response = printMessage("431", currentUser->nickName, ":No nickname given");
@@ -68,12 +69,11 @@ void	Polls::nick() {
 	}
 	else {
 		try {
-			
 			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); ++it) {
 				if (currentUser->registered && it->nickName == name)
 					throw std::invalid_argument("");
 				else if (!currentUser->registered && it->nickName == name)
-					{ setNick(currentUser, name, oldname); throw std::invalid_argument(""); }
+					{setNick(currentUser, name+"_", oldname); msg.command += "_"; throw std::invalid_argument("");}
 			}
 			
 			setNick(currentUser, name, oldname);
