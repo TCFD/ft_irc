@@ -4,6 +4,16 @@
 # include "Server.hpp"
 # include "Client.hpp"
 
+# define NC       "\033[0m"
+# define BLACK       "\033[30m"      /* Noir */
+# define RED         "\033[31m"      /* Rouge */
+# define GREEN       "\033[32m"      /* Vert */
+# define YELLOW      "\033[33m"      /* Jaune */
+# define BLUE        "\033[34m"      /* Bleu */
+# define MAGENTA     "\033[35m"      /* Magenta */
+# define CYAN        "\033[36m"      /* Cyan */
+
+
 std::string	printMessage(std::string num, std::string nickname, std::string message);
 
 struct User {

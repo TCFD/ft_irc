@@ -43,7 +43,6 @@ void	Polls::handle_client_command(int client_fd) {
 	}
 
 	else if (msg.command.rfind("USER", 0) == 0) {
-		std::cout << "COMMAND RECEIVED = " << msg.command << std::endl;
 		currentUser->userName = msg.command.substr(5, msg.command.find(" ", 5) - 5);
 		currentUser->realName = msg.command.substr(msg.command.find(":"));
 		if (currentUser->nickName != "") {

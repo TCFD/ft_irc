@@ -37,23 +37,25 @@ std::string	printMessage(std::string num, std::string nickname, std::string mess
 {
 	if (nickname.empty())
 		nickname = "*";
-	return (":server " + num + " " + nickname + " " + message + "\r\n");
+	return (":localhost " + num + " " + nickname + " " + message + "\r\n");
 }
 //		return (_printMessage("001", this->_clients[i]->getNickName(), "Welcome to the Internet Relay Network " + this->_clients[i]->getID()));
 
 void	Polls::setNick(User* currentUser, std::string name, std::string oldname) {
 
-	std::cout << "changing name\n";
+	// std::cout << "changing name\n";
 	currentUser->nickName = name;
 	if (currentUser->userName != "") {
 		// if (currentUser->nickName.find("_") != std::string::npos && currentUser->userName.find("_") == std::string::npos)
 		// 	{currentUser->userName += "_";}
 		currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
+		std::cout << GREEN "ID NICK : " << currentUser->id << NC << std::endl;
 		currentUser->registered = true;
 		if (oldname.size() == 1)
-			msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id); 
+			msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id);
 		else
-			msg.response = oldname + " NICK " + name + "\r\n";
+			// msg.response = oldname + " NICK " + name + "\r\n";
+			msg.response = BLUE ":" + currentUser->id + " NICK " + name + "\r\n" NC;
 	}
 }
 
@@ -72,12 +74,17 @@ void	Polls::nick(int client_fd) {
 	else {
 		try {
 			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); ++it) {
-				if (currentUser->registered && it->nickName == name)
+				if (currentUser->registered && it->nickName == name && it->nickName.length() == name.length())
 					throw std::invalid_argument("");
-				else if (!currentUser->registered && it->nickName == name)
-					{ throw std::invalid_argument(""); }
+				else if (!currentUser->registered && it->nickName == name && it->nickName.length() == name.length())
+					{
+						throw std::invalid_argument("");
+						// msg.response = printMessage("433", currentUser->nickName, name + " :Nickname is already in use");
+						// msg.response = YELLOW ":localhost 433 " + currentUser->nickName + " " + name + " :Nickname is already in use\r\n" NC;
+						// send_response(client_fd);
+						// setNick(currentUser, name, oldname);
+					}
 			}
-			
 			setNick(currentUser, name, oldname);
 
 			std::cout << "List of known users : ";
