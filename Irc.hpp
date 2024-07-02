@@ -21,6 +21,7 @@ struct User {
 	std::string	userName;
 	std::string	nickName;
 	std::string	realName;
+    std::string oldName;
 	std::string	id;
 	std::string	host;
 	bool		registered;
@@ -65,7 +66,8 @@ class Polls : public Server
 		void	handle_client_command(int client_fd);
         void    send_response(int client_fd);
 		void	nick(int client_fd);
-        void	setNick(User* currentUser, std::string name, std::string oldname);
+        void	setNick(User* currentUser, std::string name);
+        bool	isAlreadyExists(User* currentUser, std::string name);
 
         void    mainPoll(void);
         void    createClientPoll(void);

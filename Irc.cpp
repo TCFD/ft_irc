@@ -80,6 +80,7 @@ void	Polls::handle_client_command(int client_fd) {
 	}
 
 	send_response(client_fd);
+	msg.response.clear();
 }
 
 void Polls::mainPoll(void)

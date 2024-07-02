@@ -41,62 +41,61 @@ std::string	printMessage(std::string num, std::string nickname, std::string mess
 }
 //		return (_printMessage("001", this->_clients[i]->getNickName(), "Welcome to the Internet Relay Network " + this->_clients[i]->getID()));
 
-void	Polls::setNick(User* currentUser, std::string name, std::string oldname) {
+void	Polls::setNick(User* currentUser, std::string name) {
 
 	// std::cout << "changing name\n";
+	currentUser->oldName = currentUser->nickName;
 	currentUser->nickName = name;
 	if (currentUser->userName != "") {
-		// if (currentUser->nickName.find("_") != std::string::npos && currentUser->userName.find("_") == std::string::npos)
-		// 	{currentUser->userName += "_";}
 		currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
-		std::cout << GREEN "ID NICK : " << currentUser->id << NC << std::endl;
+		// std::cout << GREEN "ID NICK : " << currentUser->id << NC << std::endl;
 		currentUser->registered = true;
-		if (oldname.size() == 1)
-			msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id);
-		else
+		// if (oldname.size() == 1)
+			// msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network :" + currentUser->id);
+		// else
 			// msg.response = oldname + " NICK " + name + "\r\n";
-			msg.response = BLUE ":" + currentUser->id + " NICK " + name + "\r\n" NC;
+			// msg.response = BLUE ":" + currentUser->id + " NICK " + name + "\r\n" NC;
 	}
+	std::cout << MAGENTA "NAME ==> " << currentUser->nickName << NC << std::endl;
 }
 
+bool	Polls::isAlreadyExists(User* currentUser, std::string name)
+{
+	for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); ++it) {
+		std::cout << "nick: " << it->nickName << std::endl;
+		if (currentUser->registered && it->nickName == name)
+			return true;
+		else if (!currentUser->registered && it->nickName == name)
+			return true;
+	}
+	return false;
+}
+
+//Probleme de NickName a gerer: _ gerer pour un client, mais pas pour +...
 void	Polls::nick(int client_fd) {
 	std::string	name					=	msg.command.substr(5);
 	User		*currentUser			=	&tab[msg.currentIndex];
-	std::string	oldname					=	":" + currentUser->nickName;
+	currentUser->oldName				=	currentUser->nickName;
 
 	(void) client_fd;
 	std::cout << "Verifying name :'" << name << "'\n\n";
-	if (name.empty())
-		msg.response = printMessage("431", currentUser->nickName, ":No nickname given");
+	// if (!currentUser->registered)
+		// oldname = name;
+	if (name.empty()) {
+		msg.response = printMessage("431", currentUser->nickName, " :No nickname given");}
 	else if (!isValidNick(name)) {
-		msg.response = printMessage("432", currentUser->nickName, name + " :Erroneous nickname");
-	}
-	else {
-		try {
-			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); ++it) {
-				if (currentUser->registered && it->nickName == name && it->nickName.length() == name.length())
-					throw std::invalid_argument("");
-				else if (!currentUser->registered && it->nickName == name && it->nickName.length() == name.length())
-					{
-						throw std::invalid_argument("");
-						// msg.response = printMessage("433", currentUser->nickName, name + " :Nickname is already in use");
-						// msg.response = YELLOW ":localhost 433 " + currentUser->nickName + " " + name + " :Nickname is already in use\r\n" NC;
-						// send_response(client_fd);
-						// setNick(currentUser, name, oldname);
-					}
-			}
-			setNick(currentUser, name, oldname);
+		msg.response = printMessage("432", currentUser->nickName, name + " :Erroneous nickname"); }
+	else if (isAlreadyExists(currentUser, name)) {
+		msg.response = printMessage("433", currentUser->nickName, name + " :Nickname is already in use"); }
+	// else if (currentUser->registered)
+	setNick(currentUser, name);
 
-			std::cout << "List of known users : ";
-			for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
-				std::cout << it->nickName << ",";
-			}
-			std::cout << "\n";
+	std::cout << "List of known users : ";
+	for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
+		std::cout << it->nickName << ",";}
+	std::cout << "\n";
 
-		} catch (const std::invalid_argument& e) {
-			msg.response = printMessage("433", currentUser->nickName, name + " :Nickname is already in use");
-		}
-	}
+	msg.response += ":" + currentUser->oldName + "!" + currentUser->userName + "@localhost NICK " + currentUser->nickName + "\r\n";
 }
 
 //			response = prefix + "001 " + name +" :Welcome to the Internet Relay Network, " + name + "\r\n";
