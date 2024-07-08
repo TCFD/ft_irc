@@ -59,13 +59,14 @@ void	Polls::setNick(User* currentUser, std::string name) {
 	std::cout << MAGENTA "NAME ==> " << currentUser->nickName << NC << std::endl;
 }
 
-bool	Polls::isAlreadyExists(User* currentUser, std::string name)
+bool	Polls::isAlreadyExists(User* currentUser, std::string name, int clientFd)
 {
-	for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); ++it) {
-		std::cout << "nick: " << it->nickName << std::endl;
-		if (currentUser->registered && it->nickName == name)
-			return true;
-		else if (!currentUser->registered && it->nickName == name)
+	(void) currentUser;
+	(void) clientFd;
+	std::cout << BLUE "FD required: " NC << clientFd << std::endl;
+	for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
+		std::cout << "nick: " << it->nickName << " and the client fd is : " << it->fd << std::endl;
+		if (it->nickName == name && it->fd != clientFd)
 			return true;
 	}
 	return false;
@@ -77,25 +78,29 @@ void	Polls::nick(int client_fd) {
 	User		*currentUser			=	&tab[msg.currentIndex];
 	currentUser->oldName				=	currentUser->nickName;
 
-	(void) client_fd;
+	// (void) client_fd;
 	std::cout << "Verifying name :'" << name << "'\n\n";
-	// if (!currentUser->registered)
-		// oldname = name;
+	std::cout << RED "CHECK fd: Cli = " << currentUser->fd << " and EXPCTED = " << client_fd << NC << std::endl;
+	if (!currentUser->registered)
+	{
+		currentUser->nickName = name;
+		currentUser->oldName = name;
+	}
 	if (name.empty()) {
 		msg.response = printMessage("431", currentUser->nickName, " :No nickname given");}
 	else if (!isValidNick(name)) {
 		msg.response = printMessage("432", currentUser->nickName, name + " :Erroneous nickname"); }
-	else if (isAlreadyExists(currentUser, name)) {
+	else if (isAlreadyExists(currentUser, name, client_fd)) {
 		msg.response = printMessage("433", currentUser->nickName, name + " :Nickname is already in use"); }
-	// else if (currentUser->registered)
-	setNick(currentUser, name);
+	else {
+		setNick(currentUser, name);
+		msg.response = ":" + currentUser->oldName + "!" + currentUser->userName + "@localhost NICK " + currentUser->nickName + "\r\n"; }
 
 	std::cout << "List of known users : ";
 	for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++) {
 		std::cout << it->nickName << ",";}
 	std::cout << "\n";
 
-	msg.response += ":" + currentUser->oldName + "!" + currentUser->userName + "@localhost NICK " + currentUser->nickName + "\r\n";
 }
 
 //			response = prefix + "001 " + name +" :Welcome to the Internet Relay Network, " + name + "\r\n";

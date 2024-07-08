@@ -147,6 +147,7 @@ void    Polls::createClientPoll(void)
 	temp.id			= "";
 	temp.nickName	= "";
 	temp.host		= "server";
+	temp.fd			= clientFd;
 	temp.registered = false;
 	tab.push_back(temp);
     std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
