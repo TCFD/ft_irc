@@ -11,6 +11,18 @@
 # define CHAN_ITERATOR      std::vector<Channel>::iterator
 # define USER_ITERATOR      std::vector<User>::iterator
 
+# define NC       "\033[0m"
+# define BLACK       "\033[30m"      /* Noir */
+# define RED         "\033[31m"      /* Rouge */
+# define GREEN       "\033[32m"      /* Vert */
+# define YELLOW      "\033[33m"      /* Jaune */
+# define BLUE        "\033[34m"      /* Bleu */
+# define MAGENTA     "\033[35m"      /* Magenta */
+# define CYAN        "\033[36m"      /* Cyan */
+
+
+std::string	printMessage(std::string num, std::string nickname, std::string message);
+
 struct User {
 	int			indexInPollFd;
 	std::string	userName;
@@ -18,7 +30,13 @@ struct User {
 	std::string	realName;
 	bool		newUser;
 	bool		nickDone;
-    VEC_LIST modes;
+    VEC_LIST    modes;
+    std::string oldName;
+	std::string	id;
+	std::string	host;
+	bool		registered;
+    int         operators;
+    int         fd;
 };
 
 struct Msg {
@@ -53,7 +71,8 @@ class Polls : public Server
         CHAN_VECTOR                     tabChan;
 
 		User							findUser(std::string name);
-
+		bool							isValidNick(const std::string& nick);
+    
     public:
         Polls(void)						{};
         Polls(int fd);
@@ -61,7 +80,9 @@ class Polls : public Server
 
 		void	handle_client_command(int client_fd);
         void    send_response(int client_fd);
-		void	nick();
+		void	nick(int client_fd);
+        void	setNick(User* currentUser, std::string name);
+        bool	isAlreadyExists(std::string name, int clientFd);
 
         void    mainPoll(void);
         void    createClientPoll(void);
