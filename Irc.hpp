@@ -68,7 +68,7 @@ class Polls : public Server
         void    send_response(int client_fd);
 		void	nick(int client_fd);
         void	setNick(User* currentUser, std::string name);
-        bool	isAlreadyExists(User* currentUser, std::string name, int clientFd);
+        bool	isAlreadyExists(std::string name, int clientFd);
 
         void    mainPoll(void);
         void    createClientPoll(void);
