@@ -99,8 +99,14 @@ int  Polls::channelHandle()
         tabChan.push_back(temp);
     }
     else { //Check if its an INVITE ONLY channel
-        temp.usersInChan[tab[msg.currentIndex].nickName] = 0; 
-        tabChan.push_back(temp); }
-    std::cout << "NEW CHANNEL ENTERING . . . " << std::endl;
+        // temp.usersInChan[tab[msg.currentIndex].nickName] = 0; 
+        tabChan[msg.currentChan].usersInChan[tab[msg.currentIndex].nickName] = 0; 
+        std::cout << "coucou je suis la bitch et NICK = " << tab[msg.currentIndex].nickName << "\n ";
+        sendToChan(); }
+
+    std::cout << "ChanName: " << tabChan[msg.currentChan].name << " | ChanUsers: ";
+    for (MAP_TAB::iterator it = tabChan[msg.currentChan].usersInChan.begin(); it != tabChan[msg.currentChan].usersInChan.end(); ++it) {
+        std::cout << it->first << " "; }
+    std::cout << "\nNEW CHANNEL ENTERING . . . " << std::endl;
     return (0);
 }

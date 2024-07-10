@@ -19,6 +19,7 @@ void    Polls::modesOptions(VEC_LIST& split)
 */
 void    Polls::modeK(VEC_LIST& split)
 {
+    sendToChan();
     if (split[2].find("+") != std::string::npos) {
         tabChan[msg.currentChan].pwd = split[3];
         if (!foundModeInChan(split[2].substr(1), tabChan[msg.currentChan].modes)) {
@@ -33,21 +34,30 @@ void    Polls::modeK(VEC_LIST& split)
 /* 
  * Handle o MODE
  * Check if the nick chosen exists and is in the channel
- * If +o --> add the operator status to nick; add the mode to the channel
+ * If +o --> add the operator status to nick; add the mode to the channel;
  * If -o --> remove the operator status to nick; if mode was active, remove it from the channel
 */
 void    Polls::modeO(VEC_LIST& split)
 {
-    if (split[2].find("+") != std::string::npos) {
-        if (isUserExists(split[3]) && isUserInChan(split[3])) {
-            if (split[2].find("+")) {
-                if (!foundModeInChan(split[2].substr(1), tabChan[msg.currentChan].modes)) {
+    if (isUserInChan(split[3])) {
+        if (split[2].find("+")) {
+            if (!foundModeInChan(split[2].substr(1), tabChan[msg.currentChan].modes)) {
                 tabChan[msg.currentChan].usersInChan[split[3]] = 1; }
-            }
-            else {
-                if (foundModeInChan(split[2].substr(1), tabChan[msg.currentChan].modes)) {
-                    tabChan[msg.currentChan].usersInChan[split[3]] = 0; }
-            }
         }
+        else {
+            if (foundModeInChan(split[2].substr(1), tabChan[msg.currentChan].modes)) {
+                tabChan[msg.currentChan].usersInChan[split[3]] = 0; }
+        }
+    }
+}
+
+void    Polls::sendToChan(void)
+{
+    std::cout << BLUE "Current Chan Name: " << tabChan[msg.currentChan].name << NC << std::endl;
+    for (MAP_TAB::iterator it = tabChan[msg.currentChan].usersInChan.begin(); it != tabChan[msg.currentChan].usersInChan.end(); it ++)
+    {
+        // if (it->first != tab[msg.currentIndex].nickName) {
+            msg.response = "Message to " + it->first + ": Ce message est un test\r\n";
+            send_response(userInChanFd(it->first));
     }
 }

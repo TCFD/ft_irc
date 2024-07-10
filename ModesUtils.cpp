@@ -1,8 +1,6 @@
 #include "Irc.hpp"
 
-/*
- * Check if the current channel exists in the database tabChan<CHANNEL>
-*/
+// Check if the current channel exists in the database tabChan<CHANNEL>
 bool    Polls::isChanExists(std::string target)
 {
     int len=0;
@@ -14,9 +12,7 @@ bool    Polls::isChanExists(std::string target)
     return false;
 }
 
-/*
- * Check if the current user exists in the database tab<USER>
-*/
+// Check if the current user exists in the database tab<USER>
 bool    Polls::isUserExists(std::string target)
 {
     for (USER_ITERATOR it=tab.begin(); it != tab.end(); ++it) {
@@ -26,6 +22,7 @@ bool    Polls::isUserExists(std::string target)
     return false;
 }
 
+// Check if the target is already in the channel or not
 bool    Polls::isUserInChan(std::string target)
 {
     MAP_TAB::iterator it=tabChan[msg.currentChan].usersInChan.find(target);
@@ -34,6 +31,7 @@ bool    Polls::isUserInChan(std::string target)
     return false;
 }
 
+// Check if the mode is already activated in the channel or not
 bool    Polls::foundModeInChan(std::string mod, VEC_LIST modList)
 {
     for (VEC_LIST::iterator it=modList.begin(); it != modList.end(); ++it) {
@@ -62,7 +60,6 @@ VEC_LIST    Polls::cutModeCommand()
 {
     std::string delim = " ";
 	VEC_LIST split;
-    std::cout << "command initiale: " << msg.command << std::endl;
 	for (size_t j=0; msg.command.length() != 0; j++)
 	{
         if (!msg.command.find("-l")) {
@@ -71,9 +68,17 @@ VEC_LIST    Polls::cutModeCommand()
         }
         else {
     		split.push_back(msg.command.substr(0, msg.command.find(delim)));
-		    msg.command.erase(0, (int)split[j].size() +1);
-            std::cout << "split[j] = " << split[j] << std::endl; }
+		    msg.command.erase(0, (int)split[j].size() +1); }
 	}
     return split;
 }
 
+int    Polls::userInChanFd(std::string nick)
+{
+    int i = 0;
+    for (USER_ITERATOR it = tab.begin(); it != tab.end(); i++, it++) {
+        if (tab[i].nickName == nick)
+            return (tab[i].fd); 
+    }
+    return (-1);
+}

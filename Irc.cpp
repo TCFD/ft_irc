@@ -95,7 +95,9 @@ void Polls::mainPoll(void)
 		msg.currentChan = 0;
 		msg.prefixServer = ":server ";
         for (size_t i = 0; i < pollFds.size(); i++){
-            if (pollFds[i].revents & POLLIN) {
+            if (pollFds[i].revents & POLLIN) 
+			{
+				// std::cout << RED "CLIENT FD IS " << pollFds[i].fd << NC << std::endl;
                 if (pollFds[i].fd == serverFd)	//? Si quelqu'un essaie de se connecter
                     createClientPoll();
 				else {

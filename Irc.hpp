@@ -90,6 +90,7 @@ class Polls : public Server
         
         int             channelHandle();
         int             modesHandle();
+        void            sendToChan(void);
         void            modesOptions(VEC_LIST& split);
         void            errorModes(VEC_LIST& split);
         void            errorLenModes(VEC_LIST& split);
@@ -102,6 +103,7 @@ class Polls : public Server
         bool            isFourArgs(VEC_LIST& split);
         bool            isUserInChan(std::string target);
         bool            foundModeInChan(std::string mod, VEC_LIST modList);
+        int             userInChanFd(std::string nick);
         
         
         void            modeK(VEC_LIST& split);
