@@ -16,35 +16,31 @@
 # include <exception>
 # include <errno.h>
 # include <algorithm>
-// # include "Irc.hpp"
 
-// class ServerPoll
-// {
-//     protected:
-//         struct pollfd   serverPollFds;
-
-//     public:
-//         ServerPoll(void) {};
-//         ServerPoll(int serverFd);
-//         ~ServerPoll(void) {};
-// };
+# include "Irc.hpp"
 
 class Server
 {
     protected:
-        int port;
-        int serverSocket;
-        struct sockaddr_in serverAddr;
-        int limitUsers;
+        int                 _port;
+        int                 _serverSocket;
+        struct sockaddr_in  _serverAddr;
+        int                 _limitUsers;
+        CLIENT_VEC          _clients;
+        CHAN_VEC            _channels;
     
     public:
-        Server(void) {};
-        Server(int _port);
+        Server(int port);
         ~Server(void) {};
 
-        int getPort(void) {return(port); }
-        int getServerSocket(void) { return(serverSocket); }
-        void    socketDataSet(void);
+        int             getPort(void) {return(_port); }
+        int             getServerSocket(void) { return(_serverSocket); }
+        void            socketDataSet(void);
+
+        void            createClient(Polls &poll);
+   		void	        clientDisconnected(int bytes_received);
+
+
 };
 
 class StrerrorException : public std::exception
@@ -58,4 +54,23 @@ class StrerrorException : public std::exception
 
         virtual const char* what() const throw(){
             return bufferMessage; };
+};
+
+class Polls
+{
+    private:
+        std::vector<struct pollfd>		_pollFds;
+        struct pollfd					_clientPollFds;
+        struct pollfd					_serverPollFds;
+        int								_pollCount;
+        Msg                             _msg;
+
+    public:
+
+        Polls(int fd) {};
+        ~Polls() {};
+
+        void            mainPoll(Server& server);
+        void            addClientPoll(int clientFd);
+
 };

@@ -1,74 +1,67 @@
-#include "Irc.hpp"
+#include "Server.hpp"
 #include "Parsing/includes/Parsing.hpp"
 
-Polls::Polls(int fd) : serverFd(fd)
+Polls::Polls(int fd)
 {
-    serverPollFds.fd = serverFd;
-    serverPollFds.events = POLLIN;
-    pollFds.push_back(serverPollFds);
+    __serverPollFds.fd = fd;
+    __serverPollFds.events = POLLIN;
+    __pollFds.push_back(__serverPollFds);
 }
 
 void Polls::send_response(int client_fd) {
-	std::cout << "Server sent " << msg.response << std::endl;
-	send(client_fd, msg.response.c_str(), msg.response.size(), 0);
-	msg.response.erase();
+	std::cout << "Server sent " << _msg.response << std::endl;
+	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
+	_msg.response.erase();
 }
 
-void Polls::clientDisconnected(int bytes_received) {
-	if (bytes_received == 0)
-		std::cout << "Client disconnected" << std::endl;
-	else
-		perror("recv");
-	clientsBuffer.erase(pollFds[msg.currentIndex].fd); //? clear user's buffer
-	close(pollFds[msg.currentIndex].fd);
-	//// pollFds[currentIndex].fd = -1; 
-	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
-	//// Jpense que c'est plus simple que de decaller tous les indexs
-}
-
-/* User	Polls::findUser(std::string name) {
-	for (std::vector<User>::iterator it = tab.begin(); it < tab.end(); it++)
-		if (name == it->userName)
-			return *it;
-	return NULL;
-} */
+// void Polls::clientDisconnected(int bytes_received) {
+// 	if (bytes_received == 0)
+// 		std::cout << "Client disconnected" << std::endl;
+// 	else
+// 		perror("recv");
+// 	clientsBuffer.erase(_pollFds[_msg.currentIndex].fd); //? clear user's buffer
+// 	close(_pollFds[_msg.currentIndex].fd);
+// 	//// _pollFds[currentIndex].fd = -1; 
+// 	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
+// 	//// Jpense que c'est plus simple que de decaller tous les indexs
+// }
 
 void	Polls::handle_client_command(int client_fd) {
-	User	*currentUser = &tab[msg.currentIndex];
+	User	*currentUser = &tab[_msg.currentIndex];
 
-	msg.prefixNick = currentUser->nickName;
-	if (msg.command.rfind("CAP", 0) == 0)
-		msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
+	_msg.prefixNick = currentUser->nickName;
+	if (_msg.command.rfind("CAP", 0) == 0)
+		_msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
-	else if (msg.command.rfind("NICK", 0) == 0) { /////TODO Il n'y a pas encore de sécurité. A faire.
+	else if (_msg.command.rfind("NICK", 0) == 0) { /////TODO Il n'y a pas encore de sécurité. A faire.
 		nick(client_fd);
 	}
 
-	else if (msg.command.rfind("USER", 0) == 0) {
-		currentUser->userName = msg.command.substr(5, msg.command.find(" ", 5) - 5);
-		currentUser->realName = msg.command.substr(msg.command.find(":"));
+	else if (_msg.command.rfind("USER", 0) == 0) {
+		currentUser->userName = _msg.command.substr(5, _msg.command.find(" ", 5) - 5);
+		currentUser->realName = _msg.command.substr(_msg.command.find(":"));
 		if (currentUser->nickName != "") {
 			// if (currentUser->nickName.find("_") != std::string::npos && currentUser->userName.find("_") == std::string::npos)
 			// 	{currentUser->userName += "_";}
 			currentUser->registered = true;
 			currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
-			msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id);
+			_msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id);
 		}
 	}
 
-	else if (msg.command.rfind("MODE", 0) == 0) {
+	else if (_msg.command.rfind("MODE", 0) == 0) {
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
-	else if (msg.command.rfind("JOIN", 0) == 0) {
+	else if (_msg.command.rfind("JOIN", 0) == 0) {
 		channelHandle(); }
 
-	else if (msg.command.rfind("PING", 0) == 0) {
-		msg.response = msg.prefixServer + "PONG :" + msg.command.substr(5) + "\r\n"; //? Done.
+	else if (_msg.command.rfind("PING", 0) == 0) {
+		_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
 	}
 
-	else if (msg.command.rfind("QUIT", 0) == 0) {
-		msg.currentChan = 0; }
-	else if (msg.command.rfind("WHOIS", 0) == 0) {
+	else if (_msg.command.rfind("QUIT", 0) == 0) {
+		_msg.currentChan = 0; }
+	else if (_msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);
 		if (temp != NULL)
@@ -76,53 +69,53 @@ void	Polls::handle_client_command(int client_fd) {
 		else */
 
 	}
-	else if (msg.command.rfind("PONG", 0) == 0) {}
+	else if (_msg.command.rfind("PONG", 0) == 0) {}
 	else {
-		msg.response = msg.prefixServer + "421 " + msg.command.substr(0, msg.command.find(' ')) + " :Unknown command\r\n";
+		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
 
 	send_response(client_fd);
-	msg.response.clear();
+	_msg.response.clear();
 }
 
-void Polls::mainPoll(void)
+void Polls::mainPoll(Server& server)
 {	
     while (true) {
-        pollCount = poll(pollFds.data(), pollFds.size(), -1);
+        _pollCount = poll(_pollFds.data(), _pollFds.size(), -1);
 
-        if (pollCount == -1) throw StrerrorException("Poll Error");
+        if (_pollCount == -1) throw StrerrorException("Poll Error");
 
-		msg.currentChan = 0;
-		msg.prefixServer = ":server ";
-        for (size_t i = 0; i < pollFds.size(); i++){
-            if (pollFds[i].revents & POLLIN) 
+		_msg.currentChan = 0;
+		_msg.prefixServer = ":server ";
+        for (size_t i = 0; i < _pollFds.size(); i++){
+            if (_pollFds[i].revents & POLLIN) 
 			{
-				// std::cout << RED "CLIENT FD IS " << pollFds[i].fd << NC << std::endl;
-                if (pollFds[i].fd == serverFd)	//? Si quelqu'un essaie de se connecter
-                    createClientPoll();
+				// std::cout << RED "CLIENT FD IS " << _pollFds[i].fd << NC << std::endl;
+                if (_pollFds[i].fd == server.getServerSocket())	//? Si quelqu'un essaie de se connecter
+                    server.createClient(*this);
 				else {
 					char buffer[1024];
-					int bytes_received = recv(pollFds[i].fd, buffer, sizeof(buffer), 0);
+					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
 
 					if (bytes_received <= 0)
 						clientDisconnected(bytes_received);
 					else {
 						std::cout << "buffer = " << buffer << std::endl;
 						//? Ajouter les données reçues au buffer du client
-						clientsBuffer[pollFds[i].fd].append(buffer, bytes_received);
+						clientsBuffer[_pollFds[i].fd].append(buffer, bytes_received);
 						memset(buffer, 0, sizeof(buffer));
 						//? Traiter chaque commande complète (terminée par "\r\n")
 						size_t pos;
-						while ((pos = clientsBuffer[pollFds[i].fd].find("\n")) != std::string::npos) {
-							if (clientsBuffer[pollFds[i].fd].find("\r") != std::string::npos)
+						while ((pos = clientsBuffer[_pollFds[i].fd].find("\n")) != std::string::npos) {
+							if (clientsBuffer[_pollFds[i].fd].find("\r") != std::string::npos)
 								pos--;
-							msg.command = clientsBuffer[pollFds[i].fd].substr(0, pos);
-							clientsBuffer[pollFds[i].fd].erase(0, pos + 2);
+							_msg.command = clientsBuffer[_pollFds[i].fd].substr(0, pos);
+							clientsBuffer[_pollFds[i].fd].erase(0, pos + 2);
 							// Parsing	parsingtools;
 
 							// try
 							// {
-							// 	std::string concat = "/" + msg.command;
+							// 	std::string concat = "/" + _msg.command;
 							// 	if (concat == "/HELP")
 							// 		parsingtools.parsing_help();
 							// 	parsingtools.cmd_treat_test(concat);
@@ -132,10 +125,10 @@ void Polls::mainPoll(void)
 							// 	std::cout << e.what() << std::endl;
 							// 	parsingtools.err_write_correct_form("");
 							// }
-							std::cout << "command client buffer: " << clientsBuffer[pollFds[i].fd] << std::endl;
-							std::cout << "Received command: " << msg.command << std::endl;
-							msg.currentIndex = i - 1;
-							handle_client_command(pollFds[i].fd);
+							std::cout << "command client buffer: " << clientsBuffer[_pollFds[i].fd] << std::endl;
+							std::cout << "Received command: " << _msg.command << std::endl;
+							_msg.currentIndex = i - 1;
+							handle_client_command(_pollFds[i].fd);
 						}
 					}
 				}
@@ -144,31 +137,10 @@ void Polls::mainPoll(void)
     }
 	close(serverSocket);
 }
-//Creer classe ClientPoll en lien avec Polls
-void    Polls::createClientPoll(void)
+
+void	Polls::addClientPoll(int clientFd)
 {
-    struct sockaddr_in clientAddr;
-    socklen_t clientLen = sizeof(clientAddr);
-    int clientFd = accept(serverFd, (struct sockaddr *)&clientAddr, &clientLen);
-
-    if (clientFd == -1) perror("accept");
-
-    fcntl(clientFd, F_SETFD, O_NONBLOCK);
-
-    clientPollFds.fd = clientFd;
-    clientPollFds.events = POLLIN;
-    pollFds.push_back(clientPollFds);
-
-    clientsBuffer[clientFd] = "";
-
-	User temp; //TODO A decaler dans le constructeur
-    temp.indexInPollFd = pollFds.size() - 1;
-	temp.userName	= "";
-	temp.id			= "";
-	temp.nickName	= "";
-	temp.host		= "server";
-	temp.fd			= clientFd;
-	temp.registered = false;
-	tab.push_back(temp);
-    std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
+	_clientPollFds.fd = clientFd;
+    _clientPollFds.events = POLLIN;
+    _pollFds.push_back(_clientPollFds);
 }

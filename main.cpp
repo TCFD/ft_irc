@@ -8,7 +8,6 @@ int main(int ac, char **av)
     try {
         Server server(atoi(av[1]));
         std::cout << "Server is running on port " << server.getPort() << std::endl;
-        // ServerPoll serverPoll(server.getPort());
         Polls poll(server.getServerSocket());
 		poll.mainPoll();
     }

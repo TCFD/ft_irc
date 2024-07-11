@@ -1,7 +1,7 @@
 #ifndef IRC_HPP
 # define IRC_HPP
 
-# include "Server.hpp"
+// # include "Server.hpp"
 # include "Client.hpp"
 
 # define MAP_TAB            std::map<std::string, int>
@@ -10,6 +10,9 @@
 # define USER_VECTOR        std::vector<User>
 # define CHAN_ITERATOR      std::vector<Channel>::iterator
 # define USER_ITERATOR      std::vector<User>::iterator
+
+# define CLIENT_VEC  std::vector<Client>
+# define CHAN_VEC    std::vector<Channel>
 
 # define NC       "\033[0m"
 # define BLACK       "\033[30m"      /* Noir */
@@ -58,14 +61,13 @@ struct Channel {
 class Polls : public Server
 {
     private:
-        Msg msg;
+        // Msg msg;
 
-
-        std::vector<struct pollfd>		pollFds;
-        struct pollfd					clientPollFds;
-        struct pollfd					serverPollFds;
-        int								serverFd;
-        int								pollCount;
+        // std::vector<struct pollfd>		pollFds;
+        // struct pollfd					clientPollFds;
+        // struct pollfd					serverPollFds;
+        // int								serverFd;
+        // int								pollCount;
         std::map<int, std::string>		clientsBuffer;
 		USER_VECTOR     				tab;
         CHAN_VECTOR                     tabChan;
@@ -74,20 +76,22 @@ class Polls : public Server
 		bool							isValidNick(const std::string& nick);
     
     public:
-        Polls(void)						{};
-        Polls(int fd);
-        ~Polls(void)					{};
+        // Polls(void)						{};
+        // Polls(int fd);
+        // ~Polls(void)					{};
 
-		void	handle_client_command(int client_fd);
-        void    send_response(int client_fd);
-		void	nick(int client_fd);
-        void	setNick(User* currentUser, std::string name);
-        bool	isAlreadyExists(std::string name, int clientFd);
+		void	        handle_client_command(int client_fd);
+        void            send_response(int client_fd);
+		void	        nick(int client_fd);
+        void	        setNick(User* currentUser, std::string name);
+        bool	        isAlreadyExists(std::string name, int clientFd);
 
-        void    mainPoll(void);
-        void    createClientPoll(void);
-   		void	clientDisconnected(int bytes_received);
+        // void            mainPoll(void);
+        // void            createClient(void);
+   		// void	        clientDisconnected(int bytes_received);
         
+
+        // Modes/Channels concerns
         int             channelHandle();
         int             modesHandle();
         void            sendToChan(void);
@@ -95,8 +99,7 @@ class Polls : public Server
         void            errorModes(VEC_LIST& split);
         void            errorLenModes(VEC_LIST& split);
 
-        //Useful MODE
-		
+        // Useful MODE
         std::string     returnZeroOneEnd(User user);
         bool            isChanExists(std::string target);
         bool            isUserExists(std::string target);
@@ -104,7 +107,6 @@ class Polls : public Server
         bool            isUserInChan(std::string target);
         bool            foundModeInChan(std::string mod, VEC_LIST modList);
         int             userInChanFd(std::string nick);
-        
         
         void            modeK(VEC_LIST& split);
         void            modeO(VEC_LIST& split);

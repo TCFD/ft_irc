@@ -17,7 +17,6 @@ NC = "\033[0m"
 
 all: $(LIBS) $(NAME)
 
-
 $(OBJDIR)%.o: $(SRCDIR)/%.cpp $(LIBS)
 	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@

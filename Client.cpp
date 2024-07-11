@@ -1,5 +1,7 @@
 #include "Client.hpp"
 
+Client::Client(int clientFd) : _fd(clientFd), _registered(false) {}
+
 int Client::parseNickname(std::string name)
 {
     char test[5] = {'#', '&', '~', '%', '+'};
@@ -14,9 +16,3 @@ int Client::parseNickname(std::string name)
         if (name.find(*it)) return(1); }
     return 0;
 }
-
-/* Client::ClientPoll(int clientFd) : Poll()
-{
-    clientPollFds.fd = clientFd;
-    clientPollFds.events = POLLIN;
-} */
