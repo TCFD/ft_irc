@@ -1,18 +1,18 @@
 #pragma once
 
 #include "Client.hpp"
+#include "Irc.hpp"
 #include <iostream>
 #include <vector>
 
-#define CLIENT_VEC  std::vector<Client>
-#define MODES_VEC   std::vector<char>
+class Client;
+
+# define CLIENT_VEC         std::vector<Client>
+# define MODES_VEC          std::vector<char>
+# define CLIENT_IT          CLIENT_VEC::iterator
+# define CHAN_IT            CHAN_VEC::iterator
 
 class Channel {
-
-    public:
-        Channel(std::string name);
-
-        ~Channel();
 
     private:
         std::string _name;
@@ -21,4 +21,21 @@ class Channel {
         CLIENT_VEC  _clients;
         CLIENT_VEC  _operators;
         MODES_VEC   _modes;
+
+    public:
+        Channel(std::string name): _name(name) {};
+        ~Channel() {};
+
+        std::string     gName() { return _name; };
+        std::string     gTopic() { return _topic; };
+        std::string     gPassword() { return _password; };
+        MODES_VEC       gModes() { return _modes; };
+        Client&         gClientIdx(int idx) { return _clients[idx]; };
+
+        void            sName(std::string name) {_name = name; };
+        void            sTopic(std::string topic) {_topic = topic; };
+        void            sPwd(std::string pwd) {_password = pwd; };
+
+        void            addModes(char mod);
+        void            addOperator(Client& client);
 };

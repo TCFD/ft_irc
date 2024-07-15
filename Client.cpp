@@ -1,6 +1,16 @@
 #include "Client.hpp"
 
-Client::Client(int clientFd) : _fd(clientFd), _registered(false) {}
+Client::Client(int clientFd)
+{
+    _fd             = clientFd;
+    _registered     = false;
+    _username       = "";
+    _nickname       = "";
+    _realname       = "";
+    _oldname        = "";
+    _id             = "";
+    _hostname       = "server";
+}
 
 int Client::parseNickname(std::string name)
 {

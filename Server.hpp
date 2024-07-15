@@ -1,45 +1,78 @@
 #pragma once
 
-# include <cstdlib>
-# include <cstdio>
-# include <fcntl.h>
-# include <poll.h>
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <iostream>
-# include <cstring>
-# include <unistd.h>
-# include <map>
-# include <vector>
-# include <exception>
-# include <errno.h>
-# include <algorithm>
-
 # include "Irc.hpp"
 
-class Server
+class Client;
+class Server;
+
+
+class Polls
 {
     protected:
-        int                 _port;
-        int                 _serverSocket;
-        struct sockaddr_in  _serverAddr;
-        int                 _limitUsers;
-        CLIENT_VEC          _clients;
-        CHAN_VEC            _channels;
-    
+        std::vector<struct pollfd>		_pollFds;
+        struct pollfd					_clientPollFds;
+        struct pollfd					_serverPollFds;
+        int								_pollCount;
+        std::map<int, std::string>		_clientsBuffer;
+
+    public:
+        Polls() {};
+        Polls(int fd);
+        ~Polls() {};
+
+        // int                         getPollCount() { return(_pollCount); };
+        // std::vector<struct pollfd>  getPollsFds(void) {return (_pollFds); };
+        // void                        setPollCount(int count) {_pollCount = count; };
+        void            mainPoll(Server& server);
+        void            addClientPoll(int clientFd);
+
+};
+
+class Server: public Client
+{
+    private:
+        int                             _port;
+        int                             _serverSocket;
+        struct sockaddr_in              _serverAddr;
+        int                             _limitUsers;
+        Msg                             _msg;
+        CLIENT_VEC                      _clients;
+        CHAN_VEC                        _channels;
+        Polls                           _poll;
+
     public:
         Server(int port);
         ~Server(void) {};
 
-        int             getPort(void) {return(_port); }
-        int             getServerSocket(void) { return(_serverSocket); }
+    // Getters / Setters
+        int             getPort(void) {return(_port); };
+        int             getServerSocket(void) { return(_serverSocket); };
+        Msg             getMsg() {return(_msg); };
+        void            setMsgIdx(int idx) {_msg.currentIndex = idx; };
+        void            setMsgCmd(std::string cmd) {_msg.command = cmd; };
+        void            setMsg() {_msg.currentChan = 0; _msg.prefixServer = ":server"; };
+        void            setPoll(Polls& poll) {_poll = poll; };
+        
         void            socketDataSet(void);
 
-        void            createClient(Polls &poll);
-   		void	        clientDisconnected(int bytes_received);
+        int             createClient(Polls &poll);
+   		void	        clientDisconnected(int bytes_received, int id);
 
+        void            handleClientCommand(int client_fd);
+        void            sendResponse(int client_fd);
+        STR_LIST        cutModeCommand(void);
+
+    // Command
+        int             modesHandle(void);
+        void            errorModes(STR_LIST& split);
+        void            errorLenModes(STR_LIST& split);
+        void            modesOptions(STR_LIST& split);
+        void            modeK(STR_LIST& split);
+        // void            modeO(STR_LIST& split);
+
+        // int             channelHandle(void);
+        // void            sendToChan(void);
+        bool            isChanExists(std::string target);
 
 };
 
@@ -56,21 +89,3 @@ class StrerrorException : public std::exception
             return bufferMessage; };
 };
 
-class Polls
-{
-    private:
-        std::vector<struct pollfd>		_pollFds;
-        struct pollfd					_clientPollFds;
-        struct pollfd					_serverPollFds;
-        int								_pollCount;
-        Msg                             _msg;
-
-    public:
-
-        Polls(int fd) {};
-        ~Polls() {};
-
-        void            mainPoll(Server& server);
-        void            addClientPoll(int clientFd);
-
-};

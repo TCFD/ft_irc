@@ -1,19 +1,19 @@
-#include "Irc.hpp"
+#include "Server.hpp"
 
 /* 
  * Handling Error Modes #2
  * Check if there is enough/ not too much params, if flags are valid
 */
-void    Polls::errorLenModes(VEC_LIST& split)
+void    Server::errorLenModes(STR_LIST& split)
 {
     const char* init[] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
-    VEC_LIST flags(init, init+ sizeof(init) / sizeof(init[0]));
+    STR_LIST flags(init, init+ sizeof(init) / sizeof(init[0]));
     if ((isFourArgs(split) && split.size() < 4) || split.size() < 3 || split[2].length() < 2) {
-        msg.response = msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
+        _msg.response = _msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
     else if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
-        msg.response = msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407 // BIG PROBLEM dans les conditions je pense !!
+        _msg.response = _msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407 // BIG PROBLEM dans les conditions je pense !!
     else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
-        msg.response = msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
+        _msg.response = _msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
 }
 
 /* 
@@ -21,15 +21,15 @@ void    Polls::errorLenModes(VEC_LIST& split)
  * Check if the channel exists, if the user is an operator
  * Print actives modes from current channel
 */
-void    Polls::errorModes(VEC_LIST& split)
+void    Server::errorModes(STR_LIST& split)
 {
     if (!isChanExists(split[1]) || split[1].find("#", 0)) {
-        msg.response = msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
-    else if (tabChan[msg.currentChan].usersInChan[tab[msg.currentIndex].nickName] == 0) {
-        msg.response = msg.prefixNick + " 482 " + tab[msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
-    else if (split.size() == 2 && isChanExists(split[1]) && split[1] == tabChan[msg.currentChan].name) {
-        msg.response = msg.prefixServer + "324 " + tab[msg.currentIndex].nickName + " " + split[1] + \
-        printModes(tabChan[msg.currentChan].modes) + "\r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
+        _msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
+    // else if (tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] == 0) {
+        // _msg.response = _msg.prefixNick + " 482 " + tab[_msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
+    // else if (split.size() == 2 && isChanExists(split[1]) && split[1] == _channels[_msg.currentChan].gName()) {
+        // _msg.response = _msg.prefixServer + "324 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + 
+        //printModes(_channels[_msg.currentChan].gModes()) + "\r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
     else {
         errorLenModes(split); }
 }
@@ -45,30 +45,30 @@ void    Polls::errorModes(VEC_LIST& split)
     * Modes +/-k, +/-l, +/-i, +/-t, +/-o to handle
  * Add User/Channel modes to their respective structures
 */
-int	Polls::modesHandle()
+int	Server::modesHandle(void)
 {
-    msg.response = "";
-	VEC_LIST split = cutModeCommand();
+    _msg.response = "";
+	STR_LIST split = cutModeCommand();
     // std::cout << "CHECK MODES: " << split.back() << " and size : " << split.size() << std::endl;
-    msg.prefixNick = ":" + tab[msg.currentIndex].nickName;
+    _msg.prefixNick = ":" + _clients[_msg.currentIndex].getNickname();
     std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
     
     //Modes handling
     errorModes(split);
-    if (msg.response.find("MODE") == std::string::npos)
+    if (_msg.response.find("MODE") == std::string::npos)
     {
         //Traitement de mode option
         modesOptions(split);
 
         //Affichage pour le client 
         if (split.size() == 4) {
-            msg.response = msg.prefixServer + "MODE " + linkPrint + "\r\n"; }
+            _msg.response = _msg.prefixServer + "MODE " + linkPrint + "\r\n"; }
         else if (split.size() == 3) {
-            msg.response = msg.prefixServer + "MODE " + split[1] + " " + split[2] + "\r\n";}
+            _msg.response = _msg.prefixServer + "MODE " + split[1] + " " + split[2] + "\r\n"; }
         
     }
-    std::cout << "Response MODE: " << msg.response << std::endl;
-    for (VEC_LIST::iterator it=split.begin(); it != split.end();) {
+    std::cout << "Response MODE: " << _msg.response << std::endl;
+    for (STR_LIST::iterator it=split.begin(); it != split.end(); ++it) {
         it = split.erase(it);
     }
 	return(0);
@@ -81,32 +81,32 @@ int	Polls::modesHandle()
  * Useful for MODES !!
  * TO HANDLE : limitUsers restrict the channel access !!
 */
-int  Polls::channelHandle()
-{
-    VEC_LIST split = cutModeCommand();
-    Channel temp;
-    if (split.size() != 2 && split.size() != 3)
-        return (1);
-    // else if (limitUsers != 0 &&  ) // si la limite existe et quelle n'est pas depassee, le client peut join
-    else if (!isChanExists(split[1])) { //Creation du channel
-        temp.name = split[1];
-        if (split.size() == 2) {
-            temp.pwd = ""; } // Entree libre dans le channel
-        else {
-            temp.pwd = split[2]; // Mot de passe pour rentrer dans le channel
-        }
-        temp.usersInChan[tab[msg.currentIndex].nickName] = 1; //Add user into Users channel's list
-        tabChan.push_back(temp);
-    }
-    else { //Check if its an INVITE ONLY channel
-        // temp.usersInChan[tab[msg.currentIndex].nickName] = 0; 
-        tabChan[msg.currentChan].usersInChan[tab[msg.currentIndex].nickName] = 0; 
-        std::cout << "coucou je suis la bitch et NICK = " << tab[msg.currentIndex].nickName << "\n ";
-        sendToChan(); }
-
-    std::cout << "ChanName: " << tabChan[msg.currentChan].name << " | ChanUsers: ";
-    for (MAP_TAB::iterator it = tabChan[msg.currentChan].usersInChan.begin(); it != tabChan[msg.currentChan].usersInChan.end(); ++it) {
-        std::cout << it->first << " "; }
-    std::cout << "\nNEW CHANNEL ENTERING . . . " << std::endl;
-    return (0);
-}
+// int  Server::channelHandle()
+// {
+//     STR_LIST split = cutModeCommand();
+//     Channel temp(split[1]);
+//     if (split.size() != 2 && split.size() != 3)
+//         return (1);
+//     // else if (limitUsers != 0 &&  ) // si la limite existe et quelle n'est pas depassee, le client peut join
+//     else if (!isChanExists(split[1])) { //Creation du channel
+//         temp.name = split[1];
+//         if (split.size() == 2) {
+//             temp.pwd = ""; } // Entree libre dans le channel
+//         else {
+//             temp.pwd = split[2]; // Mot de passe pour rentrer dans le channel
+//         }
+//         temp.usersInChan[tab[_msg.currentIndex].nickName] = 1; //Add user into Users channel's list
+//         _channels.push_back(temp);
+//     }
+//     else { //Check if its an INVITE ONLY channel
+//         // temp.usersInChan[tab[_msg.currentIndex].nickName] = 0; 
+//         tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] = 0; 
+//         std::cout << "coucou je suis la bitch et NICK = " << tab[_msg.currentIndex].nickName << "\n ";
+//         // sendToChan(); }
+//     }
+//     std::cout << "ChanName: " << tabChan[_msg.currentChan].name << " | ChanUsers: ";
+//     for (MAP_TAB::iterator it = tabChan[_msg.currentChan].usersInChan.begin(); it != tabChan[_msg.currentChan].usersInChan.end(); ++it) {
+//         std::cout << it->first << " "; }
+//     std::cout << "\nNEW CHANNEL ENTERING . . . " << std::endl;
+//     return (0);
+// }

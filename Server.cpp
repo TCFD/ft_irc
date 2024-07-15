@@ -29,7 +29,7 @@ void    Server::socketDataSet(void)
 }
 
 //Creer classe ClientPoll en lien avec Polls
-void    Server::createClient(Polls &poll)
+int    Server::createClient(Polls &poll)
 {
     struct sockaddr_in clientAddr;
     socklen_t clientLen = sizeof(clientAddr);
@@ -42,30 +42,88 @@ void    Server::createClient(Polls &poll)
 
 	Client	client(clientFd);
 	_clients.push_back(client);
-    // clientsBuffer[clientFd] = "";
 	
 	// User temp; //TODO A decaler dans le constructeur
     // temp.indexInPollFd = _pollFds.size() - 1;
 	// temp.userName	= "";
 	// temp.id			= "";
-	// temp.nickName	= "";
+	// temp._nickname	= "";
 	// temp.host		= "server";
 	// temp.fd			= clientFd;
 	// temp.registered = false;
 	// tab.push_back(temp);
-    std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
+    
+    // std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
+    return (clientFd);
 }
 
 // Pas fini: gros travaux !!!
-void Server::clientDisconnected(int bytes_received) {
+void Server::clientDisconnected(int bytes_received, int id) {
 	if (bytes_received == 0)
 		std::cout << "Client disconnected" << std::endl;
 	else
 		perror("recv");
-    
-	clientsBuffer.erase(_clients[_msg.currentIndex].fd); //? clear user's buffer
-	close(_pollFds[_msg.currentIndex].fd);
-	//// _pollFds[currentIndex].fd = -1; 
+	_clients.erase(_clients.begin() + id); //? clear user's buffer
+	//// _pollFds[currentIndex].fd = -1;
 	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
 	//// Jpense que c'est plus simple que de decaller tous les indexs
+}
+
+void	Server::handleClientCommand(int client_fd)
+{
+	Client	*currentUser = &_clients[_msg.currentIndex];
+
+	_msg.prefixNick = currentUser->getNickname();
+	if (_msg.command.rfind("CAP", 0) == 0)
+		_msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
+
+	else if (_msg.command.rfind("NICK", 0) == 0) { /////TODO Il n'y a pas encore de sécurité. A faire.
+		// nick(client_fd);
+	}
+
+	else if (_msg.command.rfind("USER", 0) == 0) {
+		currentUser->setUsername(_msg.command.substr(5, _msg.command.find(" ", 5) - 5));
+		currentUser->setRealname(_msg.command.substr(_msg.command.find(":")));
+		if (currentUser->getNickname() != "") {
+			// if (currentUser->_nickname.find("_") != std::string::npos && currentUser->userName.find("_") == std::string::npos)
+			// 	{currentUser->userName += "_";}
+			currentUser->setRegistered(true);
+			currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
+			_msg.response = printMessage("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
+		}
+	}
+
+	else if (_msg.command.rfind("MODE", 0) == 0) {
+		modesHandle(); // faire la reponse du serveur vers le client
+	}
+	else if (_msg.command.rfind("JOIN", 0) == 0) {}
+		// channelHandle(); }
+
+	else if (_msg.command.rfind("PING", 0) == 0) {
+		_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
+	}
+
+	else if (_msg.command.rfind("QUIT", 0) == 0) {
+		_msg.currentChan = 0; }
+	else if (_msg.command.rfind("WHOIS", 0) == 0) {
+ 		// std::string user = command.substr(6);
+		/* User temp = findUser(user);
+		if (temp != NULL)
+
+		else */
+
+	}
+	else if (_msg.command.rfind("PONG", 0) == 0) {}
+	else {
+		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
+	}
+
+	sendResponse(client_fd);
+	_msg.response.clear();
+}
+
+void Server::sendResponse(int client_fd) {
+	std::cout << "Server sent " << _msg.response << std::endl;
+	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
+	_msg.response.erase();
 }
