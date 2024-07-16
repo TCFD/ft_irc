@@ -3,9 +3,9 @@
 /* 
  * Handle JOIN (back up)
  * Handling of channel list, channel users, channel limit users, current channel, 
- *      channel password or not, channel modes
+ *      channel password or not, channel modes, channel invite-only or not
  * Useful for MODES !!
- * TO HANDLE : limitUsers restrict the channel access !!
+ * TO HANDLE : +l/ +k/ +i !!
 */
 
 int  Server::channelHandle(void)
@@ -27,9 +27,7 @@ int  Server::channelHandle(void)
         _channels.push_back(temp);
     }
     else { 
-        std::cout << RED "je suis la\n" NC;
         // (+i) Check if its an INVITE ONLY channel
-        // (+k) Check if the key is the right one
         if (_channels[_msg.currentChan].gPassword() != "")
         {
             // Gestion d'erreurs !
@@ -38,7 +36,6 @@ int  Server::channelHandle(void)
             else
             {
                 _msg.response = _msg.prefixNick + " 475 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :Cannot join channel (+k)\r\n";
-                // std::cout << RED "Error: Wrong key\n" NC;
                 return (1);
             }
         }
