@@ -58,7 +58,7 @@ bool    isFourArgs(STR_VEC& split)
  * Get the command line and split it per part
  * Exception when the third arg == -l --> forced split
 */
-STR_LIST    Server::cutModeCommand(void)
+STR_VEC    Server::cutModeCommand(void)
 {
     std::string delim = " ";
 	STR_VEC split;

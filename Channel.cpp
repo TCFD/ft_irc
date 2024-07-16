@@ -19,6 +19,7 @@ bool	Channel::isUserOnMe(std::string nick) {
 		}
 	}
 	return false;
+}
 
 void    Channel::addClient(Client& client)
 {

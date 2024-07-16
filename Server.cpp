@@ -127,8 +127,10 @@ STR_VEC Server::splitCmd(std::string s) {
 	size_t pos = 0;
 	while ((pos = s.find(delimiter)) != std::string::npos) {
 		vec.push_back(s.substr(0, pos));
+		std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 		s.erase(0, pos + delimiter.length());
 	}
+	vec.push_back(s);
 	return vec;
 }
 
@@ -148,27 +150,28 @@ void	Server::invite() {
 
 	//* Check if there is enough args	
 	if (cmdVec.size() < 3) {
-		printMessage("461", _clients[_msg.currentIndex].getNickname(), "Invite :Not enough parameters");
+		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "Invite :Not enough parameters");
 		return;
 	}
 	//* Does channel exist ? 
+	std::cout <<  "does channel exist\n";
 	CHAN_IT targetChan = DoesChanExist(cmdVec[2]);
 	if (targetChan == _channels.end()) {
-		printMessage("403", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :No such channel");
+		_msg.response = printMessage("403", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :No such channel");
 		return;
 	}
 	//* Is user on channel ?
 	if (!targetChan->isUserOnMe(_clients[_msg.currentIndex].getNickname())) {
-		printMessage("442", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :You're not on that channel");
+		_msg.response = printMessage("442", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :You're not on that channel");
 		return;
 	}
 	//* Is target on channel ?
-	if (!targetChan->isUserOnMe(cmdVec[1])) {
-		printMessage("443", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2] + " :is already on channel");
+	if (targetChan->isUserOnMe(cmdVec[1])) {
+		_msg.response = printMessage("443", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2] + " :is already on channel");
 		return;
 	}
 
 	//* Successfull invite
-	printMessage("341", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2]);
+	_msg.response = printMessage("341", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2]);
 	//TODO On doit aussi envoyer au client invite
 }

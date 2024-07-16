@@ -72,7 +72,7 @@ int	Server::modesHandle(void)
     }
     std::cout << "Response MODE: " << _msg.response << std::endl;
 
-    // for (STR_LIST::iterator it=split.begin(); it != split.end(); it++) {
+    // for (STR_VEC::iterator it=split.begin(); it != split.end(); it++) {
         // std::cout << "hey toi\n";
         // it = split.erase(it);
     // }
