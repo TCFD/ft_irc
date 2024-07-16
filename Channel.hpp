@@ -38,4 +38,6 @@ class Channel {
 
         void            addModes(char mod);
         void            addOperator(Client& client);
+
+		bool			isUserOnMe(std::string nick);
 };

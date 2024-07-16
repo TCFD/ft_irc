@@ -5,11 +5,11 @@
  * Access of each mode by their own functions
  * For now, there is only modeO and modeK
 */
-void    Server::modesOptions(STR_LIST& split)
+void    Server::modesOptions(STR_VEC& split)
 {
     std::string init[10] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
 
-    void (Server::*funcPtr[2]) (STR_LIST& split) = {&Server::modeK};
+    void (Server::*funcPtr[2]) (STR_VEC& split) = {&Server::modeK};
     for (int i=0; !init[i].empty(); i++) {if (init[i] == split[2]) (this->*funcPtr[i])(split); return;}
 }
 
@@ -18,7 +18,7 @@ void    Server::modesOptions(STR_LIST& split)
  * If +k --> add the password to the vector; add the mode to the channel
  * If -k --> remove the password from the vector; if mode was active, remove it from the channel
 */
-void    Server::modeK(STR_LIST& split)
+void    Server::modeK(STR_VEC& split)
 {
     // sendToChan();
     if (split[2].find("+") != std::string::npos) {
@@ -38,7 +38,7 @@ void    Server::modeK(STR_LIST& split)
  * If +o --> add the operator status to nick; add the mode to the channel;
  * If -o --> remove the operator status to nick; if mode was active, remove it from the channel
 */
-// void    Server::modeO(STR_LIST& split)
+// void    Server::modeO(STR_VEC& split)
 // {   // A REVOIR !!!
     // if (isUserInChan(split[3])) {
     //     if (split[2].find("+")) {

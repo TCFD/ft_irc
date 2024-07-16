@@ -46,7 +46,7 @@ bool    foundModeInChan(std::string mod, CHAR_LIST modList)
  * Check if the third arg is +k, +l or +/-o
 */
 //probablement un probleme !!
-bool    isFourArgs(STR_LIST& split)
+bool    isFourArgs(STR_VEC& split)
 {
     if ((split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
         return true;
@@ -57,10 +57,10 @@ bool    isFourArgs(STR_LIST& split)
  * Get the command line and split it per part
  * Exception when the third arg == -l --> forced split
 */
-STR_LIST    Server::cutModeCommand()
+STR_VEC    Server::cutModeCommand()
 {
     std::string delim = " ";
-	STR_LIST split;
+	STR_VEC split;
 	for (size_t j=0; _msg.command.length() != 0; j++)
 	{
         if (!_msg.command.find("-l")) {
