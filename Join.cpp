@@ -10,7 +10,7 @@
 
 int  Server::channelHandle(void)
 {
-    STR_LIST split = cutModeCommand();
+    STR_VEC split = cutModeCommand();
     Channel temp(split[1]);
     if (split.size() != 2 && split.size() != 3)
         return (1);

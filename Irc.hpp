@@ -27,7 +27,7 @@ class Channel;
 # define CLIENT_VEC         std::vector<Client>
 # define MAP_TAB            std::map<std::string, int>
 # define CHAR_LIST          std::vector<char>
-# define STR_LIST           std::vector<std::string>
+# define STR_VEC			std::vector<std::string>
 # define CHAN_VEC           std::vector<Channel>
 
 # define NC          "\033[0m"
@@ -70,8 +70,9 @@ std::string	printMessage(std::string num, std::string nickname, std::string mess
 bool    isUserExists(std::string target, CLIENT_VEC clients);
 bool    isUserInChan(std::string target, CHAN_VEC channels, int currentChan);
 bool    foundModeInChan(std::string mod, CHAR_LIST modList);
-bool    isFourArgs(STR_LIST& split);
+
 int     userInChanFd(std::string nick, CLIENT_VEC clients);
+bool    isFourArgs(STR_VEC& split);
 
 bool    isValidNick(const std::string& nick);
 bool	isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients);

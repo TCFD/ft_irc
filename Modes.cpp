@@ -4,10 +4,10 @@
  * Handling Error Modes #2
  * Check if there is enough/ not too much params, if flags are valid
 */
-void    Server::errorLenModes(STR_LIST& split)
+void    Server::errorLenModes(STR_VEC& split)
 {
     const char* init[] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
-    STR_LIST flags(init, init+ sizeof(init) / sizeof(init[0]));
+    STR_VEC flags(init, init+ sizeof(init) / sizeof(init[0]));
     if ((isFourArgs(split) && split.size() < 4) || split.size() < 3 || split[2].length() < 2) {
         _msg.response = _msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
     else if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
@@ -21,7 +21,7 @@ void    Server::errorLenModes(STR_LIST& split)
  * Check if the channel exists, if the user is an operator
  * Print actives modes from current channel
 */
-void    Server::errorModes(STR_LIST& split)
+void    Server::errorModes(STR_VEC& split)
 {
     if (split[1] != _clients[_msg.currentIndex].getNickname())
     {
@@ -51,7 +51,7 @@ void    Server::errorModes(STR_LIST& split)
 int	Server::modesHandle(void)
 {
     _msg.response = "";
-	STR_LIST split = cutModeCommand();
+	STR_VEC split = cutModeCommand();
     // std::cout << "CHECK MODES: " << split.back() << " and size : " << split.size() << std::endl;
     _msg.prefixNick = ":" + _clients[_msg.currentIndex].getNickname();
     std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
@@ -72,7 +72,7 @@ int	Server::modesHandle(void)
     }
     std::cout << "Response MODE: " << _msg.response << std::endl;
 
-    // for (STR_LIST::iterator it=split.begin(); it != split.end(); it++) {
+    // for (STR_VEC::iterator it=split.begin(); it != split.end(); it++) {
         // std::cout << "hey toi\n";
         // it = split.erase(it);
     // }

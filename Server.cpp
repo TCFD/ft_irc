@@ -102,6 +102,9 @@ void	Server::handleClientCommand(int client_fd)
 
 	}
 	else if (_msg.command.rfind("PONG", 0) == 0) {}
+	else if (_msg.command.rfind("INVITE", 0) == 0) {
+		invite();
+	}
 	else {
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
@@ -114,4 +117,61 @@ void Server::sendResponse(int client_fd) {
 	std::cout << "Server sent " << _msg.response << std::endl;
 	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
 	_msg.response.erase();
+}
+
+// Separate the command into the all args
+STR_VEC Server::splitCmd(std::string s) {
+	std::string delimiter = " ";
+	STR_VEC vec;
+	
+	size_t pos = 0;
+	while ((pos = s.find(delimiter)) != std::string::npos) {
+		vec.push_back(s.substr(0, pos));
+		std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
+		s.erase(0, pos + delimiter.length());
+	}
+	vec.push_back(s);
+	return vec;
+}
+
+CHAN_IT Server::DoesChanExist (std::string target) {
+	CHAN_IT it = _channels.begin();
+
+	for (; it != _channels.end(); it++) {
+		if (it->gName() == target) {
+			return it;
+		}
+	}
+	return it;
+}
+
+void	Server::invite() {
+	STR_VEC cmdVec(splitCmd(_msg.command));
+
+	//* Check if there is enough args	
+	if (cmdVec.size() < 3) {
+		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "Invite :Not enough parameters");
+		return;
+	}
+	//* Does channel exist ? 
+	std::cout <<  "does channel exist\n";
+	CHAN_IT targetChan = DoesChanExist(cmdVec[2]);
+	if (targetChan == _channels.end()) {
+		_msg.response = printMessage("403", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :No such channel");
+		return;
+	}
+	//* Is user on channel ?
+	if (!targetChan->isUserOnMe(_clients[_msg.currentIndex].getNickname())) {
+		_msg.response = printMessage("442", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :You're not on that channel");
+		return;
+	}
+	//* Is target on channel ?
+	if (targetChan->isUserOnMe(cmdVec[1])) {
+		_msg.response = printMessage("443", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2] + " :is already on channel");
+		return;
+	}
+
+	//* Successfull invite
+	_msg.response = printMessage("341", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2]);
+	//TODO On doit aussi envoyer au client invite
 }
