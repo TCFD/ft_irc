@@ -81,7 +81,6 @@ bool	isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients);
 void    printListUser(CLIENT_VEC&   clients);
 
 // TEMPLATES
-
 /* Make a message to print channel modes, or not */
 template <typename V>
 std::string    printModes(V& modes)
