@@ -53,7 +53,7 @@ int	Server::modesHandle(void)
     _msg.response = "";
 	STR_VEC split = cutModeCommand();
     // std::cout << "CHECK MODES: " << split.back() << " and size : " << split.size() << std::endl;
-    _msg.prefixNick = ":" + _clients[_msg.currentIndex].getNickname();
+    // _msg.prefixNick = ":" + _clients[_msg.currentIndex].getNickname();
     std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
     
     //Modes handling

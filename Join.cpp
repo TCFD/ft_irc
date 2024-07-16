@@ -27,12 +27,21 @@ int  Server::channelHandle(void)
         _channels.push_back(temp);
     }
     else { 
-        //Check if its an INVITE ONLY channel
-        // temp.usersInChan[tab[_msg.currentIndex].nickName] = 0; 
-        _channels[_msg.currentChan].addClient(_clients[_msg.currentIndex]);
-        // tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] = 0; 
-        // std::cout << "coucou je suis la bitch et NICK = " << tab[_msg.currentIndex].nickName << "\n ";
-        // sendToChan(); }
+        std::cout << RED "je suis la\n" NC;
+        // (+i) Check if its an INVITE ONLY channel
+        // (+k) Check if the key is the right one
+        if (_channels[_msg.currentChan].gPassword() != "")
+        {
+            // Gestion d'erreurs !
+            if (split.size() == 3 && split[2] == _channels[_msg.currentChan].gPassword())
+                _channels[_msg.currentChan].addClient(_clients[_msg.currentIndex]);
+            else
+            {
+                _msg.response = _msg.prefixNick + " 475 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :Cannot join channel (+k)\r\n";
+                // std::cout << RED "Error: Wrong key\n" NC;
+                return (1);
+            }
+        }
     }
     std::cout << "ChanName: " << _channels[_msg.currentChan].gName() << " | ChanUsers: ";
     for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); ++it) {

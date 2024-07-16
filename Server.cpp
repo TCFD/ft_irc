@@ -62,8 +62,9 @@ void Server::clientDisconnected(int bytes_received, int id) {
 void	Server::handleClientCommand(int client_fd)
 {
 	Client	*currentUser = &_clients[_msg.currentIndex];
+    _msg.prefixNick = ":" + currentUser->getNickname();
 
-	_msg.prefixNick = currentUser->getNickname();
+	// _msg.prefixNick = currentUser->getNickname();
 	if (_msg.command.rfind("CAP", 0) == 0)
 		_msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
 
@@ -109,6 +110,7 @@ void	Server::handleClientCommand(int client_fd)
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
 
+	std::cout << YELLOW "CHECK OUT response = " << _msg.response << NC << std::endl;
 	sendResponse(client_fd);
 	_msg.response.erase();
 }

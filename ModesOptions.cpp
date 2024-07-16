@@ -22,7 +22,7 @@ void    Server::modeK(STR_VEC& split)
 {
     sendToChan();
     if (split[2].find("+") != std::string::npos) {
-        _channels[_msg.currentChan].gPassword() = split[3];
+        _channels[_msg.currentChan].sPwd(split[3]);
         if (!foundModeInChan(split[2].substr(1), _channels[_msg.currentChan].gModes())) {
             _channels[_msg.currentChan].addModes(split[2][1]); }
     }
