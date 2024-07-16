@@ -20,7 +20,7 @@ void    Server::modesOptions(STR_LIST& split)
 */
 void    Server::modeK(STR_LIST& split)
 {
-    // sendToChan();
+    sendToChan();
     if (split[2].find("+") != std::string::npos) {
         _channels[_msg.currentChan].gPassword() = split[3];
         if (!foundModeInChan(split[2].substr(1), _channels[_msg.currentChan].gModes())) {
@@ -55,13 +55,13 @@ void    Server::modeK(STR_LIST& split)
     // }
 // }
 
-// void    Server::sendToChan(void)
-// {
-//     std::cout << BLUE "Current Chan Name: " << _channels[_msg.currentChan].gName() << NC << std::endl;
-//     for (MAP_TAB::iterator it = _channels[_msg.currentChan]._clients.begin(); it != _channels[_msg.currentChan]._clients.end(); it ++)
-//     {
-//         // if (it->first != tab[_msg.currentIndex].nickName) {
-//             _msg.response = "Message to " + it->first + ": Ce message est un test\r\n";
-//             send_response(userInChanFd(it->first));
-//     }
-// }
+void    Server::sendToChan(void)
+{
+    std::cout << BLUE "Current Chan Name: " << _channels[_msg.currentChan].gName() << NC << std::endl;
+    for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it ++)
+    {
+        if (it->getNickname() != _clients[_msg.currentIndex].getNickname()) {
+            _msg.response = "Message to " + it->getNickname() + ": Ce message est un test\r\n";
+            sendResponse(userInChanFd(it->getNickname(), _channels[_msg.currentChan].gClients()));}
+    }
+}

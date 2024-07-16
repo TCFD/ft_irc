@@ -38,5 +38,14 @@ int  Server::channelHandle(void)
     for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); ++it) {
         std::cout << it->getNickname() << " "; }
     std::cout << "\nNEW CHANNEL ENTERING . . . " << std::endl;
+    
+    for (CLIENT_IT it=_channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it++)
+    {
+        _msg.response += ":" + _clients[_msg.currentIndex].getNickname() + " JOIN " + _channels[_msg.currentChan].gName() + "\r\n";
+        std::cout << GREEN "NICK loop: " << it->getNickname() << NC << std::endl;
+        // if (it->getNickname() != _clients[_msg.currentIndex].getNickname())
+        sendResponse(it->getFd());
+    }
+
     return (0);
 }
