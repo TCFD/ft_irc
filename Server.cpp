@@ -85,7 +85,8 @@ void	Server::handleClientCommand(int client_fd)
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
 	else if (_msg.command.rfind("JOIN", 0) == 0)
-	{}	// channelHandle(); }
+	{	channelHandle(); }
+	
 	else if (_msg.command.rfind("PING", 0) == 0) {
 		_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
 	}

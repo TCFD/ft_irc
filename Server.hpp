@@ -75,7 +75,7 @@ class Server: public Client
         void            nick(int client_fd);
         void	        setNick(Client* currentUser, std::string name);
     // JOIN
-        // int             channelHandle(void);
+        int             channelHandle(void);
         // void            sendToChan(void);
         bool            isChanExists(std::string target);
 

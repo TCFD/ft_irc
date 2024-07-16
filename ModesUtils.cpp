@@ -58,7 +58,7 @@ bool    isFourArgs(STR_LIST& split)
  * Get the command line and split it per part
  * Exception when the third arg == -l --> forced split
 */
-STR_LIST    Server::cutModeCommand()
+STR_LIST    Server::cutModeCommand(void)
 {
     std::string delim = " ";
 	STR_LIST split;
