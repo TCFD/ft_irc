@@ -9,6 +9,7 @@ bool    Server::isChanExists(std::string target)
         { _msg.currentChan = len; return true; }
     }
     _msg.currentChan = len;
+    // std::cout << "hello"<< std::endl;
     return false;
 }
 
@@ -57,7 +58,7 @@ bool    isFourArgs(STR_VEC& split)
  * Get the command line and split it per part
  * Exception when the third arg == -l --> forced split
 */
-STR_VEC    Server::cutModeCommand()
+STR_LIST    Server::cutModeCommand(void)
 {
     std::string delim = " ";
 	STR_VEC split;

@@ -91,10 +91,11 @@ void Polls::mainPoll(Server& server)
 			{
 				// std::cout << RED "CLIENT FD IS " << _pollFds[i].fd << NC << std::endl;
                 if (_pollFds[i].fd == server.getServerSocket())	//? Si quelqu'un essaie de se connecter
-                    {if (int idx = server.createClient(*this) > 0)
-    					_clientsBuffer[idx] = "";}
+                    server.createClient(*this);
+    					// _clientsBuffer[idx] = "";}
 				else {
 					char buffer[1024];
+					memset(buffer, 0, sizeof(buffer));
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
 
 					if (bytes_received <= 0) {
@@ -126,7 +127,7 @@ void Polls::mainPoll(Server& server)
 							// 	std::cout << e.what() << std::endl;
 							// 	parsingtools.err_write_correct_form("");
 							// }
-							std::cout << "command client buffer: " << _clientsBuffer[_pollFds[i].fd] << std::endl;
+							// std::cout << "command client buffer: " << _clientsBuffer[_pollFds[i].fd] << std::endl;
 							std::cout << "Received command: " << server.getMsg().command << std::endl;
 							server.setMsgIdx(i - 1);
 							server.handleClientCommand(_pollFds[i].fd);
