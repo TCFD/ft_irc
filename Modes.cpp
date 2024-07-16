@@ -23,15 +23,18 @@ void    Server::errorLenModes(STR_LIST& split)
 */
 void    Server::errorModes(STR_LIST& split)
 {
-    if (!isChanExists(split[1]) || split[1].find("#", 0)) {
-        _msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
-    // else if (tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] == 0) {
-        // _msg.response = _msg.prefixNick + " 482 " + tab[_msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
-    // else if (split.size() == 2 && isChanExists(split[1]) && split[1] == _channels[_msg.currentChan].gName()) {
-        // _msg.response = _msg.prefixServer + "324 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + 
-        //printModes(_channels[_msg.currentChan].gModes()) + "\r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
-    else {
-        errorLenModes(split); }
+    if (split[1] != _clients[_msg.currentIndex].getNickname())
+    {
+        if (!isChanExists(split[1]) || split[1].find("#", 0)) {
+            _msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
+        // else if (tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] == 0) {
+            // _msg.response = _msg.prefixNick + " 482 " + tab[_msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
+        // else if (split.size() == 2 && isChanExists(split[1]) && split[1] == _channels[_msg.currentChan].gName()) {
+            // _msg.response = _msg.prefixServer + "324 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + 
+            //printModes(_channels[_msg.currentChan].gModes()) + "\r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
+        else {
+            errorLenModes(split); }
+    }
 }
 
 /* 
@@ -68,45 +71,11 @@ int	Server::modesHandle(void)
         
     }
     std::cout << "Response MODE: " << _msg.response << std::endl;
-    for (STR_LIST::iterator it=split.begin(); it != split.end(); ++it) {
-        it = split.erase(it);
-    }
+
+    // for (STR_LIST::iterator it=split.begin(); it != split.end(); it++) {
+        // std::cout << "hey toi\n";
+        // it = split.erase(it);
+    // }
+    split.clear();
 	return(0);
 }
-
-/* 
- * Handle JOIN (back up)
- * Handling of channel list, channel users, channel limit users, current channel, 
- *      channel password or not, channel modes
- * Useful for MODES !!
- * TO HANDLE : limitUsers restrict the channel access !!
-*/
-// int  Server::channelHandle()
-// {
-//     STR_LIST split = cutModeCommand();
-//     Channel temp(split[1]);
-//     if (split.size() != 2 && split.size() != 3)
-//         return (1);
-//     // else if (limitUsers != 0 &&  ) // si la limite existe et quelle n'est pas depassee, le client peut join
-//     else if (!isChanExists(split[1])) { //Creation du channel
-//         temp.name = split[1];
-//         if (split.size() == 2) {
-//             temp.pwd = ""; } // Entree libre dans le channel
-//         else {
-//             temp.pwd = split[2]; // Mot de passe pour rentrer dans le channel
-//         }
-//         temp.usersInChan[tab[_msg.currentIndex].nickName] = 1; //Add user into Users channel's list
-//         _channels.push_back(temp);
-//     }
-//     else { //Check if its an INVITE ONLY channel
-//         // temp.usersInChan[tab[_msg.currentIndex].nickName] = 0; 
-//         tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] = 0; 
-//         std::cout << "coucou je suis la bitch et NICK = " << tab[_msg.currentIndex].nickName << "\n ";
-//         // sendToChan(); }
-//     }
-//     std::cout << "ChanName: " << tabChan[_msg.currentChan].name << " | ChanUsers: ";
-//     for (MAP_TAB::iterator it = tabChan[_msg.currentChan].usersInChan.begin(); it != tabChan[_msg.currentChan].usersInChan.end(); ++it) {
-//         std::cout << it->first << " "; }
-//     std::cout << "\nNEW CHANNEL ENTERING . . . " << std::endl;
-//     return (0);
-// }

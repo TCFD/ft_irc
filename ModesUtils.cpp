@@ -9,6 +9,7 @@ bool    Server::isChanExists(std::string target)
         { _msg.currentChan = len; return true; }
     }
     _msg.currentChan = len;
+    // std::cout << "hello"<< std::endl;
     return false;
 }
 

@@ -39,9 +39,6 @@ class Channel;
 # define MAGENTA     "\033[35m"      /* Magenta */
 # define CYAN        "\033[36m"      /* Cyan */
 
-
-std::string	printMessage(std::string num, std::string nickname, std::string message);
-
 // struct User {
 // 	int			indexInPollFd;
 // 	std::string	userName;
@@ -67,131 +64,20 @@ struct Msg {
     std::string prefixNick;
 };
 
-// struct Channel {
-//     std::string                 name;
-//     std::string                 pwd;
-//     VEC_LIST                    modes;
-//     MAP_TAB                     usersInChan;
-// };
-
 //Useful to commands
+std::string	printMessage(std::string num, std::string nickname, std::string message);
+
 bool    isUserExists(std::string target, CLIENT_VEC clients);
 bool    isUserInChan(std::string target, CHAN_VEC channels, int currentChan);
 bool    foundModeInChan(std::string mod, CHAR_LIST modList);
 bool    isFourArgs(STR_LIST& split);
 int     userInChanFd(std::string nick);
 
-// class Polls : public Server
-// {
-//     private:
-//         // Msg msg;
+bool    isValidNick(const std::string& nick);
+bool	isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients);
 
-//         // std::vector<struct pollfd>		pollFds;
-//         // struct pollfd					clientPollFds;
-//         // struct pollfd					serverPollFds;
-//         // int								serverFd;
-//         // int								pollCount;
-//         // std::map<int, std::string>		clientsBuffer;
-// 		USER_VECTOR     				tab;
-//         CHAN_VECTOR                     tabChan;
-
-// 		User							findUser(std::string name);
-// 		bool							isValidNick(const std::string& nick);
-    
-//     public:
-//         // Polls(void)						{};
-//         // Polls(int fd);
-//         // ~Polls(void)					{};
-
-// 		void	        handle_client_command(int client_fd);
-//         void            send_response(int client_fd);
-// 		void	        nick(int client_fd);
-//         void	        setNick(User* currentUser, std::string name);
-//         bool	        isAlreadyExists(std::string name, int clientFd);
-
-//         // void            mainPoll(void);
-//         // void            createClient(void);
-//    		// void	        clientDisconnected(int bytes_received);
-        // class Polls : public Server
-// {
-//     private:
-//         // Msg msg;
-
-//         // std::vector<struct pollfd>		pollFds;
-//         // struct pollfd					clientPollFds;
-//         // struct pollfd					serverPollFds;
-//         // int								serverFd;
-//         // int								pollCount;
-//         // std::map<int, std::string>		clientsBuffer;
-// 		USER_VECTOR     				tab;
-//         CHAN_VECTOR                     tabChan;
-
-// 		User							findUser(std::string name);
-// 		bool							isValidNick(const std::string& nick);
-    
-//     public:
-//         // Polls(void)						{};
-//         // Polls(int fd);
-//         // ~Polls(void)					{};
-
-// 		void	        handle_client_command(int client_fd);
-//         void            send_response(int client_fd);
-// 		void	        nick(int client_fd);
-//         void	        setNick(User* currentUser, std::string name);
-//         bool	        isAlreadyExists(std::string name, int clientFd);
-
-//         // void            mainPoll(void);
-//         // void            createClient(void);
-//    		// void	        clientDisconnected(int bytes_received);
-        
-
-//         // Modes/Channels concerns
-//         int             channelHandle();
-//         int             modesHandle();
-//         void            sendToChan(void);
-//         void            modesOptions(VEC_LIST& split);
-//         void            errorModes(VEC_LIST& split);
-//         void            errorLenModes(VEC_LIST& split);
-
-//         // Useful MODE
-//         std::string     returnZeroOneEnd(User user);
-//         bool            isChanExists(std::string target);
-//         bool            isUserExists(std::string target);
-//         bool            isFourArgs(VEC_LIST& split);
-//         bool            isUserInChan(std::string target);
-//         bool            foundModeInChan(std::string mod, VEC_LIST modList);
-//         int             userInChanFd(std::string nick);
-        
-//         void            modeK(VEC_LIST& split);
-//         void            modeO(VEC_LIST& split);
-
-//         VEC_LIST        cutModeCommand();
-
-// };
-
-//         // Modes/Channels concerns
-//         int             channelHandle();
-//         int             modesHandle();
-//         void            sendToChan(void);
-//         void            modesOptions(VEC_LIST& split);
-//         void            errorModes(VEC_LIST& split);
-//         void            errorLenModes(VEC_LIST& split);
-
-//         // Useful MODE
-//         std::string     returnZeroOneEnd(User user);
-//         bool            isChanExists(std::string target);
-//         bool            isUserExists(std::string target);
-//         bool            isFourArgs(VEC_LIST& split);
-//         bool            isUserInChan(std::string target);
-//         bool            foundModeInChan(std::string mod, VEC_LIST modList);
-//         int             userInChanFd(std::string nick);
-        
-//         void            modeK(VEC_LIST& split);
-//         void            modeO(VEC_LIST& split);
-
-//         VEC_LIST        cutModeCommand();
-
-// };
+// DEBUG
+void    printListUser(CLIENT_VEC&   clients);
 
 // TEMPLATES
 
