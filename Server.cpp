@@ -81,6 +81,8 @@ void	Server::handleClientCommand(int client_fd)
 			_msg.response = printMessage("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
 		}
 	}
+	else if (_msg.command.rfind("NAMES", 0) == 0) {
+		namesHandle(); }
 
 	else if (_msg.command.rfind("MODE", 0) == 0) {
 		modesHandle(); // faire la reponse du serveur vers le client
@@ -88,12 +90,15 @@ void	Server::handleClientCommand(int client_fd)
 	else if (_msg.command.rfind("JOIN", 0) == 0)
 	{	channelHandle(); }
 	
+	else if (_msg.command.rfind("TOPIC", 0) == 0) {
+		topicHandle(); }
+
 	else if (_msg.command.rfind("PING", 0) == 0) {
 		_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
 	}
 
 	else if (_msg.command.rfind("QUIT", 0) == 0) {
-		_msg.currentChan = 0; }
+		_msg.currentChan = -1; }
 	else if (_msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);
@@ -110,7 +115,6 @@ void	Server::handleClientCommand(int client_fd)
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
 
-	std::cout << YELLOW "CHECK OUT response = " << _msg.response << NC << std::endl;
 	sendResponse(client_fd);
 	_msg.response.erase();
 }

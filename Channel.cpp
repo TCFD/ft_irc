@@ -1,5 +1,11 @@
 #include "Channel.hpp"
 
+Channel::Channel(std::string name): _name(name)
+{
+    _lenClients = 0;
+	_limit = 0;
+}
+
 void    Channel::addModes(char mod)
 {
     _modes.push_back(mod);
@@ -24,4 +30,14 @@ bool	Channel::isUserOnMe(std::string nick) {
 void    Channel::addClient(Client& client)
 {
     _clients.push_back(client);
+}
+
+void	Channel::addLenClient(void)
+{
+	_lenClients ++;
+}
+
+void	Channel::dltLenClient(void)
+{
+	_lenClients --;
 }

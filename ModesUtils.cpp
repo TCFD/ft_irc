@@ -4,12 +4,16 @@
 bool    Server::isChanExists(std::string target)
 {
     int len=0;
-    for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, ++it) {
-        if (target == it->gName())
-        { _msg.currentChan = len; return true; }
+    std::cout << "Target is " << target << std::endl;
+    for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, ++it)
+    {
+        std::cout << YELLOW "Chan name: " << it->gName() << NC << std::endl;
+        if (target == it->gName()) {
+            _msg.currentChan = len;
+            return true; }
     }
     _msg.currentChan = len;
-    // std::cout << "hello"<< std::endl;
+    std::cout << "hello"<< std::endl;
     return false;
 }
 

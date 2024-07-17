@@ -53,7 +53,7 @@ class Server: public Client
         Msg             getMsg() {return(_msg); };
         void            setMsgIdx(int idx) {_msg.currentIndex = idx; };
         void            setMsgCmd(std::string cmd) {_msg.command = cmd; };
-        void            setMsg() {_msg.currentChan = 0; _msg.prefixServer = ":server "; };
+        void            setMsg() {_msg.currentChan = -1; _msg.prefixServer = ":server "; };
         void            setPoll(Polls& poll) {_poll = poll; };
         
         void            socketDataSet(void);
@@ -77,10 +77,19 @@ class Server: public Client
     // NICK
         void            nick(int client_fd);
         void	        setNick(Client* currentUser, std::string name);
+
     // JOIN
         int             channelHandle(void);
         void            sendToChan(void);
         bool            isChanExists(std::string target);
+        void            sendToEveryone(std::string msg);
+
+    // TOPIC
+        void            topicHandle(void);
+        STR_VEC         cutTopicCmd(void);
+
+    // NAMES
+        void            namesHandle(void);
 
 };
 

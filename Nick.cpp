@@ -23,9 +23,7 @@ bool isValidNick(const std::string& nick) {
 
 bool	isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients)
 {
-	std::cout << BLUE "FD required: " NC << clientFd << std::endl;
 	for (CLIENT_IT it = clients.begin(); it < clients.end(); it++) {
-		std::cout << "nick: " << it->getNickname() << " and the client fd is : " << it->getFd() << std::endl;
 		if (it->getNickname() == name && it->getFd() != clientFd)
 			return true;
 	}
@@ -54,7 +52,7 @@ void	Server::setNick(Client* currentUser, std::string name) {
 	if (currentUser->getUsername() != "") {
 		currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
 		currentUser->setRegistered(true); }
-	std::cout << MAGENTA "NAME ==> " << currentUser->getNickname() << NC << std::endl;
+	// std::cout << MAGENTA "NAME ==> " << currentUser->getNickname() << NC << std::endl;
 }
 
 //Probleme de NickName a gerer: _ gerer pour un client, mais pas pour +...
@@ -63,7 +61,7 @@ void	Server::nick(int client_fd) {
 	Client		*currentUser			=	&_clients[_msg.currentIndex];
 	currentUser->setOldname(currentUser->getNickname());
 
-	std::cout << "Verifying name :'" << name << "'\n\n";
+	// std::cout << "Verifying name :'" << name << "'\n\n";
 	if (!currentUser->getRegistered())
 	{
 		currentUser->setNickname(name);
@@ -79,7 +77,7 @@ void	Server::nick(int client_fd) {
 	else {
 		setNick(currentUser, name); }
 
-	printListUser(_clients);
+	// printListUser(_clients);
 
 	_msg.response += ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
 }

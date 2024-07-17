@@ -1,5 +1,31 @@
 #include "Server.hpp"
 
+void    printChanInfos(Channel chan)
+{
+    std::cout << "CHAN INFOS:\n";
+    std::cout << MAGENTA "* Name: " << chan.gName() << std::endl;
+    std::cout << "* Users: ";
+    for (CLIENT_IT it = chan.gClients().begin(); it != chan.gClients().end(); ++it) {
+        std::cout << it->getNickname() << " "; }
+    std::cout << "\n* Limit: " << chan.gLimit() << std::endl;
+    std::cout << "* Len: " << chan.gLenClients() << std::endl;
+    std::cout << "* Password: " << chan.gPassword() << std::endl;
+    std::cout << "* Topic: " << chan.gTopic() << std::endl;
+    std::cout << "* Modes: ";
+    for (MODES_VEC::iterator it = chan.gModes().begin(); it != chan.gModes().end(); ++it) {
+        std::cout << *it << " "; }
+    std::cout << NC << std::endl;
+}
+
+void    Server::sendToEveryone(std::string msg)
+{
+    for (CLIENT_IT it=_channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it++)
+    {
+        _msg.response = msg;
+        sendResponse(it->getFd());
+    }
+}
+
 /* 
  * Handle JOIN (back up)
  * Handling of channel list, channel users, channel limit users, current channel, 
@@ -11,47 +37,57 @@
 int  Server::channelHandle(void)
 {
     STR_VEC split = cutModeCommand();
-    Channel temp(split[1]);
+
     if (split.size() != 2 && split.size() != 3)
         return (1);
     // else if (limitUsers != 0 &&  ) // si la limite existe et quelle n'est pas depassee, le client peut join
-    else if (!isChanExists(split[1])) { //Creation du channel
+    else if (!isChanExists(split[1]))
+    { //Creation du channel
+        Channel temp(split[1]);
         temp.sName(split[1]);
         if (split.size() == 2) {
             temp.sPwd(""); } // Entree libre dans le channel
         else {
-            temp.sPwd(split[2]); // Mot de passe pour rentrer dans le channel
-        }
+            temp.sPwd(split[2]); } // Mot de passe requis
+        temp.addOperator(_clients[_msg.currentIndex]);
         temp.addClient(_clients[_msg.currentIndex]);
-        // temp.usersInChan[tab[_msg.currentIndex].nickName] = 1; //Add user into Users channel's list
+        temp.addLenClient();
         _channels.push_back(temp);
     }
     else { 
         // (+i) Check if its an INVITE ONLY channel
-        if (_channels[_msg.currentChan].gPassword() != "")
+        Channel    *currChan = &_channels[_msg.currentChan];
+        if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit())
+            _msg.response = _msg.prefixNick + " 471 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+l)\r\n";
+        else if (currChan->gPassword() != "" && split.size() == 3 && split[2] != currChan->gPassword())
         {
-            // Gestion d'erreurs !
-            if (split.size() == 3 && split[2] == _channels[_msg.currentChan].gPassword())
-                _channels[_msg.currentChan].addClient(_clients[_msg.currentIndex]);
-            else
-            {
-                _msg.response = _msg.prefixNick + " 475 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :Cannot join channel (+k)\r\n";
-                return (1);
-            }
+            _msg.response = _msg.prefixNick + " 475 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";
+            return (1);
+        }
+        // else if invite only to do !
+        //      _msg.response = _msg.prefixNick + " 473 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+i)\r\n";
+        else
+        {
+            std::cout << "HELLO BITCH\n";
+            currChan->addClient(_clients[_msg.currentIndex]);
+            currChan->addLenClient();
         }
     }
-    std::cout << "ChanName: " << _channels[_msg.currentChan].gName() << " | ChanUsers: ";
-    for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); ++it) {
-        std::cout << it->getNickname() << " "; }
-    std::cout << "\nNEW CHANNEL ENTERING . . . " << std::endl;
+    printChanInfos(_channels[_msg.currentChan]);
+    std::cout << RED "\nNEW CHANNEL ENTERING . . . " NC << std::endl;
     
+    // Loop to send the arrival of a new client to everyone in that channel
     for (CLIENT_IT it=_channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it++)
     {
-        _msg.response += ":" + _clients[_msg.currentIndex].getNickname() + " JOIN " + _channels[_msg.currentChan].gName() + "\r\n";
-        std::cout << GREEN "NICK loop: " << it->getNickname() << NC << std::endl;
-        // if (it->getNickname() != _clients[_msg.currentIndex].getNickname())
+        _msg.response = ":" + _clients[_msg.currentIndex].getNickname() + " JOIN " + _channels[_msg.currentChan].gName() + "\r\n";
         sendResponse(it->getFd());
     }
-
+    if (_channels[_msg.currentChan].gTopic() != "") {
+        _msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n"; 
+        // sendResponse(_clients[_msg.currentIndex].getFd());
+        }
+    // namesHandle();
+    std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
+    // sendResponse(_clients[_msg.currentIndex].getFd());
     return (0);
 }

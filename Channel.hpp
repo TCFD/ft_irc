@@ -19,18 +19,20 @@ class Channel {
         std::string _topic;
         std::string _password;
         int         _limit;
+        int         _lenClients;
         CLIENT_VEC  _clients;
         CLIENT_VEC  _operators;
         MODES_VEC   _modes;
 
     public:
-        Channel(std::string name): _name(name) {};
+        Channel(std::string name);
         ~Channel() {};
 
         std::string     gName() { return _name; };
         std::string     gTopic() { return _topic; };
         std::string     gPassword() { return _password; };
         int             gLimit() {return _limit; };
+        int             gLenClients() {return _lenClients; };
         MODES_VEC       gModes() { return _modes; };
         CLIENT_VEC      gClients() { return _clients; };
         Client&         gClientIdx(int idx) { return _clients[idx]; };
@@ -38,11 +40,15 @@ class Channel {
         void            sName(std::string name) {_name = name; };
         void            sTopic(std::string topic) {_topic = topic; };
         void            sPwd(std::string pwd) {_password = pwd; };
-        int             sLimit(void) { return _limit; };
+        void            sLimit(int limit) { _limit = limit; };
+        // void            sLenClients(int len) {_lenClients = len; };
+
 
         void            addModes(char mod);
         void            addOperator(Client& client);
+        void            addClient(Client& client);
+        void            addLenClient(void);
+        void            dltLenClient(void);
 
 		bool			isUserOnMe(std::string nick);
-        void            addClient(Client& client);
 };
