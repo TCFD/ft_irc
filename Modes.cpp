@@ -25,7 +25,7 @@ void    Server::errorModes(STR_VEC& split)
 {
     if (split[1] != _clients[_msg.currentIndex].getNickname())
     {
-        if (!isChanExists(split[1]) || split[1].find("#", 0)) {
+        if (!isChanExists(split[1])) {
             _msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
         // else if (tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] == 0) {
             // _msg.response = _msg.prefixNick + " 482 " + tab[_msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482

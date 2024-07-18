@@ -44,11 +44,13 @@ class Channel {
         // void            sLenClients(int len) {_lenClients = len; };
 
 
-        void            addModes(char mod);
+        void            addMode(char mod);
         void            addOperator(Client& client);
         void            addClient(Client& client);
         void            addLenClient(void);
         void            dltLenClient(void);
+        void            dltMode(char mod);
+        void            dltOperator(Client& client);
 
 		bool			isUserOnMe(std::string nick);
 };

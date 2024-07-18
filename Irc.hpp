@@ -2,22 +2,23 @@
 # define IRC_HPP
 
 // # include "Server.hpp"
-# include <cstdlib>
+# include <algorithm>
+# include <arpa/inet.h>
 # include <cstdio>
+# include <cstdlib>
+# include <cstring>
+# include <errno.h>
+# include <exception>
 # include <fcntl.h>
+# include <iostream>
+# include <map>
+# include <netinet/in.h>
 # include <poll.h>
+# include <string>
 # include <sys/types.h>
 # include <sys/socket.h>
-# include <netinet/in.h>
-# include <arpa/inet.h>
-# include <iostream>
-# include <cstring>
 # include <unistd.h>
-# include <map>
 # include <vector>
-# include <exception>
-# include <errno.h>
-# include <algorithm>
 # include "Client.hpp"
 # include "Channel.hpp"
 

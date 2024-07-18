@@ -98,7 +98,7 @@ void	Server::handleClientCommand(int client_fd)
 	}
 
 	else if (_msg.command.rfind("QUIT", 0) == 0) {
-		_msg.currentChan = -1; }
+		_msg.currentChan = 0; }
 	else if (_msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);

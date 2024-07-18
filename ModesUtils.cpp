@@ -4,16 +4,15 @@
 bool    Server::isChanExists(std::string target)
 {
     int len=0;
-    std::cout << "Target is " << target << std::endl;
+    if (target[0] != '#')
+        target = "#" + target;
     for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, ++it)
     {
-        std::cout << YELLOW "Chan name: " << it->gName() << NC << std::endl;
         if (target == it->gName()) {
             _msg.currentChan = len;
             return true; }
     }
     _msg.currentChan = len;
-    std::cout << "hello"<< std::endl;
     return false;
 }
 
@@ -28,13 +27,13 @@ bool    isUserExists(std::string target, CLIENT_VEC clients)
 }
 
 // Check if the target is already in the channel or not
-// bool    isUserInChan(std::string target, CHAN_VEC channels, int currentChan)
-// {
-//     MAP_TAB::iterator it=channels[currentChan].usersInChan.find(target);
-//     if (it != channels[currentChan].usersInChan.end())
-//         return true;
-//     return false;
-// } A REVOIR
+bool    isUserInChan(std::string target, CHAN_VEC channels, int currentChan)
+{
+    for (CLIENT_IT it=channels[currentChan].gClients().begin(); it != channels[currentChan].gClients().end(); ++it)
+    if (it->getNickname() == target)
+        return true;
+    return false;
+}
 
 // Check if the mode is already activated in the channel or not
 bool    foundModeInChan(std::string mod, CHAR_LIST modList)
