@@ -40,9 +40,11 @@ class Server: public Client
         CHAN_VEC                        _channels;
         Polls                           _poll;
 		void							invite();
+		void							privmsg();
 		std::vector<std::string>		splitCmd(std::string s);
 		bool							isUserOnChannel(std::string nick, std::string targetChannel);
 		CHAN_IT							DoesChanExist (std::string target);
+		int								getFdOfUser(std::string nick);
     public:
         Server(int port);
         ~Server(void) {};
@@ -63,7 +65,7 @@ class Server: public Client
 
         void            handleClientCommand(int client_fd);
         void            sendResponse(int client_fd);
-        STR_VEC        cutModeCommand(void);
+        STR_VEC			cutModeCommand(void);
 
     /* * * Command * * */
     // MODE

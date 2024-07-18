@@ -111,6 +111,9 @@ void	Server::handleClientCommand(int client_fd)
 	else if (_msg.command.rfind("INVITE", 0) == 0) {
 		invite();
 	}
+	else if (_msg.command.rfind("PRIVMSG", 0) == 0) {
+		privmsg();
+	}
 	else {
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
@@ -136,48 +139,38 @@ STR_VEC Server::splitCmd(std::string s) {
 		std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 		s.erase(0, pos + delimiter.length());
 	}
+	std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 	vec.push_back(s);
 	return vec;
 }
 
-CHAN_IT Server::DoesChanExist (std::string target) {
-	CHAN_IT it = _channels.begin();
+void	Server::privmsg() {
+	std::string destinataire = _msg.command.substr(8, _msg.command.find(':') - 8);
+	std::string msg = _msg.command.substr(_msg.command.find(':'));
 
-	for (; it != _channels.end(); it++) {
-		if (it->gName() == target) {
-			return it;
+	std::cout << "destinataire : " << destinataire << "\n";
+	if (destinataire.empty()) {
+		_msg.response = printMessage("401", _clients[_msg.currentIndex].getNickname(), " :No such nick/channel");
+		return;
+	}
+	if (msg.empty()) {
+		_msg.response = printMessage("412", _clients[_msg.currentIndex].getNickname(), " :No text to send");
+		return;
+	}
+	if (destinataire[0] == '#') { // On envoie vers un channel
+		CHAN_IT targetChan = DoesChanExist(destinataire);
+		//if (targetChan == _channels.end()) {
+		//	_msg.response = printMessage("401", _clients[_msg.currentIndex].getNickname(), destinataire +" :No such nick/channel");
+		//	return;
+		//}
+		CLIENT_VEC clients = targetChan->gClients();
+		CLIENT_IT it = clients.begin();
+		for (; it < clients.end(); it++) {
+			_msg.response = msg.substr(1);
+			sendResponse(it->getFd());
 		}
+		return ;
 	}
-	return it;
-}
-
-void	Server::invite() {
-	STR_VEC cmdVec(splitCmd(_msg.command));
-
-	//* Check if there is enough args	
-	if (cmdVec.size() < 3) {
-		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "Invite :Not enough parameters");
-		return;
-	}
-	//* Does channel exist ? 
-	std::cout <<  "does channel exist\n";
-	CHAN_IT targetChan = DoesChanExist(cmdVec[2]);
-	if (targetChan == _channels.end()) {
-		_msg.response = printMessage("403", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :No such channel");
-		return;
-	}
-	//* Is user on channel ?
-	if (!targetChan->isUserOnMe(_clients[_msg.currentIndex].getNickname())) {
-		_msg.response = printMessage("442", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :You're not on that channel");
-		return;
-	}
-	//* Is target on channel ?
-	if (targetChan->isUserOnMe(cmdVec[1])) {
-		_msg.response = printMessage("443", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2] + " :is already on channel");
-		return;
-	}
-
-	//* Successfull invite
-	_msg.response = printMessage("341", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2]);
-	//TODO On doit aussi envoyer au client invite
+	else
+		_msg.response = "ayo wtf";
 }
