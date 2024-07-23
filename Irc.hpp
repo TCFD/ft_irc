@@ -7,6 +7,7 @@
 # include <cstdio>
 # include <cstdlib>
 # include <cstring>
+# include <ctime>
 # include <errno.h>
 # include <exception>
 # include <fcntl.h>
@@ -69,8 +70,9 @@ struct Msg {
 std::string	printMessage(std::string num, std::string nickname, std::string message);
 
 bool    isUserExists(std::string target, CLIENT_VEC clients);
-bool    isUserInChan(std::string target, CHAN_VEC channels, int currentChan);
-bool    foundModeInChan(std::string mod, CHAR_LIST modList);
+bool    isUserInChan(std::string target, Channel chan);
+bool    foundModeInChan(char mod, CHAR_LIST modList);
+bool    isUserAnOperator(std::string target, Channel chan);
 
 int     userInChanFd(std::string nick, CLIENT_VEC clients);
 bool    isFourArgs(STR_VEC& split);

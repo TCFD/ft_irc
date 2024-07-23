@@ -9,7 +9,7 @@ Channel::Channel(std::string name): _name(name)
 void    Channel::addMode(char mod)
 {
     _modes.push_back(mod);
-	// std::cout << GREEN << _modes.back()  << NC << std::endl; 
+	std::cout << GREEN << _modes.back()  << NC << std::endl; 
 }
 
 void    Channel::addOperator(Client& client)

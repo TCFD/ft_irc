@@ -35,6 +35,7 @@ class Channel {
         int             gLenClients() {return _lenClients; };
         MODES_VEC       gModes() { return _modes; };
         CLIENT_VEC      gClients() { return _clients; };
+        CLIENT_VEC      gOperators() { return _operators; };
         Client&         gClientIdx(int idx) { return _clients[idx]; };
 
         void            sName(std::string name) {_name = name; };

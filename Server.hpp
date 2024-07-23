@@ -77,7 +77,6 @@ class Server: public Client
         void            modeT(STR_VEC& split);
         void            modeI(STR_VEC& split);
 
-
     // NICK
         void            nick(int client_fd);
         void	        setNick(Client* currentUser, std::string name);
@@ -91,6 +90,7 @@ class Server: public Client
     // TOPIC
         void            topicHandle(void);
         STR_VEC         cutTopicCmd(void);
+        bool            errorsTopic(STR_VEC split);
 
     // NAMES
         void            namesHandle(void);

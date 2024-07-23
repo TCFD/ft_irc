@@ -65,17 +65,15 @@ int	Server::modesHandle(void)
 
         //Affichage pour le client 
         if (split.size() == 4) {
-            _msg.response = _msg.prefixServer + "MODE " + linkPrint + "\r\n"; }
+            _msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
         else if (split.size() == 3) {
-            _msg.response = _msg.prefixServer + "MODE " + split[1] + " " + split[2] + "\r\n"; }
+            _msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
         
+        if (isChanExists(split[1]))
+            sendToEveryone(_msg.response);
     }
     std::cout << "Response MODE: " << _msg.response << std::endl;
 
-    // for (STR_VEC::iterator it=split.begin(); it != split.end(); it++) {
-        // std::cout << "hey toi\n";
-        // it = split.erase(it);
-    // }
     split.clear();
 	return(0);
 }

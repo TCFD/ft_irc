@@ -56,18 +56,13 @@ int  Server::channelHandle(void)
     else { 
         // (+i) Check if its an INVITE ONLY channel
         Channel    *currChan = &_channels[_msg.currentChan];
-        // Probleme Print Modes !!
-        std::cout << "* Modes: ";
-        for (MODES_VEC::iterator it = currChan->gModes().begin(); it != currChan->gModes().end(); ++it) {
-            std::cout << *it << " "; }
+
         if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit()) {
             _msg.response = _msg.prefixNick + " 471 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+l)\r\n";
             return (1); }
-        else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword())))
-        {
+        else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword()))) {
             _msg.response = _msg.prefixNick + " 475 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";
-            return (1);
-        }
+            return (1); }
         // else if invite only to do !
         //      _msg.response = _msg.prefixNick + " 473 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+i)\r\n";
         else
@@ -86,9 +81,11 @@ int  Server::channelHandle(void)
         sendResponse(it->getFd());
     }
     if (_channels[_msg.currentChan].gTopic() != "") {
-        _msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n"; 
-        // sendResponse(_clients[_msg.currentIndex].getFd());
-        }
+        _msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n";
+        
+    }
+    else {
+        _msg.response += _msg.prefixNick + " 331 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :No topic set\r\n"; }
     // namesHandle();
     std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
     // sendResponse(_clients[_msg.currentIndex].getFd());

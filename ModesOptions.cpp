@@ -12,7 +12,6 @@ void    Server::modesOptions(STR_VEC& split)
     void (Server::*funcPtr[5]) (STR_VEC& split) = { &Server::modeK, &Server::modeL, &Server::modeI, &Server::modeT, &Server::modeO };
     int j = 0;
     for (int i=0; !init[i].empty(); i++) {
-        // std::cout << "split[2] = " << split[2] << " | and init[i] == " << init[i] << std::endl;
         if (init[i] == split[2]) {
             (this->*funcPtr[j])(split);
             return; }
@@ -28,22 +27,17 @@ void    Server::modesOptions(STR_VEC& split)
 */
 void    Server::modeK(STR_VEC& split)
 {
-    // sendToChan();
-    // std::cout << RED "N* CHAN: " << _msg.currentChan << NC << std::endl;
-    // std::cout << CYAN "Je suis ici et split vaut : " << split[2] << NC << std::endl;
+    Channel *current = &_channels[_msg.currentChan];
+
     if (split[2].find("+") != std::string::npos) {
-        _channels[_msg.currentChan].sPwd(split[3]);
-        if (!foundModeInChan(split[2].substr(1), _channels[_msg.currentChan].gModes())) {
-            _channels[_msg.currentChan].addMode('k');
-            // MODES_VEC modes = _channels[_msg.currentChan].gModes();
-            // for (MODES_VEC::const_iterator it = modes.begin(); it != modes.end(); it++)
-            //     std::cout << "Mode active: " << *it << std::endl; 
-        }
+        current->sPwd(split[3]);
+        if (!foundModeInChan(split[2][1], current->gModes())) {
+            current->addMode('k'); }
     }
     else {
-        if (foundModeInChan(split[2].substr(1), _channels[_msg.currentChan].gModes())) {
-            _channels[_msg.currentChan].sPwd("");
-            _channels[_msg.currentChan].dltMode('k'); }
+        if (foundModeInChan(split[2][1], current->gModes())) {
+            current->sPwd("");
+            current->dltMode('k'); }
     }
 }
 
@@ -55,14 +49,14 @@ void    Server::modeK(STR_VEC& split)
 */
 void    Server::modeO(STR_VEC& split)
 {
-    if (isUserInChan(split[3], _channels, _msg.currentChan)) {
-        if (split[2].find("+")) {
+    if (isUserInChan(split[3], _channels[_msg.currentChan])) {
+        if (split[1].find("+")) {
             _channels[_msg.currentChan].addOperator(_clients[_msg.currentIndex]);
-            if (!foundModeInChan(split[2].substr(1), _channels[_msg.currentChan].gModes())) {
+            if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
                 _channels[_msg.currentChan].addMode('o'); }
         }
         else {
-            if (foundModeInChan(split[2].substr(1), _channels[_msg.currentChan].gModes())) {
+            if (foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
                 _channels[_msg.currentChan].dltOperator(_clients[_msg.currentIndex]);
                 _channels[_msg.currentChan].dltMode('o'); }
         }
@@ -71,7 +65,22 @@ void    Server::modeO(STR_VEC& split)
 
 void            Server::modeI(STR_VEC& split) {(void)split;}
 
-void            Server::modeT(STR_VEC& split) {(void)split;}
+void            Server::modeT(STR_VEC& split) {
+    Channel     *current = &_channels[_msg.currentChan];
+
+    if (split[1].find("+")) {
+        if (!foundModeInChan(split[2][1], current->gModes())) {
+            current->addMode('t'); }
+    }
+    else {
+        if (foundModeInChan(split[2][1], current->gModes())) {
+            current->dltMode('t'); }
+    }
+    MODES_VEC modes = current->gModes();
+    // std::cout << "WTF?!\n";
+    // for (MODES_VEC::const_iterator it = modes.begin(); it != modes.end(); it++)
+    //     std::cout << "Mode active: " << *it << std::endl; 
+}
 
 /* Handle L mode
  * Check if its an add or a delete
@@ -83,11 +92,11 @@ void            Server::modeL(STR_VEC& split)
     if (split[2].find("+") != std::string::npos) {
         std::cout << "new limit is " << atoi(split[3].c_str()) << std::endl;
         _channels[_msg.currentChan].sLimit(atoi(split[3].c_str()));
-        if (!foundModeInChan(split[2].substr(1), _channels[_msg.currentChan].gModes())) {
+        if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
             _channels[_msg.currentChan].addMode('l'); }
     }
     else {
-        if (foundModeInChan(split[2].substr(1), _channels[_msg.currentChan].gModes())) {
+        if (foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
             _channels[_msg.currentChan].dltMode('l');
             _channels[_msg.currentChan].sLimit(0);
         }
