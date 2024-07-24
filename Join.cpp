@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-void    printChanInfos(Channel chan)
+void    printChanInfos(Channel chan, int idx)
 {
     std::cout << "CHAN INFOS:\n";
     std::cout << MAGENTA "* Name: " << chan.gName() << std::endl;
@@ -11,16 +11,15 @@ void    printChanInfos(Channel chan)
     std::cout << "* Len: " << chan.gLenClients() << std::endl;
     std::cout << "* Password: " << chan.gPassword() << std::endl;
     std::cout << "* Topic: " << chan.gTopic() << std::endl;
-    std::cout << "* Modes: ";
-    for (MODES_VEC::iterator it = chan.gModes().begin(); it != chan.gModes().end(); ++it) {
-        std::cout << *it << " "; }
+    std::cout << "\n* NUM CHAN: " << idx << std::endl;
     std::cout << NC << std::endl;
 }
 
 void    Server::sendToEveryone(std::string msg)
 {
-    for (CLIENT_IT it=_channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it++)
+    for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); ++it)
     {
+        // std::cout << "IT : " << it->getNickname() << std::endl;
         _msg.response = msg;
         sendResponse(it->getFd());
     }
@@ -57,23 +56,22 @@ int  Server::channelHandle(void)
     else { 
         // (+i) Check if its an INVITE ONLY channel
         Channel    *currChan = &_channels[_msg.currentChan];
-        if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit())
+
+        if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit()) {
             _msg.response = _msg.prefixNick + " 471 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+l)\r\n";
-        else if (currChan->gPassword() != "" && split.size() == 3 && split[2] != currChan->gPassword())
-        {
+            return (1); }
+        else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword()))) {
             _msg.response = _msg.prefixNick + " 475 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";
-            return (1);
-        }
+            return (1); }
         // else if invite only to do !
         //      _msg.response = _msg.prefixNick + " 473 " + _clients[_msg.currentIndex].getNickname() + " " + currChan->gName() + " :Cannot join channel (+i)\r\n";
         else
         {
-            std::cout << "HELLO BITCH\n";
             currChan->addClient(_clients[_msg.currentIndex]);
             currChan->addLenClient();
         }
     }
-    printChanInfos(_channels[_msg.currentChan]);
+    printChanInfos(_channels[_msg.currentChan], _msg.currentChan);
     std::cout << RED "\nNEW CHANNEL ENTERING . . . " NC << std::endl;
     
     // Loop to send the arrival of a new client to everyone in that channel
@@ -83,9 +81,11 @@ int  Server::channelHandle(void)
         sendResponse(it->getFd());
     }
     if (_channels[_msg.currentChan].gTopic() != "") {
-        _msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n"; 
-        // sendResponse(_clients[_msg.currentIndex].getFd());
-        }
+        _msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n";
+        
+    }
+    else {
+        _msg.response += _msg.prefixNick + " 331 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :No topic set\r\n"; }
     // namesHandle();
     std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
     // sendResponse(_clients[_msg.currentIndex].getFd());

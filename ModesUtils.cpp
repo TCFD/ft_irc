@@ -4,16 +4,18 @@
 bool    Server::isChanExists(std::string target)
 {
     int len=0;
-    std::cout << "Target is " << target << std::endl;
-    for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, ++it)
-    {
-        std::cout << YELLOW "Chan name: " << it->gName() << NC << std::endl;
-        if (target == it->gName()) {
-            _msg.currentChan = len;
-            return true; }
+
+    if (target[0] != '#')
+        target = "#" + target;
+    if (!_channels.empty()) {
+        for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, it++)
+        {
+            if (target == it->gName()) {
+                _msg.currentChan = len;
+                return true; }
+        }
     }
     _msg.currentChan = len;
-    std::cout << "hello"<< std::endl;
     return false;
 }
 
@@ -28,22 +30,23 @@ bool    isUserExists(std::string target, CLIENT_VEC clients)
 }
 
 // Check if the target is already in the channel or not
-// bool    isUserInChan(std::string target, CHAN_VEC channels, int currentChan)
-// {
-//     MAP_TAB::iterator it=channels[currentChan].usersInChan.find(target);
-//     if (it != channels[currentChan].usersInChan.end())
-//         return true;
-//     return false;
-// } A REVOIR
+bool    isUserInChan(std::string target, Channel chan)
+{
+    for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it)
+    if (it->getNickname() == target)
+        return true;
+    return false;
+}
 
 // Check if the mode is already activated in the channel or not
-bool    foundModeInChan(std::string mod, CHAR_LIST modList)
+bool    foundModeInChan(char mod, CHAR_LIST modList)
 {
-    (void) mod;
     for (CHAR_LIST::iterator it=modList.begin(); it != modList.end(); ++it) {
-        // if (*it == mod) A REVOIR
-            // return true;
+        std::cout << "mod == " << *it << std::endl;
+        if (*it == mod)
+            return true;
     }
+    std::cout << "him or\n";
     return false;
 }
 
@@ -87,4 +90,14 @@ int    userInChanFd(std::string nick, CLIENT_VEC clients)
             return (clients[i].getFd()); 
     }
     return (-1);
+}
+
+bool    isUserAnOperator(std::string target, Channel chan)
+{
+    for (CLIENT_IT it = chan.gOperators().begin(); it != chan.gOperators().end(); ++it) {
+        if (target == it->getNickname())
+            return true;
+    }
+    std::cout << "...him ?\n";
+    return false;
 }

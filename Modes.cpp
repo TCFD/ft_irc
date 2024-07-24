@@ -25,7 +25,7 @@ void    Server::errorModes(STR_VEC& split)
 {
     if (split[1] != _clients[_msg.currentIndex].getNickname())
     {
-        if (!isChanExists(split[1]) || split[1].find("#", 0)) {
+        if (!isChanExists(split[1])) {
             _msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
         // else if (tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] == 0) {
             // _msg.response = _msg.prefixNick + " 482 " + tab[_msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
@@ -65,17 +65,15 @@ int	Server::modesHandle(void)
 
         //Affichage pour le client 
         if (split.size() == 4) {
-            _msg.response = _msg.prefixServer + "MODE " + linkPrint + "\r\n"; }
+            _msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
         else if (split.size() == 3) {
-            _msg.response = _msg.prefixServer + "MODE " + split[1] + " " + split[2] + "\r\n"; }
+            _msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
         
+        if (isChanExists(split[1]))
+            sendToEveryone(_msg.response);
     }
     std::cout << "Response MODE: " << _msg.response << std::endl;
 
-    // for (STR_VEC::iterator it=split.begin(); it != split.end(); it++) {
-        // std::cout << "hey toi\n";
-        // it = split.erase(it);
-    // }
     split.clear();
 	return(0);
 }

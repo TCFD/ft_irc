@@ -35,6 +35,7 @@ class Channel {
         int             gLenClients() {return _lenClients; };
         MODES_VEC       gModes() { return _modes; };
         CLIENT_VEC      gClients() { return _clients; };
+        CLIENT_VEC      gOperators() { return _operators; };
         Client&         gClientIdx(int idx) { return _clients[idx]; };
 
         void            sName(std::string name) {_name = name; };
@@ -44,11 +45,13 @@ class Channel {
         // void            sLenClients(int len) {_lenClients = len; };
 
 
-        void            addModes(char mod);
+        void            addMode(char mod);
         void            addOperator(Client& client);
         void            addClient(Client& client);
         void            addLenClient(void);
         void            dltLenClient(void);
+        void            dltMode(char mod);
+        void            dltOperator(Client& client);
 
 		bool			isUserOnMe(std::string nick);
 };
