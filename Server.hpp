@@ -40,7 +40,7 @@ class Server: public Client
         CHAN_VEC                        _channels;
         Polls                           _poll;
 		void							invite();
-		void							privmsg();
+		void							privmsg(std::string senderNick);
 		std::vector<std::string>		splitCmd(std::string s);
 		bool							isUserOnChannel(std::string nick, std::string targetChannel);
 		CHAN_IT							DoesChanExist (std::string target);
