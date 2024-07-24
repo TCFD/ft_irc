@@ -61,3 +61,14 @@ void	Channel::dltOperator(Client& client)
 			_operators.erase(it); return ; }
 	}
 }
+
+std::string	Channel::getTime(void)
+{
+	std::time_t currentTime = std::time(0);
+	std::tm*	localTime = std::localtime(&currentTime);
+	char buffer[100];
+
+	std::strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S %Y", localTime);
+	
+	return std::string(buffer); 
+}

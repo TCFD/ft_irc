@@ -81,11 +81,11 @@ int  Server::channelHandle(void)
 		sendResponse(it->getFd());
 	}
 	if (_channels[_msg.currentChan].gTopic() != "") {
-		_msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n";
-		
-	}
+		_msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n"; 
+		_msg.response += _msg.prefixNick + " 333 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " " + _channels[_msg.currentChan].gTopicName() + " " + _channels[_msg.currentChan].gTopicDate() + "\r\n"; }
 	else {
 		_msg.response += _msg.prefixNick + " 331 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :No topic set\r\n"; }
+	// sendResponse(_clients[_msg.currentIndex].getFd());
 	// namesHandle();
 	std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
 	// sendResponse(_clients[_msg.currentIndex].getFd());

@@ -38,26 +38,16 @@ bool	Server::errorsTopic(STR_VEC split)
 	return true;
 }
 
-std::string	getTime(void)
-{
-	std::time_t currentTime = std::time(0);
-	std::cout << CYAN "Time: " << currentTime << NC << std::endl;
-	std::tm*	localTime = std::localtime(&currentTime);
-	char buffer[100];
-	std::strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S %Y", localTime);
-	return std::string(buffer); 
-}
-
 void	Server::topicHandle(void)
 {
 	STR_VEC split = cutTopicCmd();
 	Channel	*current = &_channels[_msg.currentChan];
 
-	std::string buff = getTime();
 	if (!errorsTopic(split))
 	{
 		current->sTopic(split[2]);
-		std::cout << GREEN "TOPIC is now set: " << current->gTopic() << " on " << buff << NC << std::endl;
-		sendToEveryone(_msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + current->gName() + " :" + current->gTopic() + "\r\n");
+		current->sTopicName(_clients[_msg.currentIndex].getNickname());
+		std::cout << GREEN "TOPIC is now set: " << current->gTopic() << NC << std::endl;
+		sendToEveryone(_msg.prefixNick + " TOPIC " + current->gName() + " " + current->gTopic() + "\r\n");
 	}
 }
