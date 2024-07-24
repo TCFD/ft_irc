@@ -2,19 +2,19 @@
 
 Channel::Channel(std::string name): _name(name)
 {
-    _lenClients = 0;
+	_lenClients = 0;
 	_limit = 0;
 }
 
-void    Channel::addMode(char mod)
+void	Channel::addMode(char mod)
 {
-    _modes.push_back(mod);
+	_modes.push_back(mod);
 	std::cout << GREEN << _modes.back()  << NC << std::endl; 
 }
 
-void    Channel::addOperator(Client& client)
+void	Channel::addOperator(Client& client)
 {
-    _operators.push_back(client);
+	_operators.push_back(client);
 }
 
 bool	Channel::isUserOnMe(std::string nick)
@@ -29,9 +29,9 @@ bool	Channel::isUserOnMe(std::string nick)
 	return false;
 }
 
-void    Channel::addClient(Client& client)
+void	Channel::addClient(Client& client)
 {
-    _clients.push_back(client);
+	_clients.push_back(client);
 }
 
 void	Channel::addLenClient(void)

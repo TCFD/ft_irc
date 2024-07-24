@@ -2,49 +2,49 @@
 
 Server::Server(int port) : _port(port)
 {
-    socketDataSet();
+	socketDataSet();
 }
 
-void    Server::socketDataSet(void)
+void	Server::socketDataSet(void)
 {
-    _serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (_serverSocket == -1)
-        throw StrerrorException("Socket Error");
-    int opt = 1;
-    if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
-    { throw StrerrorException("Set Socket Options Error"); close (_serverSocket); }
+	_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (_serverSocket == -1)
+		throw StrerrorException("Socket Error");
+	int opt = 1;
+	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+	{ throw StrerrorException("Set Socket Options Error"); close (_serverSocket); }
 
-    _serverAddr.sin_family = AF_INET;
-    _serverAddr.sin_addr.s_addr = INADDR_ANY;
-    _serverAddr.sin_port = htons(_port);
-    memset(&(_serverAddr.sin_zero), '\0', 8);
+	_serverAddr.sin_family = AF_INET;
+	_serverAddr.sin_addr.s_addr = INADDR_ANY;
+	_serverAddr.sin_port = htons(_port);
+	memset(&(_serverAddr.sin_zero), '\0', 8);
 
-    if (bind(_serverSocket, (struct sockaddr *)&_serverAddr, sizeof(_serverAddr)) == -1)
-    { throw StrerrorException("Bind Error"); close(_serverSocket); }
+	if (bind(_serverSocket, (struct sockaddr *)&_serverAddr, sizeof(_serverAddr)) == -1)
+	{ throw StrerrorException("Bind Error"); close(_serverSocket); }
 
-    if (listen(_serverSocket, 10) == -1)
-    { throw StrerrorException("Listen Error"); close(_serverSocket); }
+	if (listen(_serverSocket, 10) == -1)
+	{ throw StrerrorException("Listen Error"); close(_serverSocket); }
 
-    fcntl(_serverSocket, F_SETFL, O_NONBLOCK);
+	fcntl(_serverSocket, F_SETFL, O_NONBLOCK);
 }
 
 //Creer classe ClientPoll en lien avec Polls
-int    Server::createClient(Polls &poll)
+int	Server::createClient(Polls &poll)
 {
-    struct sockaddr_in clientAddr;
-    socklen_t clientLen = sizeof(clientAddr);
-    int clientFd = accept(_serverSocket, (struct sockaddr *)&clientAddr, &clientLen);
+	struct sockaddr_in clientAddr;
+	socklen_t clientLen = sizeof(clientAddr);
+	int clientFd = accept(_serverSocket, (struct sockaddr *)&clientAddr, &clientLen);
 
-    if (clientFd == -1) perror("accept");
+	if (clientFd == -1) perror("accept");
 
-    fcntl(clientFd, F_SETFD, O_NONBLOCK);
+	fcntl(clientFd, F_SETFD, O_NONBLOCK);
 	poll.addClientPoll(clientFd);
 
 	Client	client(clientFd);
 	_clients.push_back(client);
 	
-    // std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
-    return (clientFd);
+	// std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
+	return (clientFd);
 }
 
 // Pas fini: gros travaux !!!
@@ -62,7 +62,7 @@ void Server::clientDisconnected(int bytes_received, int id) {
 void	Server::handleClientCommand(int client_fd)
 {
 	Client	*currentUser = &_clients[_msg.currentIndex];
-    _msg.prefixNick = ":" + currentUser->getNickname();
+	_msg.prefixNick = ":" + currentUser->getNickname();
 
 	// _msg.prefixNick = currentUser->getNickname();
 	if (_msg.command.rfind("CAP", 0) == 0)
