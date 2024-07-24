@@ -50,6 +50,7 @@
 		"optional": "cpp",
 		"ranges": "cpp",
 		"span": "cpp",
-		"sstream": "cpp"
+		"sstream": "cpp",
+		"ctime": "cpp"
 	}
 }
