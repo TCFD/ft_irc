@@ -4,7 +4,7 @@
  * Handling Error Modes #2
  * Check if there is enough/ not too much params, if flags are valid
 */
-void	Server::errorLenModes(STR_VEC& split)
+bool	Server::errorLenModes(STR_VEC& split)
 {
 	const char* init[] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
 	STR_VEC flags(init, init+ sizeof(init) / sizeof(init[0]));
@@ -14,6 +14,9 @@ void	Server::errorLenModes(STR_VEC& split)
 		_msg.response = _msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407 // BIG PROBLEM dans les conditions je pense !!
 	else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
 		_msg.response = _msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
+	else
+		return false;
+	return true;
 }
 
 /* 
@@ -21,20 +24,23 @@ void	Server::errorLenModes(STR_VEC& split)
  * Check if the channel exists, if the user is an operator
  * Print actives modes from current channel
 */
-void	Server::errorModes(STR_VEC& split)
+bool	Server::errorModes(STR_VEC& split)
 {
+	Channel	*curr = &_channels[_msg.currentChan];
+
 	if (split[1] != _clients[_msg.currentIndex].getNickname())
 	{
 		if (!isChanExists(split[1])) {
 			_msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
 		// else if (tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] == 0) {
 			// _msg.response = _msg.prefixNick + " 482 " + tab[_msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
-		// else if (split.size() == 2 && isChanExists(split[1]) && split[1] == _channels[_msg.currentChan].gName()) {
-			// _msg.response = _msg.prefixServer + "324 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + 
-			//printModes(_channels[_msg.currentChan].gModes()) + "\r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
+		else if (split.size() == 2 && isChanExists(split[1]) && split[1] == curr->gName()) {
+			_msg.response = _msg.prefixServer + "324 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " " + 
+			curr->gModesActives() + "\r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
 		else {
-			errorLenModes(split); }
+			return (errorLenModes(split)); }
 	}
+	return true;
 }
 
 /* 
@@ -52,23 +58,22 @@ int	Server::modesHandle(void)
 {
 	_msg.response = "";
 	STR_VEC split = cutModeCommand();
-	// std::cout << "CHECK MODES: " << split.back() << " and size : " << split.size() << std::endl;
-	// _msg.prefixNick = ":" + _clients[_msg.currentIndex].getNickname();
-	std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
 		
 	//Modes handling
-	errorModes(split);
-	if (_msg.response.find("MODE") == std::string::npos)
+	
+	if (!errorModes(split) && _msg.response.find("MODE") == std::string::npos)
 	{
 		//Traitement de mode option
 		modesOptions(split);
 
 		//Affichage pour le client 
+		// if (split.size() == 2 && !split[1].find("#"))
+			// _msg.response = _msg.prefixNick + " MODE " + split[1] + "\r\n";
 		if (split.size() == 4) {
+			std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
 			_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
 		else if (split.size() == 3) {
 			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
-		
 		if (isChanExists(split[1]))
 			sendToEveryone(_msg.response);
 	}

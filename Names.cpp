@@ -18,8 +18,7 @@ void			Server::namesHandle(void)
 			std::string nicks = "";
 			for (CLIENT_IT it = chan->gClients().begin(); it != chan->gClients().end(); it++)
 			{
-				std::cout << "et ici ?\n";
-				nicks += it->getNickname() + " ";
+				nicks += it->getNickname();
 			}
 			sendToEveryone(_msg.prefixNick + " NAMES " + _channels[_msg.currentChan].gName() + "\r\n");
 			// _msg.response += ":server 353 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + nicks + "\r\n";

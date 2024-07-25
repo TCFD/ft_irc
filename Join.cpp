@@ -81,11 +81,25 @@ int  Server::channelHandle(void)
 		sendResponse(it->getFd());
 	}
 	if (_channels[_msg.currentChan].gTopic() != "") {
-		_msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n"; 
-		_msg.response += _msg.prefixNick + " 333 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " " + _channels[_msg.currentChan].gTopicName() + " " + _channels[_msg.currentChan].gTopicDate() + "\r\n"; }
+		_msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n";
+		sendResponse(_clients[_msg.currentIndex].getFd());
+		_msg.response += _msg.prefixNick + " 333 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " " + _channels[_msg.currentChan].gTopicName() + " " + timeToStr(std::time(0)) + "\r\n"; }
 	else {
 		_msg.response += _msg.prefixNick + " 331 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :No topic set\r\n"; }
-	// sendResponse(_clients[_msg.currentIndex].getFd());
+	sendResponse(_clients[_msg.currentIndex].getFd());
+
+	{
+		Channel *chan = &_channels[_msg.currentChan];
+		std::string nicks = "";
+		for (CLIENT_IT it = chan->gClients().begin(); it != chan->gClients().end(); it++)
+		{
+			nicks += it->getNickname() + " ";
+		}
+		_msg.response += _msg.prefixNick + " 353 " + _clients[_msg.currentIndex].getNickname() + " = " + chan->gName() + " :" + nicks + "\r\n";
+		_msg.response += _msg.prefixNick + " 366 " + _clients[_msg.currentIndex].getNickname() + " " + chan->gName() + " :End of /NAMES list\r\n";
+	}
+
+	// _msg.response = _msg.prefixNick + " NAMES " + _channels[_msg.currentChan].gName() + "\r\n";
 	// namesHandle();
 	std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
 	// sendResponse(_clients[_msg.currentIndex].getFd());

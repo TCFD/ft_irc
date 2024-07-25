@@ -50,7 +50,7 @@ void	Server::modeK(STR_VEC& split)
 void	Server::modeO(STR_VEC& split)
 {
 	if (isUserInChan(split[3], _channels[_msg.currentChan])) {
-		if (split[1].find("+")) {
+		if (split[2].find("+") != std::string::npos) {
 			_channels[_msg.currentChan].addOperator(_clients[_msg.currentIndex]);
 			if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
 				_channels[_msg.currentChan].addMode('o'); }
@@ -66,20 +66,18 @@ void	Server::modeO(STR_VEC& split)
 void			Server::modeI(STR_VEC& split) {(void)split;}
 
 void			Server::modeT(STR_VEC& split) {
-	Channel	 *current = &_channels[_msg.currentChan];
+	// Channel	 *current = &_channels[_msg.currentChan];
 
-	if (split[1].find("+")) {
-		if (!foundModeInChan(split[2][1], current->gModes())) {
-			current->addMode('t'); }
+	std::cout << BLUE "split two is " << split[2] << NC << std::endl;
+	if (split[2].find("+") != std::string::npos) {
+		if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
+			_channels[_msg.currentChan].addMode('t'); }
 	}
 	else {
-		if (foundModeInChan(split[2][1], current->gModes())) {
-			current->dltMode('t'); }
-	}
-	MODES_VEC modes = current->gModes();
-	// std::cout << "WTF?!\n";
-	// for (MODES_VEC::const_iterator it = modes.begin(); it != modes.end(); it++)
-	//	 std::cout << "Mode active: " << *it << std::endl; 
+		std::cout << "is it working ??\n";
+		if (foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
+			_channels[_msg.currentChan].dltMode('t'); }
+	} 
 }
 
 /* Handle L mode

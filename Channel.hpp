@@ -18,7 +18,7 @@ class Channel {
 		std::string _name;
 		std::string _topic;
 		std::string _topicName;
-		std::string	_topicDate;
+		// std::string	_topicDate;
 		std::string _password;
 		int		 	_limit;
 		int		 	_lenClients;
@@ -33,23 +33,23 @@ class Channel {
 		std::string	 	gName() { return _name; };
 		std::string	 	gTopic() { return _topic; };
 		std::string	 	gTopicName() { return _topicName; };
-		std::string		gTopicDate() { return _topicDate; };
+		// std::string		gTopicDate() { return _topicDate; };
 		std::string	 	gPassword() { return _password; };
 		int			 	gLimit() {return _limit; };
 		int				gLenClients() {return _lenClients; };
 		MODES_VEC		gModes() { return _modes; };
+		std::string		gModesActives(void);
 		CLIENT_VEC		gClients() { return _clients; };
 		CLIENT_VEC		gOperators() { return _operators; };
 		Client&			gClientIdx(int idx) { return _clients[idx]; };
-		std::string		getTime(void);
+		// std::string		getTime(void);
 
 		void			sName(std::string name) {_name = name; };
-		void			sTopic(std::string topic) {_topic = topic; _topicDate = getTime(); };
+		void			sTopic(std::string topic) {_topic = topic; };
 		void			sTopicName(std::string nick) {_topicName = nick; };
 		void			sPwd(std::string pwd) {_password = pwd; };
 		void			sLimit(int limit) { _limit = limit; };
 		// void			sLenClients(int len) {_lenClients = len; };
-
 
 		void			addMode(char mod);
 		void			addOperator(Client& client);

@@ -62,13 +62,37 @@ void	Channel::dltOperator(Client& client)
 	}
 }
 
-std::string	Channel::getTime(void)
-{
-	std::time_t currentTime = std::time(0);
-	std::tm*	localTime = std::localtime(&currentTime);
-	char buffer[100];
+// std::string	Channel::getTime(void)
+// {
+// 	std::time_t currentTime = std::time(0);
+// 	std::tm*	localTime = std::localtime(&currentTime);
+// 	char buffer[100];
 
-	std::strftime(buffer, sizeof(buffer), "%a %b %d %H:%M:%S %Y", localTime);
+// 	std::strftime(buffer, sizeof(buffer), "%a %b  %d %H:%M:%S %Y", localTime);
 	
-	return std::string(buffer); 
+// 	return std::string(buffer); 
+// }
+
+std::string		Channel::gModesActives(void) {
+	std::string mods = "+";
+	int limit=0;
+	int key=0;
+
+	for (MODES_VEC::iterator it = _modes.begin(); it != _modes.end(); ++it) {
+	
+		if (*it == 'k')
+			key = 1;
+		else if (*it == 'l')
+			limit = 1;
+		else
+			mods += *it; 
+	}
+	
+	if (limit == 1 && key == 1)
+		mods += "lk " + intToStr(_limit) + " " + _password;
+	else if (key == 1)
+		mods += "k " + _password;
+	else if (limit == 1)
+		mods += "l " + intToStr(_limit);
+	return mods;
 }

@@ -50,9 +50,9 @@ class Server: public Client
 		~Server(void) {};
 
 	// Getters / Setters
-		int			 getPort(void) {return(_port); };
-		int			 getServerSocket(void) { return(_serverSocket); };
-		Msg			 getMsg() {return(_msg); };
+		int			 	getPort(void) {return(_port); };
+		int			 	getServerSocket(void) { return(_serverSocket); };
+		Msg			 	getMsg() {return(_msg); };
 		void			setMsgIdx(int idx) {_msg.currentIndex = idx; };
 		void			setMsgCmd(std::string cmd) {_msg.command = cmd; };
 		void			setMsg() {_msg.currentChan = 0; _msg.prefixServer = ":server "; };
@@ -69,9 +69,9 @@ class Server: public Client
 
 	/* * * Command * * */
 	// MODE
-		int			 modesHandle(void);
-		void			errorModes(STR_VEC& split);
-		void			errorLenModes(STR_VEC& split);
+		int			 	modesHandle(void);
+		bool			errorModes(STR_VEC& split);
+		bool			errorLenModes(STR_VEC& split);
 		void			modesOptions(STR_VEC& split);
 		void			modeK(STR_VEC& split);
 		void			modeO(STR_VEC& split);
