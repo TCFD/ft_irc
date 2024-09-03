@@ -85,6 +85,7 @@ void	Server::handleClientCommand(int client_fd)
 		namesHandle(); }
 
 	else if (_msg.command.rfind("MODE", 0) == 0) {
+		std::cout << "DEBUGGAGE !!!!!!!\n";
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
 	else if (_msg.command.rfind("JOIN", 0) == 0)

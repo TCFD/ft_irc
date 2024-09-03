@@ -15,7 +15,8 @@ bool	Server::errorLenModes(STR_VEC& split)
 	else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
 		_msg.response = _msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
 	else
-		return false;
+	{
+		return false;}
 	return true;
 }
 
@@ -60,7 +61,6 @@ int	Server::modesHandle(void)
 	STR_VEC split = cutModeCommand();
 		
 	//Modes handling
-	
 	if (!errorModes(split) && _msg.response.find("MODE") == std::string::npos)
 	{
 		//Traitement de mode option

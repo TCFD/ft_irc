@@ -56,7 +56,6 @@ bool	foundModeInChan(char mod, CHAR_LIST modList)
 //probablement un probleme !!
 bool	isFourArgs(STR_VEC& split)
 {
-	std::cout << "IM HERE bis\n";
 	if (!split[2].empty() && (split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
 		return true;
 	return false;

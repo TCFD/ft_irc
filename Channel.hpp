@@ -53,11 +53,12 @@ class Channel {
 
 		void			addMode(char mod);
 		void			addOperator(Client& client);
+		void			addOperatorByName(std::string name, CLIENT_VEC cli);
 		void			addClient(Client& client);
 		void			addLenClient(void);
 		void			dltLenClient(void);
 		void			dltMode(char mod);
-		void			dltOperator(Client& client);
+		void			dltOperator(std::string name);
 
 		bool			isUserOnMe(std::string nick);
 };

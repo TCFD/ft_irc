@@ -51,13 +51,14 @@ void	Server::modeO(STR_VEC& split)
 {
 	if (isUserInChan(split[3], _channels[_msg.currentChan])) {
 		if (split[2].find("+") != std::string::npos) {
-			_channels[_msg.currentChan].addOperator(_clients[_msg.currentIndex]);
+			std::cout << GREEN "Name: " << _clients[_msg.currentIndex].getNickname() << NC << std::endl;
+			_channels[_msg.currentChan].addOperatorByName(split[3], _clients);
 			if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
 				_channels[_msg.currentChan].addMode('o'); }
 		}
 		else {
 			if (foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
-				_channels[_msg.currentChan].dltOperator(_clients[_msg.currentIndex]);
+				_channels[_msg.currentChan].dltOperator(split[3]);
 				_channels[_msg.currentChan].dltMode('o'); }
 		}
 	}
@@ -65,8 +66,9 @@ void	Server::modeO(STR_VEC& split)
 
 void			Server::modeI(STR_VEC& split) {(void)split;}
 
+
+
 void			Server::modeT(STR_VEC& split) {
-	// Channel	 *current = &_channels[_msg.currentChan];
 
 	std::cout << BLUE "split two is " << split[2] << NC << std::endl;
 	if (split[2].find("+") != std::string::npos) {

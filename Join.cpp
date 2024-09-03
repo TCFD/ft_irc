@@ -36,7 +36,7 @@ void	Server::sendToEveryone(std::string msg)
 int  Server::channelHandle(void)
 {
 	STR_VEC split = cutModeCommand();
-
+	int		opCodon = 0;
 	if (split.size() != 2 && split.size() != 3)
 		return (1);
 	// else if (limitUsers != 0 &&  ) // si la limite existe et quelle n'est pas depassee, le client peut join
@@ -52,6 +52,8 @@ int  Server::channelHandle(void)
 		temp.addClient(_clients[_msg.currentIndex]);
 		temp.addLenClient();
 		_channels.push_back(temp);
+		opCodon = 1;
+		// std::cout << GREEN "NAME == " << _msg.prefixNick << NC<< std::endl;
 	}
 	else { 
 		// (+i) Check if its an INVITE ONLY channel
@@ -77,7 +79,7 @@ int  Server::channelHandle(void)
 	// Loop to send the arrival of a new client to everyone in that channel
 	for (CLIENT_IT it=_channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it++)
 	{
-		_msg.response = ":" + _clients[_msg.currentIndex].getNickname() + " JOIN " + _channels[_msg.currentChan].gName() + "\r\n";
+		_msg.response += ":" + _clients[_msg.currentIndex].getNickname() + " JOIN " + _channels[_msg.currentChan].gName() + "\r\n";
 		sendResponse(it->getFd());
 	}
 	if (_channels[_msg.currentChan].gTopic() != "") {
@@ -98,7 +100,9 @@ int  Server::channelHandle(void)
 		_msg.response += _msg.prefixNick + " 353 " + _clients[_msg.currentIndex].getNickname() + " = " + chan->gName() + " :" + nicks + "\r\n";
 		_msg.response += _msg.prefixNick + " 366 " + _clients[_msg.currentIndex].getNickname() + " " + chan->gName() + " :End of /NAMES list\r\n";
 	}
-
+	if (opCodon == 1)
+		_msg.response += _msg.prefixNick + " MODE " + _channels[_msg.currentChan].gName() + " +o " + _clients[_msg.currentIndex].getNickname() + "\r\n";
+	// sendResponse(_clients[_msg.currentIndex].getFd());
 	// _msg.response = _msg.prefixNick + " NAMES " + _channels[_msg.currentChan].gName() + "\r\n";
 	// namesHandle();
 	std::cout << "MESSAGE SENT: " << _msg.response << std::endl;

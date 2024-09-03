@@ -17,6 +17,17 @@ void	Channel::addOperator(Client& client)
 	_operators.push_back(client);
 }
 
+void	Channel::addOperatorByName(std::string name, CLIENT_VEC cli)
+{
+	int len=0;
+	for (CLIENT_IT it = _clients.begin(); it != _clients.end(); it++, len++)
+	{
+		if (it->getNickname() == name)
+			break ;
+	}
+	_operators.push_back(cli[len]);
+}
+
 bool	Channel::isUserOnMe(std::string nick)
 {
 	CLIENT_IT it = _clients.begin();
@@ -53,11 +64,11 @@ void	Channel::dltMode(char mod)
 	}
 }
 
-void	Channel::dltOperator(Client& client)
+void	Channel::dltOperator(std::string name)
 {
 	for (CLIENT_IT it = _operators.begin(); it != _operators.end(); ++it)
 	{
-		if (it->getNickname() == client.getNickname()) {
+		if (it->getNickname() == name) {
 			_operators.erase(it); return ; }
 	}
 }
