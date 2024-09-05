@@ -10,7 +10,7 @@ void			Server::namesHandle(void)
 {
 	STR_VEC split = cutModeCommand();
 	// std::cout << "SPLIT: " << split[1] << "\nsuis je ici ?\n";
-	if (_msg.currentChan != -1)
+	if (_msg.currentChan != -1)  //A CHANGER avec inChan !!
 	{
 		if (split.size() <= 1 || (split.size() == 2 && split[1] == _channels[_msg.currentChan].gName()))
 		{

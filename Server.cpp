@@ -64,6 +64,7 @@ void	Server::handleClientCommand(int client_fd)
 	Client	*currentUser = &_clients[_msg.currentIndex];
 	_msg.prefixNick = ":" + currentUser->getNickname();
 
+	std::cout << RED "are we in a chan ? " << _msg.inChan << NC << std::endl;
 	// _msg.prefixNick = currentUser->getNickname();
 	if (_msg.command.rfind("CAP", 0) == 0)
 		_msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
@@ -183,3 +184,6 @@ void	Server::privmsg(std::string senderNick) {
 		sendResponse(targetUser);
 	}
 }
+
+void	Server::setInChan(bool type) {
+	_msg.inChan = type; }

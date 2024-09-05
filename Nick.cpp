@@ -63,6 +63,7 @@ void	Server::nick(int client_fd) {
 
 	// std::cout << "Verifying name :'" << name << "'\n\n";
 	// std::cout << RED "current Chan == " << _msg.currentCha<<  NC << std::endl;
+	
 	// if (!_msg.inChan)
 		// return ;
 	if (!currentUser->getRegistered())
@@ -70,6 +71,9 @@ void	Server::nick(int client_fd) {
 		currentUser->setNickname(name);
 		currentUser->setOldname(name);
 	}
+	// else if (_msg.inChan == true) { REVOIR BOOL MARCHE PAS
+		// _msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
+		// return ; }
 	if (name.empty()) {
 		_msg.response = printMessage("431", currentUser->getNickname(), " :No nickname given");}
 	else if (!isValidNick(name)) {
