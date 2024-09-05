@@ -62,6 +62,9 @@ void	Server::nick(int client_fd) {
 	currentUser->setOldname(currentUser->getNickname());
 
 	// std::cout << "Verifying name :'" << name << "'\n\n";
+	// std::cout << RED "current Chan == " << _msg.currentCha<<  NC << std::endl;
+	// if (!_msg.inChan)
+		// return ;
 	if (!currentUser->getRegistered())
 	{
 		currentUser->setNickname(name);

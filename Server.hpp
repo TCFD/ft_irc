@@ -55,7 +55,7 @@ class Server: public Client
 		Msg			 	getMsg() {return(_msg); };
 		void			setMsgIdx(int idx) {_msg.currentIndex = idx; };
 		void			setMsgCmd(std::string cmd) {_msg.command = cmd; };
-		void			setMsg() {_msg.currentChan = 0; _msg.prefixServer = ":server "; };
+		void			setMsg() {_msg.inChan = false; _msg.currentChan = 0; _msg.prefixServer = ":server "; };
 		void			setPoll(Polls& poll) {_poll = poll; };
 		
 		void			socketDataSet(void);

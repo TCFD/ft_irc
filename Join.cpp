@@ -52,6 +52,8 @@ int  Server::channelHandle(void)
 		temp.addClient(_clients[_msg.currentIndex]);
 		temp.addLenClient();
 		_channels.push_back(temp);
+		// _msg.response = "Vous êtes l'opérateur du canal " + _clients[_msg.currentIndex].getNickname();
+		// sendResponse(_clients[_msg.currentIndex].getFd());
 		opCodon = 1;
 		// std::cout << GREEN "NAME == " << _msg.prefixNick << NC<< std::endl;
 	}
@@ -73,6 +75,7 @@ int  Server::channelHandle(void)
 			currChan->addLenClient();
 		}
 	}
+	// _msg.inChan = true;
 	printChanInfos(_channels[_msg.currentChan], _msg.currentChan);
 	std::cout << RED "\nNEW CHANNEL ENTERING . . . " NC << std::endl;
 		
@@ -82,6 +85,8 @@ int  Server::channelHandle(void)
 		_msg.response += ":" + _clients[_msg.currentIndex].getNickname() + " JOIN " + _channels[_msg.currentChan].gName() + "\r\n";
 		sendResponse(it->getFd());
 	}
+	if (opCodon == 1)
+		_msg.response += _msg.prefixNick + " MODE " + _channels[_msg.currentChan].gName() + " +o " + _clients[_msg.currentIndex].getNickname() + "\r\n";
 	if (_channels[_msg.currentChan].gTopic() != "") {
 		_msg.response += _msg.prefixNick + " 332 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n";
 		sendResponse(_clients[_msg.currentIndex].getFd());
@@ -90,21 +95,19 @@ int  Server::channelHandle(void)
 		_msg.response += _msg.prefixNick + " 331 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :No topic set\r\n"; }
 	sendResponse(_clients[_msg.currentIndex].getFd());
 
-	{
-		Channel *chan = &_channels[_msg.currentChan];
-		std::string nicks = "";
-		for (CLIENT_IT it = chan->gClients().begin(); it != chan->gClients().end(); it++)
-		{
-			nicks += it->getNickname() + " ";
-		}
-		_msg.response += _msg.prefixNick + " 353 " + _clients[_msg.currentIndex].getNickname() + " = " + chan->gName() + " :" + nicks + "\r\n";
-		_msg.response += _msg.prefixNick + " 366 " + _clients[_msg.currentIndex].getNickname() + " " + chan->gName() + " :End of /NAMES list\r\n";
-	}
-	if (opCodon == 1)
-		_msg.response += _msg.prefixNick + " MODE " + _channels[_msg.currentChan].gName() + " +o " + _clients[_msg.currentIndex].getNickname() + "\r\n";
-	// sendResponse(_clients[_msg.currentIndex].getFd());
-	// _msg.response = _msg.prefixNick + " NAMES " + _channels[_msg.currentChan].gName() + "\r\n";
-	// namesHandle();
+	// {
+	// 	Channel *chan = &_channels[_msg.currentChan];
+	// 	std::string nicks;
+	// 	for (CLIENT_IT it = chan->gClients().begin(); it != chan->gClients().end(); ++it) {
+	// 		for (CLIENT_IT ite = chan->gOperators().begin(); ite != chan->gOperators().end(); ++ite) {
+	// 			if (it->getNickname() == ite->getNickname())
+	// 				nicks += "@"; }
+	// 		nicks += it->getNickname() + " "; }
+	// 	_msg.response += _msg.prefixNick + " 353 " + _clients[_msg.currentIndex].getNickname() + " = " + chan->gName() + " :" + nicks + "\r\n";
+	// 	_msg.response += _msg.prefixNick + " 366 " + _clients[_msg.currentIndex].getNickname() + " " + chan->gName() + " :End of /NAMES list\r\n";
+	// }
+	
+	namesHandle();
 	std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
 	// sendResponse(_clients[_msg.currentIndex].getFd());
 	return (0);
