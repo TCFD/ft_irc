@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../../Server.hpp"
 
 /*
 * Erreurs pour la commande NICK :

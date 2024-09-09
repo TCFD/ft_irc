@@ -1,5 +1,5 @@
-#include "Server.hpp"
-#include "Parsing/includes/Parsing.hpp"
+#include "../Server.hpp"
+#include "../Parsing/includes/Parsing.hpp"
 
 Polls::Polls(int fd)
 {
@@ -102,7 +102,7 @@ void Polls::mainPoll(Server& server)
 						server.clientDisconnected(bytes_received, server.getMsg().currentIndex); 
 						close(_pollFds[server.getMsg().currentIndex].fd); }
 					else {
-						std::cout << "buffer = " << buffer << std::endl;
+						//std::cout << "buffer = " << buffer << std::endl;
 						//? Ajouter les données reçues au buffer du client
 						_clientsBuffer[_pollFds[i].fd].append(buffer, bytes_received);
 						memset(buffer, 0, sizeof(buffer));

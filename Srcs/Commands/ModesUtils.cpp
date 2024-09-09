@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../../Server.hpp"
 
 // Check if the current channel exists in the database tabChan<CHANNEL>
 bool	Server::isChanExists(std::string target)

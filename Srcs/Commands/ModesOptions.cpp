@@ -1,5 +1,5 @@
-#include "Server.hpp"
-#include "Channel.hpp"
+#include "../../Server.hpp"
+#include "../../Channel.hpp"
 
 /* Use of function pointer
  * Access of each mode by their own functions
@@ -103,13 +103,14 @@ void			Server::modeL(STR_VEC& split)
 	}
 }
 
-void	Server::sendToChan(void)
+void	Server::sendToChan(std::string message)
 {
 	std::cout << BLUE "Current Chan Name: " << _channels[_msg.currentChan].gName() << NC << std::endl;
 	for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it ++)
 	{
-		if (it->getNickname() != _clients[_msg.currentIndex].getNickname()) {
-			_msg.response = "Message to " + it->getNickname() + ": Ce message est un test\r\n";
-			sendResponse(userInChanFd(it->getNickname(), _channels[_msg.currentChan].gClients()));}
+		std::cout << "Sending...\n";
+		//if (it->getNickname() != _clients[_msg.currentIndex].getNickname()) {
+			_msg.response = message;
+			sendResponse(userInChanFd(it->getNickname(), _channels[_msg.currentChan].gClients()));
 	}
 }

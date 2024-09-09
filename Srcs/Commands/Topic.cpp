@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../../Server.hpp"
 
 STR_VEC	Server::cutTopicCmd(void)
 {

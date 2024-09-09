@@ -41,6 +41,7 @@ class Server: public Client
 		Polls						   _poll;
 		void							invite();
 		void							privmsg(std::string senderNick);
+		void							kick(std::string senderNick);
 		std::vector<std::string>		splitCmd(std::string s);
 		bool							isUserOnChannel(std::string nick, std::string targetChannel);
 		CHAN_IT							DoesChanExist (std::string target);
@@ -85,8 +86,8 @@ class Server: public Client
 		void			setNick(Client* currentUser, std::string name);
 
 	// JOIN
-		int			 channelHandle(void);
-		void			sendToChan(void);
+		int			 	channelHandle(void);
+		void			sendToChan(std::string message);
 		bool			isChanExists(std::string target);
 		void			sendToEveryone(std::string msg);
 

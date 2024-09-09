@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../Server.hpp"
 
 // Print all the names from the current channel
 // Si on est dans le chan: Max 1 argument ou 2 si le 2e est le nom du chan

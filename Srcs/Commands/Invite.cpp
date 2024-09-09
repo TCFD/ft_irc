@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../../Server.hpp"
 
 CHAN_IT Server::DoesChanExist (std::string target) {
 	CHAN_IT it = _channels.begin();
@@ -59,4 +59,4 @@ void	Server::invite() {
 
 	}
 	_msg.response = printMessage("341", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2]);
-}
+}	
