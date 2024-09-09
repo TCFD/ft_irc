@@ -18,8 +18,8 @@ class Channel {
 		std::string _name;
 		std::string _topic;
 		std::string _password;
-		int		 _limit;
-		int		 _lenClients;
+		int			_limit;
+		int			_lenClients;
 		CLIENT_VEC  _clients;
 		CLIENT_VEC  _operators;
 		MODES_VEC   _modes;
@@ -54,4 +54,4 @@ class Channel {
 		void			dltOperator(Client& client);
 
 		bool			isUserOnMe(std::string nick);
-};
+};	
