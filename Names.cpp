@@ -10,18 +10,22 @@ void			Server::namesHandle(void)
 {
 	STR_VEC split = cutModeCommand();
 	// std::cout << "SPLIT: " << split[1] << "\nsuis je ici ?\n";
-	if (_msg.currentChan != -1)
+	if (_msg.currentChan != -1)  //A CHANGER avec inChan !!
 	{
 		if (split.size() <= 1 || (split.size() == 2 && split[1] == _channels[_msg.currentChan].gName()))
 		{
 			Channel *chan = &_channels[_msg.currentChan];
 			std::string nicks = "";
-			for (CLIENT_IT it = chan->gClients().begin(); it != chan->gClients().end(); it++)
-			{
-				std::cout << "et ici ?\n";
-				nicks += it->getNickname() + " ";
-			}
-			_msg.response += ":server 353 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + nicks + "\r\n";
+			for (CLIENT_IT it = chan->gClients().begin(); it != chan->gClients().end(); it++){
+			for (CLIENT_IT ite = chan->gOperators().begin(); ite != chan->gOperators().end(); ++ite) {
+				if (it->getNickname() == ite->getNickname())
+					nicks += "@"; }
+			nicks += it->getNickname() + " "; }
+			_msg.response = _msg.prefixNick + " 353 " + _clients[_msg.currentIndex].getNickname() + " = " + chan->gName() + " :" + nicks + "\r\n";
+			_msg.response += _msg.prefixNick + " 366 " + _clients[_msg.currentIndex].getNickname() + " " + chan->gName() + " :End of /NAMES list\r\n";
+			// sendToEveryone(_msg.response);
+			// _msg.response += ":server 353 " + _clients[_msg.currentIndex].getNickname() + " " + _channels[_msg.currentChan].gName() + " :" + nicks + "\r\n";
 		}
+
 	}
 }

@@ -12,7 +12,7 @@ class Client
 		std::string _hostname;
 		std::string _id;
 		bool		_registered;
-		int		 _fd;
+		int		 	_fd;
 
 	public:
 		Client() {};

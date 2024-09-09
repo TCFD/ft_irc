@@ -17,6 +17,17 @@ void	Channel::addOperator(Client& client)
 	_operators.push_back(client);
 }
 
+void	Channel::addOperatorByName(std::string name, CLIENT_VEC cli)
+{
+	int len=0;
+	for (CLIENT_IT it = _clients.begin(); it != _clients.end(); it++, len++)
+	{
+		if (it->getNickname() == name)
+			break ;
+	}
+	_operators.push_back(cli[len]);
+}
+
 bool	Channel::isUserOnMe(std::string nick)
 {
 	CLIENT_IT it = _clients.begin();
@@ -53,11 +64,46 @@ void	Channel::dltMode(char mod)
 	}
 }
 
-void	Channel::dltOperator(Client& client)
+void	Channel::dltOperator(std::string name)
 {
 	for (CLIENT_IT it = _operators.begin(); it != _operators.end(); ++it)
 	{
-		if (it->getNickname() == client.getNickname()) {
+		if (it->getNickname() == name) {
 			_operators.erase(it); return ; }
 	}
+}
+
+// std::string	Channel::getTime(void)
+// {
+// 	std::time_t currentTime = std::time(0);
+// 	std::tm*	localTime = std::localtime(&currentTime);
+// 	char buffer[100];
+
+// 	std::strftime(buffer, sizeof(buffer), "%a %b  %d %H:%M:%S %Y", localTime);
+	
+// 	return std::string(buffer); 
+// }
+
+std::string		Channel::gModesActives(void) {
+	std::string mods = "+";
+	int limit=0;
+	int key=0;
+
+	for (MODES_VEC::iterator it = _modes.begin(); it != _modes.end(); ++it) {
+	
+		if (*it == 'k')
+			key = 1;
+		else if (*it == 'l')
+			limit = 1;
+		else
+			mods += *it; 
+	}
+	
+	if (limit == 1 && key == 1)
+		mods += "lk " + intToStr(_limit) + " " + _password;
+	else if (key == 1)
+		mods += "k " + _password;
+	else if (limit == 1)
+		mods += "l " + intToStr(_limit);
+	return mods;
 }

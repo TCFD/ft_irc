@@ -15,6 +15,7 @@
 # include <map>
 # include <netinet/in.h>
 # include <poll.h>
+# include <sstream>
 # include <string>
 # include <sys/types.h>
 # include <sys/socket.h>
@@ -60,7 +61,8 @@ class Channel;
 
 struct Msg {
 	int			currentIndex;
-	int		 currentChan;
+	int		 	currentChan;
+	bool		inChan;
 	std::string response;
 	std::string command;
 	std::string prefixServer;
@@ -70,31 +72,23 @@ struct Msg {
 //Useful to commands
 std::string	printMessage(std::string num, std::string nickname, std::string message);
 
-bool	isUserExists(std::string target, CLIENT_VEC clients);
-bool	isUserInChan(std::string target, Channel chan);
-bool	foundModeInChan(char mod, CHAR_LIST modList);
-bool	isUserAnOperator(std::string target, Channel chan);
+bool			isUserExists(std::string target, CLIENT_VEC clients);
+bool			isUserInChan(std::string target, Channel chan);
+bool			foundModeInChan(char mod, CHAR_LIST modList);
+bool			isUserAnOperator(std::string target, Channel chan);
 
-int	 userInChanFd(std::string nick, CLIENT_VEC clients);
-bool	isFourArgs(STR_VEC& split);
+int	 			userInChanFd(std::string nick, CLIENT_VEC clients);
+bool			isFourArgs(STR_VEC& split);
 
-bool	isValidNick(const std::string& nick);
-bool	isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients);
+bool			isValidNick(const std::string& nick);
+bool			isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients);
+
+std::string		intToStr(int nb);
+std::string		charToStr(char nb);
+std::string		timeToStr(time_t nb);
 
 // DEBUG
-void	printListUser(CLIENT_VEC&   clients);
+void			printListUser(CLIENT_VEC&   clients);
 
-// TEMPLATES
-/* Make a message to print channel modes, or not */
-template <typename V>
-std::string	printModes(V& modes)
-{
-	std::string currentModes="+";
-	for (typename V::iterator it=modes.begin(); it != modes.end(); ++it) {
-		currentModes += *it; }
-	if (currentModes.length() == 1)
-		currentModes = ":No modes are set";
-	return (currentModes);
-};
 
 #endif

@@ -12,6 +12,7 @@ bool	Server::isChanExists(std::string target)
 		{
 			if (target == it->gName()) {
 				_msg.currentChan = len;
+				// _msg.inChan = true;
 				return true; }
 		}
 	}
@@ -56,7 +57,7 @@ bool	foundModeInChan(char mod, CHAR_LIST modList)
 //probablement un probleme !!
 bool	isFourArgs(STR_VEC& split)
 {
-	if ((split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
+	if (!split[2].empty() && (split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
 		return true;
 	return false;
 }
@@ -100,4 +101,25 @@ bool	isUserAnOperator(std::string target, Channel chan)
 	}
 	std::cout << "...him ?\n";
 	return false;
+}
+
+std::string		intToStr(int nb)
+{
+	std::ostringstream convert;
+	convert << nb;
+	return convert.str();
+}
+
+std::string		charToStr(char nb)
+{
+	std::ostringstream convert;
+	convert << nb;
+	return convert.str();
+}
+
+std::string		timeToStr(time_t nb)
+{
+	std::ostringstream convert;
+	convert << nb;
+	return convert.str();
 }
