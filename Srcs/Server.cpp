@@ -88,7 +88,7 @@ void	Server::handleClientCommand(int client_fd)
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
 	else if (_msg.command.rfind("JOIN", 0) == 0)
-	{	channelHandle(); }
+	{	join(currentUser->getNickname()); }
 	
 	else if (_msg.command.rfind("TOPIC", 0) == 0) {
 		topicHandle(); }
@@ -109,7 +109,7 @@ void	Server::handleClientCommand(int client_fd)
 	}
 	else if (_msg.command.rfind("PONG", 0) == 0) {}
 	else if (_msg.command.rfind("INVITE", 0) == 0) {
-		invite();
+		invite(currentUser->getNickname());
 	}
 	else if (_msg.command.rfind("PRIVMSG", 0) == 0) {
 		privmsg(currentUser->getNickname());

@@ -56,17 +56,22 @@ void	Server::modeO(STR_VEC& split)
 				_channels[_msg.currentChan].addMode('o'); }
 		}
 		else {
-			if (foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
-				_channels[_msg.currentChan].dltOperator(split[3]);
-				_channels[_msg.currentChan].dltMode('o'); }
+			_channels[_msg.currentChan].dltOperator(split[3]);
+			_channels[_msg.currentChan].dltMode('o');
 		}
 	}
 }
+// Just add 'i' to the modList
+void			Server::modeI(STR_VEC& split) {
+	if (split[2].find("+") != std::string::npos) {
+		if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
+			_channels[_msg.currentChan].addMode('i'); }
+	}
+	else {
+		_channels[_msg.currentChan].dltMode('i'); }
+}
 
-void			Server::modeI(STR_VEC& split) {(void)split;}
-
-
-
+// Just add 't' to the modList
 void			Server::modeT(STR_VEC& split) {
 
 	if (split[2].find("+") != std::string::npos) {
@@ -74,9 +79,7 @@ void			Server::modeT(STR_VEC& split) {
 			_channels[_msg.currentChan].addMode('t'); }
 	}
 	else {
-		if (foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
-			_channels[_msg.currentChan].dltMode('t'); }
-	} 
+		_channels[_msg.currentChan].dltMode('t'); } 
 }
 
 /* Handle L mode

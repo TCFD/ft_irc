@@ -25,18 +25,6 @@ void	Channel::addOperatorByName(std::string name, CLIENT_VEC cli)
 	_operators.push_back(cli[len]);
 }
 
-bool	Channel::isUserOnMe(std::string nick)
-{
-	CLIENT_IT it = _clients.begin();
-
-	for (; it != _clients.end(); it++) {
-		if (it->getNickname() == nick) {
-			return true;
-		}
-	}
-	return false;
-}
-
 void	Channel::addClient(Client& client)
 {
 	_clients.push_back(client);
@@ -67,6 +55,26 @@ void	Channel::dltOperator(std::string name)
 	{
 		if (it->getNickname() == name) {
 			_operators.erase(it); return ; }
+	}
+}
+
+void	Channel::dltClient(std::string name)
+{
+	for (CLIENT_IT it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if (it->getNickname() == name) {
+			_clients.erase(it); return; }
+	}
+}
+
+void	Channel::addInvite(Client& client) {
+	_invite.push_back(client);
+}
+
+void	Channel::dltInvite(std::string name) {
+	for (CLIENT_IT it = _invite.begin(); it != _invite.end(); ++it) {
+		if (it->getNickname() == name) {
+			_invite.erase(it); return ; }
 	}
 }
 
@@ -103,4 +111,26 @@ std::string		Channel::gModesActives(void) {
 	else if (limit == 1)
 		mods += "l " + intToStr(_limit);
 	return mods;
+}
+
+//**** Utils in chan ****//
+bool	Channel::isUserOnMe(std::string nick)
+{
+	CLIENT_IT it = _clients.begin();
+
+	for (; it != _clients.end(); it++) {
+		if (it->getNickname() == nick) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool	Channel::isUserInvite(std::string name)
+{
+	for (CLIENT_IT it = _invite.begin(); it != _invite.end(); ++it) {
+		if (it->getNickname() == name)
+			return true;
+	}
+	return false;
 }
