@@ -11,10 +11,18 @@
 
 bool	Parsing::_attribution_info_channel(std::string& CMDSplit_value)
 {
-	if (CMDSplit_value[0] == '#')
+	if (CMDSplit_value.size() >= 2)
 	{
-		_infos["channel"] = CMDSplit_value;
-		return (true);
+		if (CMDSplit_value[0] == '#')
+		{
+			if ((CMDSplit_value[1] >= 'A' && CMDSplit_value[1] <= 'Z') ||
+				(CMDSplit_value[1] >= 'a' && CMDSplit_value[1] <= 'z') ||
+				(CMDSplit_value[1] >= '0' && CMDSplit_value[1] <= '9'))
+			{
+				_infos["channel"] = CMDSplit_value;
+				return (true);
+			}
+		}
 	}
 	if (!_duplicates_found)
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <channel> form.");

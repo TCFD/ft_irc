@@ -80,54 +80,67 @@ Polls::Polls(int fd)
 
 void Polls::mainPoll(Server& server)
 {	
-    while (true) {
+    while (true)
+	{
         _pollCount = poll(_pollFds.data(), _pollFds.size(), -1);
 
         if (_pollCount == -1) throw StrerrorException("Poll Error");
 
 		server.setMsg();
-        for (size_t i = 0; i < _pollFds.size(); i++){
+        for (size_t i = 0; i < _pollFds.size(); i++)
+		{
             if (_pollFds[i].revents & POLLIN) 
 			{
 				// std::cout << RED "CLIENT FD IS " << _pollFds[i].fd << NC << std::endl;
                 if (_pollFds[i].fd == server.getServerSocket())	//? Si quelqu'un essaie de se connecter
-                    server.createClient(*this);
-    					// _clientsBuffer[idx] = "";}
-				else {
+                {
+					server.createClient(*this);
+					std::cout << "NEW INCOMING CONNECTION : " << _pollFds[i].fd << std::endl;
+				}
+						// _clientsBuffer[idx] = "";}
+				else
+				{
 					char buffer[1024];
 					memset(buffer, 0, sizeof(buffer));
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
 
-					if (bytes_received <= 0) {
+					if (bytes_received <= 0)
+					{
 						server.clientDisconnected(bytes_received, server.getMsg().currentIndex); 
-						close(_pollFds[server.getMsg().currentIndex].fd); }
-					else {
+						close(_pollFds[server.getMsg().currentIndex].fd);
+					}
+					else
+					{
 						//std::cout << "buffer = " << buffer << std::endl;
-						//? Ajouter les données reçues au buffer du client
+
+					//? Ajouter les données reçues au buffer du client
 						_clientsBuffer[_pollFds[i].fd].append(buffer, bytes_received);
 						memset(buffer, 0, sizeof(buffer));
-						//? Traiter chaque commande complète (terminée par "\r\n")
+
+					//? Traiter chaque commande complète (terminée par "\r\n")
+					
 						size_t pos;
-						while ((pos = _clientsBuffer[_pollFds[i].fd].find("\n")) != std::string::npos) {
+						while ((pos = _clientsBuffer[_pollFds[i].fd].find("\n")) != std::string::npos)
+						{
 							if (_clientsBuffer[_pollFds[i].fd].find("\r") != std::string::npos)
 								pos--;
 							server.setMsgCmd(_clientsBuffer[_pollFds[i].fd].substr(0, pos));
 							_clientsBuffer[_pollFds[i].fd].erase(0, pos + 2);
-							// Parsing	parsingtools;
+							Parsing	parsingtools;
 
-							// try
-							// {
-							// 	std::string concat = "/" + _msg.command;
-							// 	if (concat == "/HELP")
-							// 		parsingtools.parsing_help();
-							// 	parsingtools.cmd_treat_test(concat);
-							// }
-							// catch (std::exception &e)
-							// {
-							// 	std::cout << e.what() << std::endl;
-							// 	parsingtools.err_write_correct_form("");
-							// }
-							// std::cout << "command client buffer: " << _clientsBuffer[_pollFds[i].fd] << std::endl;
+							try
+							{
+								std::string concat = "/" + server.getMsg().command;
+								if (concat == "/HELP")
+									parsingtools.parsing_help();
+								parsingtools.cmd_treat_test(concat);
+							}
+							catch (std::exception &e)
+							{
+								std::cout << e.what() << std::endl;
+								parsingtools.err_write_correct_form("");
+							}
+							std::cout << "command client buffer: " << _clientsBuffer[_pollFds[i].fd] << std::endl;
 							std::cout << "Received command: " << server.getMsg().command << std::endl;
 							server.setMsgIdx(i - 1);
 							server.handleClientCommand(_pollFds[i].fd);

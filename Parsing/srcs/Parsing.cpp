@@ -203,13 +203,15 @@ void	Parsing::cmd_treat_test(std::string brut_cmd)
 				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");		
 		}
 
-		std::cout << "Command  : "  << parsing_get_command()  << std::endl;
-		std::cout << "Channel  : "  << parsing_get_channel()  << std::endl;
-		std::cout << "Username : "  << parsing_get_username() << std::endl;
-		std::cout << "Msg      : "  << parsing_get_message()  << std::endl;
-		std::cout << "Option   : "  << parsing_get_option()   << std::endl;
-		std::cout << "Password : "  << parsing_get_password() << std::endl;
-
+		std::cout << "\t | Command  : "  << parsing_get_command()  << std::endl;
+		std::cout << "\t | Channel  : "  << parsing_get_channel()  << std::endl;
+		std::cout << "\t | Username : "  << parsing_get_username() << std::endl;
+		std::cout << "\t | Msg      : "  << parsing_get_message()  << std::endl;
+		std::cout << "\t | Option   : "  << parsing_get_option()   << std::endl;
+		std::cout << "\t | Password : "  << parsing_get_password() << std::endl;
+		
+		std::cout << "\n" << std::endl;
+		
 		//::::::::::::::::::://
 
 		return ;
