@@ -26,7 +26,7 @@ class Client
 		std::string getHostname(void) { return _hostname; };
 		std::string getId(void) { return _id; };
 		bool		getRegistered(void) {return _registered; };
-		int		 getFd(void) { return _fd; };
+		int			getFd(void) { return _fd; };
 
 		void		setId(std::string identity) { _id = identity; };
 		void		setNickname(std::string name) { _nickname = name; };

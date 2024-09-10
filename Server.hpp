@@ -31,14 +31,14 @@ class Polls
 class Server: public Client
 {
 	private:
-		int							 _port;
-		int							 _serverSocket;
-		struct sockaddr_in			  _serverAddr;
-		int							 _limitUsers;
-		Msg							 _msg;
-		CLIENT_VEC					  _clients;
+		int								_port;
+		int								_serverSocket;
+		struct sockaddr_in				_serverAddr;
+		int								_limitUsers;
+		Msg								_msg;
+		CLIENT_VEC						_clients;
 		CHAN_VEC						_channels;
-		Polls						   _poll;
+		Polls							_poll;
 		void							invite();
 		void							privmsg(std::string senderNick);
 		void							kick(std::string senderNick);

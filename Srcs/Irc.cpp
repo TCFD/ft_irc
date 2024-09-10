@@ -99,8 +99,11 @@ void Polls::mainPoll(Server& server)
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
 
 					if (bytes_received <= 0) {
+						std::cout << "Deleting elmt " << server.getMsg().currentIndex << "\n";
 						server.clientDisconnected(bytes_received, server.getMsg().currentIndex); 
-						close(_pollFds[server.getMsg().currentIndex].fd); }
+						_pollFds.erase(_pollFds.begin() + i);
+						//close(_pollFds[server.getMsg().currentIndex].fd); 
+						}
 					else {
 						//std::cout << "buffer = " << buffer << std::endl;
 						//? Ajouter les données reçues au buffer du client

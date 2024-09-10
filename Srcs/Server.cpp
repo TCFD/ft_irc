@@ -49,10 +49,12 @@ int	Server::createClient(Polls &poll)
 
 // Pas fini: gros travaux !!!
 void Server::clientDisconnected(int bytes_received, int id) {
-	if (bytes_received == 0)
+	(void)(bytes_received);
+	(void)(id);
+	//if (bytes_received == 0)
 		std::cout << "Client disconnected" << std::endl;
-	else
-		perror("recv");
+	//else
+	//	perror("recv");
 	_clients.erase(_clients.begin() + id); //? clear user's buffer
 	//// _pollFds[currentIndex].fd = -1;
 	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
@@ -99,7 +101,9 @@ void	Server::handleClientCommand(int client_fd)
 	}
 
 	else if (_msg.command.rfind("QUIT", 0) == 0) {
-		_msg.currentChan = 0; _msg.inChan = false; }
+		_msg.currentChan = 0;
+		_msg.inChan = false;
+		}
 	else if (_msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);
