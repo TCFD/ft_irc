@@ -52,7 +52,6 @@ int  Server::join(std::string senderNick)
 		temp.addClient(_clients[_msg.currentIndex]);
 		temp.addLenClient();
 		_channels.push_back(temp);
-		setInChan(true);
 		opCodon = 1;
 	}
 	else { 
@@ -75,7 +74,6 @@ int  Server::join(std::string senderNick)
 			currChan->addLenClient();
 		}
 	}
-	// setInChan(true); REVOIR BOOL MARCHE PAS WESH
 	printChanInfos(_channels[_msg.currentChan], _msg.currentChan);
 	std::cout << RED "\nNEW CHANNEL ENTERING . . . " NC << std::endl;
 		

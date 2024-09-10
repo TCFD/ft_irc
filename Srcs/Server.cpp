@@ -90,7 +90,7 @@ void	Server::handleClientCommand(int client_fd)
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
 	else if (_msg.command.rfind("JOIN", 0) == 0)
-	{	join(currentUser->getNickname()); setInChan(true); }
+	{	join(currentUser->getNickname());}
 	
 	else if (_msg.command.rfind("TOPIC", 0) == 0) {
 		topicHandle(); }
@@ -101,7 +101,6 @@ void	Server::handleClientCommand(int client_fd)
 
 	else if (_msg.command.rfind("QUIT", 0) == 0) {
 		_msg.currentChan = 0;
-		_msg.inChan = false;
 		}
 	else if (_msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
@@ -150,5 +149,5 @@ STR_VEC Server::splitCmd(std::string s) {
 	return vec;
 }
 
-void	Server::setInChan(bool type) {
-	_msg.inChan = type; }
+// void	Server::setInChan(bool type) {
+// 	_msg.inChan = type; }

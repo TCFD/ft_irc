@@ -12,7 +12,6 @@ bool	Server::isChanExists(std::string target)
 		{
 			if (target == it->gName()) {
 				_msg.currentChan = len;
-				// _msg.inChan = true;
 				return true; }
 		}
 	}
