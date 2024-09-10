@@ -51,7 +51,6 @@ void	Server::modeO(STR_VEC& split)
 {
 	if (isUserInChan(split[3], _channels[_msg.currentChan])) {
 		if (split[2].find("+") != std::string::npos) {
-			std::cout << GREEN "Name: " << _clients[_msg.currentIndex].getNickname() << NC << std::endl;
 			_channels[_msg.currentChan].addOperatorByName(split[3], _clients);
 			if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
 				_channels[_msg.currentChan].addMode('o'); }
@@ -70,13 +69,11 @@ void			Server::modeI(STR_VEC& split) {(void)split;}
 
 void			Server::modeT(STR_VEC& split) {
 
-	std::cout << BLUE "split two is " << split[2] << NC << std::endl;
 	if (split[2].find("+") != std::string::npos) {
 		if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].addMode('t'); }
 	}
 	else {
-		std::cout << "is it working ??\n";
 		if (foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].dltMode('t'); }
 	} 
@@ -88,9 +85,7 @@ void			Server::modeT(STR_VEC& split) {
  * If -l --> remove the mode and the limit */
 void			Server::modeL(STR_VEC& split)
 {
-	std::cout << "split == " << split[0] << " | " << split[1] << " | " << split[2] << " | " << split[3] << std::endl;
 	if (split[2].find("+") != std::string::npos) {
-		std::cout << "new limit is " << atoi(split[3].c_str()) << std::endl;
 		_channels[_msg.currentChan].sLimit(atoi(split[3].c_str()));
 		if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].addMode('l'); }
@@ -105,10 +100,8 @@ void			Server::modeL(STR_VEC& split)
 
 void	Server::sendToChan(std::string message)
 {
-	std::cout << BLUE "Current Chan Name: " << _channels[_msg.currentChan].gName() << NC << std::endl;
 	for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it ++)
 	{
-		std::cout << "Sending...\n";
 		//if (it->getNickname() != _clients[_msg.currentIndex].getNickname()) {
 			_msg.response = message;
 			sendResponse(userInChanFd(it->getNickname(), _channels[_msg.currentChan].gClients()));

@@ -76,7 +76,6 @@ int  Server::channelHandle(void)
 		}
 	}
 	// setInChan(true); REVOIR BOOL MARCHE PAS WESH
-	std::cout << "ET LAA??? " << _msg.inChan << std::endl;
 	printChanInfos(_channels[_msg.currentChan], _msg.currentChan);
 	std::cout << RED "\nNEW CHANNEL ENTERING . . . " NC << std::endl;
 		

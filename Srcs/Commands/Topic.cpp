@@ -10,13 +10,11 @@ STR_VEC	Server::cutTopicCmd(void)
 		{
 			split.push_back(_msg.command.substr(1));
 			_msg.command.erase(0, (int)split[j].size() +1);
-			std::cout << "split: " << split[j] << std::endl;
 			break ; }
 		else
 		{
 			split.push_back(_msg.command.substr(0, _msg.command.find(delim)));
-			_msg.command.erase(0, (int)split[j].size() +1); 
-			std::cout << "split: " << split[j] << std::endl; }
+			_msg.command.erase(0, (int)split[j].size() +1); }
 	}
 	return split;
 }
@@ -47,7 +45,6 @@ void	Server::topicHandle(void)
 	{
 		current->sTopic(split[2]);
 		current->sTopicName(_clients[_msg.currentIndex].getNickname());
-		std::cout << GREEN "TOPIC is now set: " << current->gTopic() << NC << std::endl;
 		sendToEveryone(_msg.prefixNick + " TOPIC " + current->gName() + " " + current->gTopic() + "\r\n");
 	}
 }

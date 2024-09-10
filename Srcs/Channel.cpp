@@ -6,11 +6,8 @@ Channel::Channel(std::string name): _name(name)
 	_limit = 0;
 }
 
-void	Channel::addMode(char mod)
-{
-	_modes.push_back(mod);
-	std::cout << GREEN << _modes.back()  << NC << std::endl; 
-}
+void	Channel::addMode(char mod) {
+	_modes.push_back(mod); }
 
 void	Channel::addOperator(Client& client)
 {

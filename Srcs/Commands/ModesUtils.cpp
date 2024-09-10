@@ -43,11 +43,9 @@ bool	isUserInChan(std::string target, Channel chan)
 bool	foundModeInChan(char mod, CHAR_LIST modList)
 {
 	for (CHAR_LIST::iterator it=modList.begin(); it != modList.end(); ++it) {
-		std::cout << "mod == " << *it << std::endl;
 		if (*it == mod)
 			return true;
 	}
-	std::cout << "him or\n";
 	return false;
 }
 
@@ -99,7 +97,6 @@ bool	isUserAnOperator(std::string target, Channel chan)
 		if (target == it->getNickname())
 			return true;
 	}
-	std::cout << "...him ?\n";
 	return false;
 }
 
