@@ -21,13 +21,14 @@ void	Server::privmsg(std::string senderNick) {
 		}
 		CLIENT_VEC clients = targetChan->gClients();
 		CLIENT_IT it = clients.begin();
-		_msg.response = ":" + senderNick + "!~" + senderNick + "@host PRIVMSG " + destinataire + " :" + msg.substr(1) + "\r\n";
 		for (; it < clients.end(); it++) {
+			_msg.response = ":" + senderNick + "!~" + senderNick + "@host PRIVMSG " + destinataire + " :" + msg.substr(1) + "\r\n";
 			if (it->getNickname() != senderNick) {
-				std::cout << "Sending \'" << _msg.response << "\' to " << it->getNickname() << std::endl;
+				std::cout << "Sending msg to " << it->getNickname() << std::endl;
 				sendResponse(it->getFd());
 			}
 		}
+		_msg.response = "";
 		return ;
 	}
 	else { //* On envoie vers un user

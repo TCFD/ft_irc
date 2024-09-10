@@ -128,6 +128,7 @@ void	Server::handleClientCommand(int client_fd)
 
 	sendResponse(client_fd);
 	_msg.response.erase();
+	std::cout << "----------------------\n";
 }
 
 void Server::sendResponse(int client_fd) {

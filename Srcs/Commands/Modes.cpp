@@ -77,7 +77,7 @@ int	Server::modesHandle(void)
 		if (isChanExists(split[1]))
 			sendToEveryone(_msg.response);
 	}
-	std::cout << "Response MODE: " << _msg.response << std::endl;
+	std::cout << "Response MODE: " << _msg.response;
 
 	split.clear();
 	return(0);
