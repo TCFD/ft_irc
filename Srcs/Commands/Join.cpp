@@ -52,13 +52,10 @@ int  Server::join(std::string senderNick)
 		temp.addClient(_clients[_msg.currentIndex]);
 		temp.addLenClient();
 		_channels.push_back(temp);
-		// _msg.response = "Vous êtes l'opérateur du canal " + senderNick;
-		// sendResponse(_clients[_msg.currentIndex].getFd());
+		setInChan(true);
 		opCodon = 1;
-		// std::cout << GREEN "NAME == " << _msg.prefixNick << NC<< std::endl;
 	}
 	else { 
-		// (+i) Check if its an INVITE ONLY channel
 		Channel	*currChan = &_channels[_msg.currentChan];
 
 		if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit()) {

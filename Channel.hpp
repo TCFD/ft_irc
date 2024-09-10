@@ -18,7 +18,6 @@ class Channel {
 		std::string _name;
 		std::string _topic;
 		std::string _topicName;
-		// std::string	_topicDate;
 		std::string _password;
 		int			_limit;
 		int			_lenClients;

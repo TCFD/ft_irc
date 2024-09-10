@@ -32,10 +32,11 @@ bool	isUserExists(std::string target, CLIENT_VEC clients)
 
 // Check if the target is already in the channel or not
 bool	isUserInChan(std::string target, Channel chan)
-{
-	for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it)
-	if (it->getNickname() == target)
-		return true;
+{	
+	for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
+		if (it->getNickname() == target)
+			return true;
+	}
 	return false;
 }
 

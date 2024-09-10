@@ -88,7 +88,7 @@ void	Server::handleClientCommand(int client_fd)
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
 	else if (_msg.command.rfind("JOIN", 0) == 0)
-	{	join(currentUser->getNickname()); }
+	{	join(currentUser->getNickname()); setInChan(true); }
 	
 	else if (_msg.command.rfind("TOPIC", 0) == 0) {
 		topicHandle(); }
@@ -98,7 +98,7 @@ void	Server::handleClientCommand(int client_fd)
 	}
 
 	else if (_msg.command.rfind("QUIT", 0) == 0) {
-		_msg.currentChan = 0; _msg.inChan = false; }
+		_msg.currentChan = 0; setInChan(false); }
 	else if (_msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);
@@ -120,9 +120,8 @@ void	Server::handleClientCommand(int client_fd)
 	else {
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
-
 	sendResponse(client_fd);
-	_msg.response.erase();
+	// std::cout << RED "IN CHAN VAUT : " << _msg.inChan << NC << std::endl;
 }
 
 void Server::sendResponse(int client_fd) {
