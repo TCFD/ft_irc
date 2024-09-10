@@ -125,7 +125,6 @@ void	Server::handleClientCommand(int client_fd)
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
 	sendResponse(client_fd);
-	_msg.response.erase();
 	std::cout << "----------------------\n";
 }
 
