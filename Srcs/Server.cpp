@@ -61,6 +61,7 @@ void Server::clientDisconnected(int bytes_received, int id) {
 	//// Jpense que c'est plus simple que de decaller tous les indexs
 }
 
+
 void	Server::handleClientCommand(int client_fd)
 {
 	Client	*currentUser = &_clients[_msg.currentIndex];
@@ -74,7 +75,8 @@ void	Server::handleClientCommand(int client_fd)
 		nick(client_fd);
 	}
 
-	else if (_msg.command.rfind("USER", 0) == 0) {
+	else if (_msg.command.rfind("USER", 0) == 0)
+	{
 		currentUser->setUsername(_msg.command.substr(5, _msg.command.find(" ", 5) - 5));
 		currentUser->setRealname(_msg.command.substr(_msg.command.find(":")));
 		if (currentUser->getNickname() != "") {
@@ -83,10 +85,13 @@ void	Server::handleClientCommand(int client_fd)
 			_msg.response = printMessage("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
 		}
 	}
-	else if (_msg.command.rfind("NAMES", 0) == 0) {
-		namesHandle(); }
+	else if (_msg.command.rfind("NAMES", 0) == 0)
+	{
+		namesHandle();
+	}
 
-	else if (_msg.command.rfind("MODE", 0) == 0) {
+	else if (_msg.command.rfind("MODE", 0) == 0)
+	{
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
 	else if (_msg.command.rfind("JOIN", 0) == 0)
@@ -115,13 +120,16 @@ void	Server::handleClientCommand(int client_fd)
 	else if (_msg.command.rfind("INVITE", 0) == 0) {
 		invite(currentUser->getNickname());
 	}
-	else if (_msg.command.rfind("PRIVMSG", 0) == 0) {
+	else if (_msg.command.rfind("PRIVMSG", 0) == 0)
+	{
 		privmsg(currentUser->getNickname());
 	}
-	else if (_msg.command.rfind("KICK", 0) == 0) {
+	else if (_msg.command.rfind("KICK", 0) == 0)
+	{
 		kick(currentUser->getNickname());
 	}
-	else {
+	else
+	{
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
 	sendResponse(client_fd);

@@ -1,19 +1,25 @@
 #include "../../Server.hpp"
 
-void	Server::privmsg(std::string senderNick) {
+void	Server::privmsg(std::string senderNick)
+{
 	std::string destinataire = _msg.command.substr(8, _msg.command.find(':') - 9);
 	std::string msg = _msg.command.substr(_msg.command.find(':'));
 
 	std::cout << "destinataire : \'" << destinataire << "\'\n";
-	if (destinataire.empty()) {
+	if (destinataire.empty())
+	{
 		_msg.response = printMessage("401", _clients[_msg.currentIndex].getNickname(), " :No such nick/channel");
 		return;
 	}
-	if (msg.empty()) {
+	
+	if (msg.empty())
+	{
 		_msg.response = printMessage("412", _clients[_msg.currentIndex].getNickname(), " :No text to send");
 		return;
 	}
-	if (destinataire[0] == '#') { //* On envoie vers un channel
+	
+	if (destinataire[0] == '#')
+	{ //* On envoie vers un channel
 		CHAN_IT targetChan = DoesChanExist(destinataire);
 		if (targetChan == _channels.end()) {
 			_msg.response = printMessage("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel");

@@ -4,8 +4,12 @@
 int main(int ac, char **av)
 {
 	if (ac != 3)
+	{
+		std::cout << "./ircserv <port> <password>" << std::endl;
 		return 1;
-	try {
+	}
+	try
+	{
 		Server server(atoi(av[1]));
 		std::cout << "Server is running on port " << server.getPort() << std::endl;
 		Polls poll(server.getServerSocket());
@@ -13,7 +17,9 @@ int main(int ac, char **av)
 		poll.mainPoll(server);
 	}
 	catch (const StrerrorException& e)
-	{ std::cout << e.what() << std::endl; exit(EXIT_FAILURE); }
+	{
+		std::cout << e.what() << std::endl; exit(EXIT_FAILURE);
+	}
   
 	return 0;
 }

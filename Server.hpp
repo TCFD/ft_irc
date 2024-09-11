@@ -8,6 +8,7 @@ class Server;
 
 class Polls
 {
+	// ! Pourquoi protected ? Polls n'est pas une classe derivee
 	protected:
 		std::vector<struct pollfd>		_pollFds;
 		struct pollfd					_clientPollFds;
@@ -39,6 +40,7 @@ class Server: public Client
 		CLIENT_VEC					 _clients;
 		CHAN_VEC					 _channels;
 		Polls						 _poll;
+
 		std::vector<std::string>		splitCmd(std::string s);
 		bool							isUserOnChannel(std::string nick, std::string targetChannel);
 		CHAN_IT							DoesChanExist (std::string target);
@@ -49,14 +51,14 @@ class Server: public Client
 		~Server(void) {};
 
 	// Getters / Setters
-		int			 	getPort(void) {return(_port); };
-		int			 	getServerSocket(void) { return(_serverSocket); };
-		Msg			 	getMsg() {return(_msg); };
-		void			setMsgIdx(int idx) {_msg.currentIndex = idx; };
-		void			setMsgCmd(std::string cmd) {_msg.command = cmd; };
+		int			 	getPort(void)				{return(_port); };
+		int			 	getServerSocket(void)		{return(_serverSocket); };
+		Msg			 	getMsg()					{return(_msg); };
+		void			setMsgIdx(int idx)			{_msg.currentIndex = idx; };
+		void			setMsgCmd(std::string cmd)	{_msg.command = cmd; };
 		void			setInChan(bool type);
-		void			setMsg() {_msg.inChan = false; _msg.currentChan = 0; _msg.prefixServer = ":server "; };
-		void			setPoll(Polls& poll) {_poll = poll; };
+		void			setMsg()					{_msg.inChan = false; _msg.currentChan = 0; _msg.prefixServer = ":server "; };
+		void			setPoll(Polls& poll)		{_poll = poll; };
 		
 		void			socketDataSet(void);
 
@@ -90,6 +92,7 @@ class Server: public Client
 		void			sendToEveryone(std::string msg);
 
 	// TOPIC
+		STR_VEC		 	cutTopicCmd(void);
 		void			topicHandle(void);
 		STR_VEC		 	cutTopicCmd(void);
 		bool			errorsTopic(STR_VEC split);
@@ -121,4 +124,3 @@ class StrerrorException : public std::exception
 		virtual const char* what() const throw(){
 			return bufferMessage; };
 };
-
