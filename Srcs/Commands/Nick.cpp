@@ -60,23 +60,20 @@ void	Server::nick(int client_fd) {
 	std::string	name					=	_msg.command.substr(5);
 	Client		*currentUser			=	&_clients[_msg.currentIndex];
 	currentUser->setOldname(currentUser->getNickname());
-	// int	codon = 0;
 
-	// std::cout << "Verifying name :'" << name << "'\n\n";
-	std::cout << RED "current Chan == " << _msg.currentChan <<  NC << std::endl;
-	
-	// if (!_msg.inChan)
-		// return ;
-	
-	// std::cout << "chan :" << _channels[_msg.currentChan].gName() << std::endl;
+	// First registration
 	if (!currentUser->getRegistered())
 	{
 		currentUser->setNickname(name);
 		currentUser->setOldname(name);
-		// codon = 1;
 	}
-	// if (codon == 0 && !_channels[_msg.currentChan].gName().empty()) {
-		// _msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel"); }
+	// Cannot use NICK in a channel
+	for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
+		if (isUserInChan(currentUser->getNickname(), *it)) {
+			_msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
+			return ;}
+	}
+
 	if (name.empty()) {
 		_msg.response = printMessage("431", currentUser->getNickname(), " :No nickname given");}
 	else if (!isValidNick(name)) {
@@ -86,8 +83,5 @@ void	Server::nick(int client_fd) {
 		currentUser->getNickname() = name; }
 	else {
 		setNick(currentUser, name); }
-
-	// printListUser(_clients);
-
 	_msg.response += ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
 }
