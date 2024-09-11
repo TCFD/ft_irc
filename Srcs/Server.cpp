@@ -48,12 +48,13 @@ int	Server::createClient(Polls &poll)
 }
 
 // Pas fini: gros travaux !!!
-void Server::clientDisconnected(int bytes_received, int id)
-{
-	if (bytes_received == 0)
+void Server::clientDisconnected(int bytes_received, int id) {
+	(void)(bytes_received);
+	(void)(id);
+	//if (bytes_received == 0)
 		std::cout << "Client disconnected" << std::endl;
-	else
-		perror("recv");
+	//else
+	//	perror("recv");
 	_clients.erase(_clients.begin() + id); //? clear user's buffer
 	//// _pollFds[currentIndex].fd = -1;
 	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
@@ -66,7 +67,6 @@ void	Server::handleClientCommand(int client_fd)
 	Client	*currentUser = &_clients[_msg.currentIndex];
 	_msg.prefixNick = ":" + currentUser->getNickname();
 
-	std::cout << RED "are we in a chan ? " << _msg.inChan << NC << std::endl;
 	// _msg.prefixNick = currentUser->getNickname();
 	if (_msg.command.rfind("CAP", 0) == 0)
 		_msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
@@ -95,24 +95,20 @@ void	Server::handleClientCommand(int client_fd)
 		modesHandle(); // faire la reponse du serveur vers le client
 	}
 	else if (_msg.command.rfind("JOIN", 0) == 0)
-	{
-		channelHandle();
-	}
-	else if (_msg.command.rfind("TOPIC", 0) == 0)
-	{
-		topicHandle();
-	}
-	else if (_msg.command.rfind("PING", 0) == 0)
-	{
+	{	join(currentUser->getNickname()); setInChan(true); }
+	
+	else if (_msg.command.rfind("TOPIC", 0) == 0) {
+		topicHandle(); }
+
+	else if (_msg.command.rfind("PING", 0) == 0) {
 		_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
 	}
 
-	else if (_msg.command.rfind("QUIT", 0) == 0)
-	{
-		_msg.currentChan = 0; _msg.inChan = false;
-	}
-	else if (_msg.command.rfind("WHOIS", 0) == 0)
-	{
+	else if (_msg.command.rfind("QUIT", 0) == 0) {
+		_msg.currentChan = 0;
+		_msg.inChan = false;
+		}
+	else if (_msg.command.rfind("WHOIS", 0) == 0) {
  		// std::string user = command.substr(6);
 		/* User temp = findUser(user);
 		if (temp != NULL)
@@ -121,9 +117,8 @@ void	Server::handleClientCommand(int client_fd)
 
 	}
 	else if (_msg.command.rfind("PONG", 0) == 0) {}
-	else if (_msg.command.rfind("INVITE", 0) == 0)
-	{
-		invite();
+	else if (_msg.command.rfind("INVITE", 0) == 0) {
+		invite(currentUser->getNickname());
 	}
 	else if (_msg.command.rfind("PRIVMSG", 0) == 0)
 	{
@@ -137,9 +132,8 @@ void	Server::handleClientCommand(int client_fd)
 	{
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
-
 	sendResponse(client_fd);
-	_msg.response.erase();
+	std::cout << "----------------------\n";
 }
 
 void Server::sendResponse(int client_fd) {

@@ -53,7 +53,7 @@ Polls::Polls(int fd)
 // 		modesHandle(); // faire la reponse du serveur vers le client
 // 	}
 // 	else if (_msg.command.rfind("JOIN", 0) == 0) {
-// 		channelHandle(); }
+// 		join(); }
 
 // 	else if (_msg.command.rfind("PING", 0) == 0) {
 // 		_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
@@ -103,14 +103,14 @@ void Polls::mainPoll(Server& server)
 					char buffer[1024];
 					memset(buffer, 0, sizeof(buffer));
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
-
-					if (bytes_received <= 0)
-					{
+          
+					if (bytes_received <= 0) {
+						std::cout << "Deleting elmt " << server.getMsg().currentIndex << "\n";
 						server.clientDisconnected(bytes_received, server.getMsg().currentIndex); 
-						close(_pollFds[server.getMsg().currentIndex].fd);
-					}
-					else
-					{
+						_pollFds.erase(_pollFds.begin() + i);
+						//close(_pollFds[server.getMsg().currentIndex].fd); 
+						}
+					else {
 						//std::cout << "buffer = " << buffer << std::endl;
 
 					//? Ajouter les données reçues au buffer du client

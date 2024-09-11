@@ -17,7 +17,7 @@ void	Server::kick(std::string senderNick) {
 	//if (cmdVec.size() > 4 || (cmdVec.size() > 3 && cmdVec[3][0] != ':')) { 
 		//* L'user veut kick plus d'une personne
 		//* On va faire tourner une fonction recursive pour kick les users 1 par 1
-		//* Avant ca on doit veriier qu'il y a soit autant d'users que de channels (il peut donc avoir un user qui va etre kick de #a et un autre de #b)
+		//* Avant ca on doit verifier qu'il y a soit autant d'users que de channels (il peut donc avoir un user qui va etre kick de #a et un autre de #b)
 		//* Ou, il y a un seul channel. Dans ce cas la, on kick tous les users fournis par la commande depuis ce meme channel
 		//* Pour que ca soit plus simple, on va compter le nombre de virgules pour les channels et pour les users. 0 virgules = 1 channel.
 
@@ -34,21 +34,31 @@ void	Server::kick(std::string senderNick) {
 	CHAN_IT targetChan = DoesChanExist(cmdVec[1]);
 	if (targetChan == _channels.end()) {
 		_msg.response = printMessage("403", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " :No such channel");
-		return;
 	}
+
 	//* Is target on channel ?
-	if (!targetChan->isUserOnMe(cmdVec[2])) {
+	else if (!targetChan->isUserOnMe(cmdVec[2])) {
 		_msg.response = printMessage("441", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " " + cmdVec[2] + " :is not channel");
-		return;
 	}
 
-	//* succesfull kick
-	//* On doit envoyer le message :sender KICK #channel @user a tous les users connectes aux channels
-	sendToChan(":" + senderNick + " KICK " + cmdVec[1] + " " + cmdVec[2] + " " + reason +"\n");
+	//* Is channel operator ? 
+	else if (!isUserAnOperator(senderNick, _channels[_msg.currentChan])) {
+		// _msg.prefixNick + " 482 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :You're not channel operator\r\n";
+		_msg.response = printMessage("482", senderNick, cmdVec[1] + " :You're not channel operator");
+	}
 
-	int userFd = getFdOfUser(cmdVec[2]);
-	if (userFd != -1) {
-		_msg.response = "PART " + cmdVec[2] ;
-		sendResponse(userFd);
+	else {
+		//* succesfull kick
+		//* On doit envoyer le message :sender KICK #channel @user a tous les users connectes aux channels
+		sendToChan(":" + senderNick + " KICK " + cmdVec[1] + " " + cmdVec[2] + " " + reason +"\n");
+		//* Gestion/mise a jour de nos donnees
+		_channels[_msg.currentChan].dltClient(cmdVec[2]);
+		_channels[_msg.currentChan].dltOperator(cmdVec[2]);
+
+		int userFd = getFdOfUser(cmdVec[2]);
+		if (userFd != -1) {
+			_msg.response = "PART " + cmdVec[2] ;
+			sendResponse(userFd);
+		}
 	}
 }

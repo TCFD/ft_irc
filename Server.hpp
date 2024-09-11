@@ -32,21 +32,20 @@ class Polls
 class Server: public Client
 {
 	private:
-		int							 	_port;
-		int							 	_serverSocket;
-		struct sockaddr_in			  	_serverAddr;
-		int							 	_limitUsers;
-		Msg							 	_msg;
-		CLIENT_VEC					  	_clients;
-		CHAN_VEC						_channels;
-		Polls						  	_poll;
-		void							invite();
-		void							privmsg(std::string senderNick);
-		void							kick(std::string senderNick);
+		int							 _port;
+		int							 _serverSocket;
+		struct sockaddr_in			 _serverAddr;
+		int							 _limitUsers;
+		Msg							 _msg;
+		CLIENT_VEC					 _clients;
+		CHAN_VEC					 _channels;
+		Polls						 _poll;
+
 		std::vector<std::string>		splitCmd(std::string s);
 		bool							isUserOnChannel(std::string nick, std::string targetChannel);
 		CHAN_IT							DoesChanExist (std::string target);
 		int								getFdOfUser(std::string nick);
+
 	public:
 		Server(int port);
 		~Server(void) {};
@@ -87,7 +86,7 @@ class Server: public Client
 		void			setNick(Client* currentUser, std::string name);
 
 	// JOIN
-		int			 	channelHandle(void);
+		int			 	join(std::string senderNick);
 		void			sendToChan(std::string message);
 		bool			isChanExists(std::string target);
 		void			sendToEveryone(std::string msg);
@@ -95,10 +94,21 @@ class Server: public Client
 	// TOPIC
 		STR_VEC		 	cutTopicCmd(void);
 		void			topicHandle(void);
+		STR_VEC		 	cutTopicCmd(void);
 		bool			errorsTopic(STR_VEC split);
 
 	// NAMES
 		void			namesHandle(void);
+
+	// PRIVMSG 
+		void			privmsg(std::string senderNick);
+
+	// INVITE
+		void			invite(std::string senderNick);
+		void			addClienttoInviteList(std::string name);
+	
+	// KICK
+		void			kick(std::string senderNick);
 
 };
 

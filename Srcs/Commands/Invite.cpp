@@ -22,29 +22,42 @@ int	Server::getFdOfUser(std::string nick) {
 	return -1;
 }
 
-void	Server::invite() {
+void	Server::addClienttoInviteList(std::string name) {
+	for (CLIENT_IT it = _clients.begin(); it != _clients.end(); ++it) {
+		if (it->getNickname() == name)
+			_channels[_msg.currentChan].addInvite(*it);
+	}
+}
+
+void	Server::invite(std::string senderNick) {
 	STR_VEC cmdVec(splitCmd(_msg.command));
+	std::cout << RED "MESSAGE = " << _msg.command << NC << std::endl;
 
 	//* Check if there is enough args	
 	if (cmdVec.size() < 3) {
-		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "Invite :Not enough parameters");
+		_msg.response = printMessage("461", senderNick, "Invite :Not enough parameters");
 		return;
 	}
 	//* Does channel exist ? 
-	std::cout <<  "does channel exist\n";
 	CHAN_IT targetChan = DoesChanExist(cmdVec[2]);
 	if (targetChan == _channels.end()) {
-		_msg.response = printMessage("403", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :No such channel");
+		_msg.response = printMessage("403", senderNick, cmdVec[2] + " :No such channel");
 		return;
 	}
+	//* Is user exists ?
+	if (!isUserExists(cmdVec[1], _clients)) {
+		_msg.response = printMessage("401", senderNick, cmdVec[1] + " :No suck nick");
+		return;
+	};
+
 	//* Is user on channel ?
-	if (!targetChan->isUserOnMe(_clients[_msg.currentIndex].getNickname())) {
-		_msg.response = printMessage("442", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " :You're not on that channel");
+	if (!targetChan->isUserOnMe(senderNick)) {
+		_msg.response = printMessage("442", senderNick, cmdVec[2] + " :You're not on that channel");
 		return;
 	}
 	//* Is target on channel ?
 	if (targetChan->isUserOnMe(cmdVec[1])) {
-		_msg.response = printMessage("443", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2] + " :is already on channel");
+		_msg.response = printMessage("443", senderNick, cmdVec[1] + " " + cmdVec[2] + " :Is already on channel");
 		return;
 	}
 
@@ -52,11 +65,12 @@ void	Server::invite() {
 	//TODO On doit aussi envoyer au client invite
 	int userFd = getFdOfUser(cmdVec[1]);
 	if (userFd != -1) {
-		_msg.response = printMessage("341", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2]);
+		_msg.response = printMessage("341", senderNick, cmdVec[1] + " " + cmdVec[2]);
 		sendResponse(userFd);
-		_msg.response = std::string(BOLD) + "Whats up " + std::string(BLUE) + cmdVec[1] + std::string(NC) + std::string(BOLD) + ", " + std::string(BLUE) + _clients[_msg.currentIndex].getNickname() + std::string(NC) + std::string(BOLD) + " invited you to channel " + std::string(BLUE) + cmdVec[2] + std::string(NC) + "\r\n";
+		_msg.response = std::string(BOLD) + "Whats up " + std::string(BLUE) + cmdVec[1] + std::string(NC) + std::string(BOLD) + ", " + std::string(BLUE) + senderNick + std::string(NC) + std::string(BOLD) + " invited you to channel " + std::string(BLUE) + cmdVec[2] + std::string(NC) + "\r\n";
 		sendResponse(userFd);
+		addClienttoInviteList(cmdVec[1]);
 
 	}
-	_msg.response = printMessage("341", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " " + cmdVec[2]);
+	_msg.response = printMessage("341", senderNick, cmdVec[1] + " " + cmdVec[2]);
 }	

@@ -29,12 +29,13 @@ bool	Server::errorModes(STR_VEC& split)
 {
 	Channel	*curr = &_channels[_msg.currentChan];
 
+	// std::cout << "TEST: " << _channels[_msg.currentChan].gOperators(). _clients[_msg.currentIndex].getNickname()
 	if (split[1] != _clients[_msg.currentIndex].getNickname())
 	{
 		if (!isChanExists(split[1])) {
 			_msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
-		// else if (tabChan[_msg.currentChan].usersInChan[tab[_msg.currentIndex].nickName] == 0) {
-			// _msg.response = _msg.prefixNick + " 482 " + tab[_msg.currentIndex].nickName + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
+		else if (split.size() > 2 && !isUserAnOperator(_clients[_msg.currentIndex].getNickname(), _channels[_msg.currentChan])) {
+			_msg.response = _msg.prefixNick + " 482 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
 		else if (split.size() == 2 && isChanExists(split[1]) && split[1] == curr->gName()) {
 			_msg.response = _msg.prefixServer + "324 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " " + 
 			curr->gModesActives() + "\r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
@@ -59,7 +60,7 @@ int	Server::modesHandle(void)
 {
 	_msg.response = "";
 	STR_VEC split = cutModeCommand();
-		
+	
 	//Modes handling
 	if (!errorModes(split) && _msg.response.find("MODE") == std::string::npos)
 	{
@@ -77,7 +78,7 @@ int	Server::modesHandle(void)
 		if (isChanExists(split[1]))
 			sendToEveryone(_msg.response);
 	}
-	std::cout << "Response MODE: " << _msg.response << std::endl;
+	std::cout << "Response MODE: " << _msg.response;
 
 	split.clear();
 	return(0);

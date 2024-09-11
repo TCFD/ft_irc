@@ -32,10 +32,11 @@ bool	isUserExists(std::string target, CLIENT_VEC clients)
 
 // Check if the target is already in the channel or not
 bool	isUserInChan(std::string target, Channel chan)
-{
-	for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it)
-	if (it->getNickname() == target)
-		return true;
+{	
+	for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
+		if (it->getNickname() == target)
+			return true;
+	}
 	return false;
 }
 
@@ -43,11 +44,9 @@ bool	isUserInChan(std::string target, Channel chan)
 bool	foundModeInChan(char mod, CHAR_LIST modList)
 {
 	for (CHAR_LIST::iterator it=modList.begin(); it != modList.end(); ++it) {
-		std::cout << "mod == " << *it << std::endl;
 		if (*it == mod)
 			return true;
 	}
-	std::cout << "him or\n";
 	return false;
 }
 
@@ -99,7 +98,6 @@ bool	isUserAnOperator(std::string target, Channel chan)
 		if (target == it->getNickname())
 			return true;
 	}
-	std::cout << "...him ?\n";
 	return false;
 }
 

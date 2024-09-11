@@ -18,12 +18,12 @@ class Channel {
 		std::string _name;
 		std::string _topic;
 		std::string _topicName;
-		// std::string	_topicDate;
 		std::string _password;
 		int			_limit;
 		int			_lenClients;
 		CLIENT_VEC  _clients;
 		CLIENT_VEC  _operators;
+		CLIENT_VEC	_invite;
 		MODES_VEC   _modes;
 
 	public:
@@ -41,6 +41,7 @@ class Channel {
 		std::string		gModesActives(void);
 		CLIENT_VEC		gClients() { return _clients; };
 		CLIENT_VEC		gOperators() { return _operators; };
+		CLIENT_VEC		gInvite() {return _invite; };
 		Client&			gClientIdx(int idx) { return _clients[idx]; };
 		// std::string		getTime(void);
 
@@ -56,9 +57,13 @@ class Channel {
 		void			addOperatorByName(std::string name, CLIENT_VEC cli);
 		void			addClient(Client& client);
 		void			addLenClient(void);
+		void			addInvite(Client& client);
 		void			dltLenClient(void);
 		void			dltMode(char mod);
 		void			dltOperator(std::string name);
+		void			dltClient(std::string name);
+		void			dltInvite(std::string name);
 
 		bool			isUserOnMe(std::string nick);
+		bool			isUserInvite(std::string name);
 };	
