@@ -91,7 +91,6 @@ class Server: public Client
 		void			sendToEveryone(std::string msg);
 
 	// TOPIC
-		STR_VEC		 	cutTopicCmd(void);
 		void			topicHandle(void);
 		STR_VEC		 	cutTopicCmd(void);
 		bool			errorsTopic(STR_VEC split);
