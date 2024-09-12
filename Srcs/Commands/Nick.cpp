@@ -52,7 +52,6 @@ void	Server::setNick(Client* currentUser, std::string name) {
 	if (currentUser->getUsername() != "") {
 		currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
 		currentUser->setRegistered(true); }
-	// std::cout << MAGENTA "NAME ==> " << currentUser->getNickname() << NC << std::endl;
 }
 
 //Probleme de NickName a gerer: _ gerer pour un client, mais pas pour +...
@@ -61,11 +60,6 @@ void	Server::nick(int client_fd) {
 	Client		*currentUser			=	&_clients[_msg.currentIndex];
 	currentUser->setOldname(currentUser->getNickname());
 
-	if (!currentUser->getRegistered())
-	{
-		currentUser->setNickname(name);
-		currentUser->setOldname(name);
-	}
 	for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
 		if (isUserInChan(currentUser->getNickname(), *it)) {
 			_msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
@@ -76,9 +70,18 @@ void	Server::nick(int client_fd) {
 	else if (!isValidNick(name)) {
 		_msg.response = printMessage("432", currentUser->getNickname(), name + " :Erroneous nickname"); }
 	else if (isAlreadyExists(name, client_fd, _clients)) {
-		_msg.response = printMessage("433", currentUser->getNickname(), name + " :Nickname is already in use");
-		currentUser->getNickname() = name; }
+		_msg.response = ":server 433 * " + name + " :Nickname is already in use\r\n";
+		}
+	else if (!currentUser->getRegistered()) {
+		currentUser->setRegistered(true);
+		setNick(currentUser, name); 
+		currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
+		_msg.response = ":" + currentUser->getNickname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
+		_msg.response += printMessage("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
+	}
 	else {
-		setNick(currentUser, name); }
-	_msg.response += ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
+		setNick(currentUser, name); 
+		_msg.response = ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
+	}
+
 }
