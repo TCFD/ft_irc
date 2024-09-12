@@ -52,7 +52,6 @@ void	Server::setNick(Client* currentUser, std::string name) {
 	if (currentUser->getUsername() != "") {
 		currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
 		currentUser->setRegistered(true); }
-	// std::cout << MAGENTA "NAME ==> " << currentUser->getNickname() << NC << std::endl;
 }
 
 //Probleme de NickName a gerer: _ gerer pour un client, mais pas pour +...
@@ -79,9 +78,4 @@ void	Server::nick(int client_fd) {
 		setNick(currentUser, name); 
 		_msg.response = ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
 	}
-
-	
-
-	// printListUser(_clients);
-
 }
