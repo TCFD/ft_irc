@@ -61,20 +61,16 @@ void	Server::nick(int client_fd) {
 	Client		*currentUser			=	&_clients[_msg.currentIndex];
 	currentUser->setOldname(currentUser->getNickname());
 
-	// First registration
 	if (!currentUser->getRegistered())
 	{
 		currentUser->setNickname(name);
 		currentUser->setOldname(name);
 	}
-	// Cannot use NICK in a channel
-	// Probleme: soit NICK gere bancalement les "_", soit on ne l'utlise pas dans un chan ...
-	// for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
-	// 	if (isUserInChan(currentUser->getNickname(), *it)) {
-	// 		_msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
-	// 		return ;}
-	// }
-
+	for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
+		if (isUserInChan(currentUser->getNickname(), *it)) {
+			_msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
+			return ;}
+	}
 	if (name.empty()) {
 		_msg.response = printMessage("431", currentUser->getNickname(), " :No nickname given");}
 	else if (!isValidNick(name)) {
@@ -84,10 +80,5 @@ void	Server::nick(int client_fd) {
 		currentUser->getNickname() = name; }
 	else {
 		setNick(currentUser, name); }
-	for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
-		if (isUserInChan(currentUser->getNickname(), *it)) {
-			_msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
-			return ;}
-	}
 	_msg.response += ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
 }
