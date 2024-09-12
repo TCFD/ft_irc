@@ -104,13 +104,15 @@ void Polls::mainPoll(Server& server)
 					memset(buffer, 0, sizeof(buffer));
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
           
-					if (bytes_received <= 0) {
+					if (bytes_received <= 0)
+					{
 						std::cout << "Deleting elmt " << server.getMsg().currentIndex << "\n";
 						server.clientDisconnected(bytes_received, server.getMsg().currentIndex); 
 						_pollFds.erase(_pollFds.begin() + i);
 						//close(_pollFds[server.getMsg().currentIndex].fd); 
-						}
-					else {
+					}
+					else
+					{
 						//std::cout << "buffer = " << buffer << std::endl;
 
 					//? Ajouter les données reçues au buffer du client
@@ -143,7 +145,7 @@ void Polls::mainPoll(Server& server)
 							std::cout << "command client buffer: " << _clientsBuffer[_pollFds[i].fd] << std::endl;
 							std::cout << "Received command: " << server.getMsg().command << std::endl;
 							server.setMsgIdx(i - 1);
-							server.handleClientCommand(_pollFds[i].fd);
+							server.test_handleClientCommand(_pollFds[i].fd);
 						}
 					}
 				}

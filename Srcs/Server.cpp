@@ -5,6 +5,28 @@ Server::Server(int port) : _port(port)
 	socketDataSet();
 }
 
+DICOCMD Server::getdicocmd()
+{
+	DICOCMD dico;
+
+	dico["PRIVMSG"]	= &Server::privmsg_command;
+	dico["INVITE"]	= &Server::invite_command;
+	dico["MODES"]	= &Server::modes_command;
+	dico["NAMES"]	= &Server::names_command;
+	dico["TOPIC"]	= &Server::topic_command;
+	dico["WHOIS"]	= &Server::whois_command;
+	dico["USER"]	= &Server::user_command;
+	dico["JOIN"]	= &Server::join_command;
+	dico["NICK"]	= &Server::nick_command;
+	dico["PING"]	= &Server::ping_command;
+	dico["QUIT"]	= &Server::quit_command;
+	dico["PONG"]	= &Server::pong_command;
+	dico["KICK"]	= &Server::kick_command;
+	dico["CAP"]		= &Server::cap_command;
+
+	return (dico);
+}
+
 void	Server::socketDataSet(void)
 {
 	_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -64,91 +86,56 @@ void Server::clientDisconnected(int bytes_received, int id) {
 
 void	Server::handleClientCommand(int client_fd)
 {
+	// Recuperation du dictionnaire de commandes
+	DICOCMD	dico = getdicocmd();
+	bool founded = false;
+
 	Client	*currentUser = &_clients[_msg.currentIndex];
 	_msg.prefixNick = ":" + currentUser->getNickname();
 
-	// _msg.prefixNick = currentUser->getNickname();
-	if (_msg.command.rfind("CAP", 0) == 0)
-		_msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
+	currentUser->setActualClientFd(client_fd); // Pour nick
 
-	else if (_msg.command.rfind("NICK", 0) == 0) { /////TODO Il n'y a pas encore de sécurité. A faire.
-		nick(client_fd);
-	}
-
-	else if (_msg.command.rfind("USER", 0) == 0)
+	// Verification pour voir si la commande envoyee existe dans le dico
+	DICOCMD::iterator it = dico.begin();
+	while (it != dico.end())
 	{
-		currentUser->setUsername(_msg.command.substr(5, _msg.command.find(" ", 5) - 5));
-		currentUser->setRealname(_msg.command.substr(_msg.command.find(":")));
-		if (currentUser->getNickname() != "") {
-			currentUser->setRegistered(true);
-			currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
-			_msg.response = printMessage("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
+		// Attention il faudra gerer le cas avec netcat ou il faut enlever le '/' du debut
+		if (_msg.command.rfind(it->first, 0) == 0)
+		{
+			ServerMemberFunction func = it->second;
+			(this->*func)(currentUser);
+			founded = true;
+			break;
 		}
-	}
-	else if (_msg.command.rfind("NAMES", 0) == 0)
-	{
-		namesHandle();
+		it++ ;
 	}
 
-	else if (_msg.command.rfind("MODE", 0) == 0)
-	{
-		modesHandle(); // faire la reponse du serveur vers le client
-	}
-	else if (_msg.command.rfind("JOIN", 0) == 0)
-	{	join(currentUser->getNickname()); setInChan(true); }
-	
-	else if (_msg.command.rfind("TOPIC", 0) == 0) {
-		topicHandle(); }
-
-	else if (_msg.command.rfind("PING", 0) == 0) {
-		_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
-	}
-
-	else if (_msg.command.rfind("QUIT", 0) == 0) {
-		_msg.currentChan = 0;
-		_msg.inChan = false;
-		}
-	else if (_msg.command.rfind("WHOIS", 0) == 0) {
- 		// std::string user = command.substr(6);
-		/* User temp = findUser(user);
-		if (temp != NULL)
-
-		else */
-
-	}
-	else if (_msg.command.rfind("PONG", 0) == 0) {}
-	else if (_msg.command.rfind("INVITE", 0) == 0) {
-		invite(currentUser->getNickname());
-	}
-	else if (_msg.command.rfind("PRIVMSG", 0) == 0)
-	{
-		privmsg(currentUser->getNickname());
-	}
-	else if (_msg.command.rfind("KICK", 0) == 0)
-	{
-		kick(currentUser->getNickname());
-	}
-	else
-	{
+	// Si la commande ne correspond a aucune commande dans le dico
+	if (!founded)
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
-	}
+
 	sendResponse(client_fd);
 	std::cout << "----------------------\n";
+
 }
 
-void Server::sendResponse(int client_fd) {
+
+void Server::sendResponse(int client_fd)
+{
 	std::cout << "Server sent " << _msg.response << std::endl;
 	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
 	_msg.response.erase();
 }
 
 // Separate the command into the all args
-STR_VEC Server::splitCmd(std::string s) {
+STR_VEC Server::splitCmd(std::string s)
+{
 	std::string delimiter = " ";
 	STR_VEC vec;
 	
 	size_t pos = 0;
-	while ((pos = s.find(delimiter)) != std::string::npos) {
+	while ((pos = s.find(delimiter)) != std::string::npos)
+	{
 		vec.push_back(s.substr(0, pos));
 		std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 		s.erase(0, pos + delimiter.length());
@@ -158,5 +145,7 @@ STR_VEC Server::splitCmd(std::string s) {
 	return vec;
 }
 
-void	Server::setInChan(bool type) {
-	_msg.inChan = type; }
+void	Server::setInChan(bool type)
+{
+	_msg.inChan = type;
+}
