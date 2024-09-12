@@ -39,7 +39,6 @@ int  Server::join(std::string senderNick)
 	int		opCodon = 0;
 	if (split.size() != 2 && split.size() != 3)
 		return (1);
-	// else if (limitUsers != 0 &&  ) // si la limite existe et quelle n'est pas depassee, le client peut join
 	else if (!isChanExists(split[1]))
 	{ //Creation du channel
 		Channel temp(split[1]);
@@ -52,7 +51,6 @@ int  Server::join(std::string senderNick)
 		temp.addClient(_clients[_msg.currentIndex]);
 		temp.addLenClient();
 		_channels.push_back(temp);
-		setInChan(true);
 		opCodon = 1;
 	}
 	else { 
@@ -75,7 +73,6 @@ int  Server::join(std::string senderNick)
 			currChan->addLenClient();
 		}
 	}
-	// setInChan(true); REVOIR BOOL MARCHE PAS WESH
 	printChanInfos(_channels[_msg.currentChan], _msg.currentChan);
 	std::cout << RED "\nNEW CHANNEL ENTERING . . . " NC << std::endl;
 		
@@ -95,20 +92,7 @@ int  Server::join(std::string senderNick)
 		_msg.response += _msg.prefixNick + " 331 " + senderNick + " " + _channels[_msg.currentChan].gName() + " :No topic set\r\n"; }
 	sendResponse(_clients[_msg.currentIndex].getFd());
 
-	// {
-	// 	Channel *chan = &_channels[_msg.currentChan];
-	// 	std::string nicks;
-	// 	for (CLIENT_IT it = chan->gClients().begin(); it != chan->gClients().end(); ++it) {
-	// 		for (CLIENT_IT ite = chan->gOperators().begin(); ite != chan->gOperators().end(); ++ite) {
-	// 			if (it->getNickname() == ite->getNickname())
-	// 				nicks += "@"; }
-	// 		nicks += it->getNickname() + " "; }
-	// 	_msg.response += _msg.prefixNick + " 353 " + senderNick + " = " + chan->gName() + " :" + nicks + "\r\n";
-	// 	_msg.response += _msg.prefixNick + " 366 " + senderNick + " " + chan->gName() + " :End of /NAMES list\r\n";
-	// }
-	
 	namesHandle();
 	std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
-	// sendResponse(_clients[_msg.currentIndex].getFd());
 	return (0);
 }

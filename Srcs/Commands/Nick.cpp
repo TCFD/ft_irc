@@ -60,6 +60,11 @@ void	Server::nick(int client_fd) {
 	Client		*currentUser			=	&_clients[_msg.currentIndex];
 	currentUser->setOldname(currentUser->getNickname());
 
+	for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
+		if (isUserInChan(currentUser->getNickname(), *it)) {
+			_msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
+			return ;}
+	}
 	if (name.empty()) {
 		_msg.response = printMessage("431", currentUser->getNickname(), " :No nickname given");}
 	else if (!isValidNick(name)) {
