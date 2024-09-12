@@ -61,30 +61,27 @@ void	Server::nick(int client_fd) {
 	Client		*currentUser			=	&_clients[_msg.currentIndex];
 	currentUser->setOldname(currentUser->getNickname());
 
-	// std::cout << "Verifying name :'" << name << "'\n\n";
-	// std::cout << RED "current Chan == " << _msg.currentCha<<  NC << std::endl;
-	
-	// if (!_msg.inChan)
-		// return ;
-	if (!currentUser->getRegistered())
-	{
-		currentUser->setNickname(name);
-		currentUser->setOldname(name);
-	}
-	// else if (_msg.inChan == true) { REVOIR BOOL MARCHE PAS
-		// _msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
-		// return ; }
 	if (name.empty()) {
 		_msg.response = printMessage("431", currentUser->getNickname(), " :No nickname given");}
 	else if (!isValidNick(name)) {
 		_msg.response = printMessage("432", currentUser->getNickname(), name + " :Erroneous nickname"); }
 	else if (isAlreadyExists(name, client_fd, _clients)) {
-		_msg.response = printMessage("433", currentUser->getNickname(), name + " :Nickname is already in use");
-		currentUser->getNickname() = name; }
+		_msg.response = ":server 433 * " + name + " :Nickname is already in use\r\n";
+		}
+	else if (!currentUser->getRegistered()) {
+		currentUser->setRegistered(true);
+		setNick(currentUser, name); 
+		currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
+		_msg.response = ":" + currentUser->getNickname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
+		_msg.response += printMessage("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
+	}
 	else {
-		setNick(currentUser, name); }
+		setNick(currentUser, name); 
+		_msg.response = ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
+	}
+
+	
 
 	// printListUser(_clients);
 
-	_msg.response += ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
 }
