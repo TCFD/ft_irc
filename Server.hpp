@@ -68,8 +68,7 @@ class Server: public Client
 		
 		void			setMsgIdx(int idx)			{_msg.currentIndex = idx; };
 		void			setMsgCmd(std::string cmd)	{_msg.command = cmd; };
-		void			setInChan(bool type);
-		void			setMsg()					{_msg.inChan = false; _msg.currentChan = 0; _msg.prefixServer = ":server "; };
+		void			setMsg()					{_msg.currentChan = 0; _msg.prefixServer = ":server "; };
 		void			setPoll(Polls& poll)		{_poll = poll; };
 		
 		DICOCMD			getdicocmd();
@@ -117,9 +116,10 @@ class Server: public Client
 		void			sendToEveryone(std::string msg);
 
 	// TOPIC
-		STR_VEC		 	cutTopicCmd(void);
+  STR_VEC		 	cutTopicCmd(void);
 
 		void			topic_command(Client *currentUser);
+
 		void			topicHandle(void);
 		
 		bool			errorsTopic(STR_VEC split);
