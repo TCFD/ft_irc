@@ -12,6 +12,7 @@ class Client
 		std::string _hostname;
 		std::string _id;
 		bool		_registered;
+		int			_actual_client_fd;
 		int		 	_fd;
 
 	public:
@@ -19,23 +20,25 @@ class Client
 		Client(int clientFd);
 		~Client(void) {};
 
-		std::string getUsername(void) {return _username; };
-		std::string getNickname(void) {return _nickname; };
-		std::string getRealname(void) {return _realname; };
-		std::string getOldname(void) {return _oldname; };
-		std::string getHostname(void) { return _hostname; };
-		std::string getId(void) { return _id; };
-		bool		getRegistered(void) {return _registered; };
-		int			getFd(void) { return _fd; };
+		std::string getUsername(void) 		{ return _username; };
+		std::string getNickname(void) 		{ return _nickname; };
+		std::string getRealname(void) 		{ return _realname; };
+		std::string getOldname(void) 		{ return _oldname; };
+		std::string getHostname(void) 		{ return _hostname; };
+		std::string getId(void) 			{ return _id; };
+		bool		getRegistered(void) 	{ return _registered; };
+		int			getFd(void) 			{ return _fd; };
+		int			getActualClientFd(void)	{ return _actual_client_fd; };
 
-		void		setId(std::string identity) { _id = identity; };
-		void		setNickname(std::string name) { _nickname = name; };
-		void		setUsername(std::string name) { _username = name; };
-		void		setRealname(std::string name) { _realname = name; };
-		void		setHostname(std::string name) { _hostname = name; };
-		void		setOldname(std::string name) { _oldname = name; };
-		void		setRegistered(bool type) { _registered = type; };
-		
+		void		setId(std::string identity) 	{ _id = identity; };
+		void		setNickname(std::string name) 	{ _nickname = name; };
+		void		setUsername(std::string name) 	{ _username = name; };
+		void		setRealname(std::string name) 	{ _realname = name; };
+		void		setHostname(std::string name) 	{ _hostname = name; };
+		void		setOldname(std::string name) 	{ _oldname = name; };
+		void		setRegistered(bool type) 		{ _registered = type; };
+		void		setActualClientFd(int c_fd)		{ _actual_client_fd = c_fd; };
+
 		int		 parseNickname(std::string);
 };
 		
