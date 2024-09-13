@@ -83,5 +83,4 @@ void	Server::nick(int client_fd) {
 		setNick(currentUser, name); 
 		_msg.response = ":" + currentUser->getOldname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
 	}
-
 }
