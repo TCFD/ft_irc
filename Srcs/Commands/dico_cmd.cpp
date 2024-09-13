@@ -37,7 +37,6 @@ void	Server::modes_command(Client *currentUser)
 void	Server::join_command(Client *currentUser)
 {
 	join(currentUser->getNickname());
-	setInChan(true);
 }
 
 		// - CAP COMMAND - //
@@ -80,7 +79,6 @@ void	Server::quit_command(Client *currentUser)
 {
 	(void)currentUser;
 	_msg.currentChan = 0;
-	_msg.inChan = false;
 }
 
 		// - WHOIS COMMAND - //

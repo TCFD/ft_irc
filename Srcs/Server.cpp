@@ -11,7 +11,7 @@ DICOCMD Server::getdicocmd()
 
 	dico["PRIVMSG"]	= &Server::privmsg_command;
 	dico["INVITE"]	= &Server::invite_command;
-	dico["MODES"]	= &Server::modes_command;
+	dico["MODE"]	= &Server::modes_command;
 	dico["NAMES"]	= &Server::names_command;
 	dico["TOPIC"]	= &Server::topic_command;
 	dico["WHOIS"]	= &Server::whois_command;
@@ -143,9 +143,4 @@ STR_VEC Server::splitCmd(std::string s)
 	std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 	vec.push_back(s);
 	return vec;
-}
-
-void	Server::setInChan(bool type)
-{
-	_msg.inChan = type;
 }

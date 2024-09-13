@@ -79,7 +79,6 @@ class Server: public Client
    		void			clientDisconnected(int bytes_received, int id);
 
 	//-//-//-// TEST
-		void	test_handleClientCommand(int client_fd);
 	//-//-//-// FIN TEST
 
 		void			handleClientCommand(int client_fd);
