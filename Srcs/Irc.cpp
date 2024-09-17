@@ -79,7 +79,7 @@ Polls::Polls(int fd)
 // }
 
 void Polls::mainPoll(Server& server)
-{	
+{
     while (true)
 	{
         _pollCount = poll(_pollFds.data(), _pollFds.size(), -1);

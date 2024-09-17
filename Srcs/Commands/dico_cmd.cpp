@@ -116,3 +116,11 @@ void	Server::kick_command(Client *currentUser)
 {
 	kick(currentUser->getNickname());
 }
+
+		// - PASS COMMAND - //
+
+void	Server::pass_command(Client *currenUser)
+{
+	(void) currenUser;
+	pass();
+}

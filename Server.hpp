@@ -38,6 +38,7 @@ class Polls
 class Server: public Client
 {
 	private:
+		std::string					_mdp;
 		int							_port;
 		int							_serverSocket;
 		int							_limitUsers;
@@ -57,7 +58,7 @@ class Server: public Client
 		CHAN_IT						DoesChanExist (std::string target);
 
 	public:
-		Server(int port);
+		Server(int port, std::string mdp);
 		~Server(void) {};
 
 	// Getters / Setters
@@ -115,7 +116,7 @@ class Server: public Client
 		void			sendToEveryone(std::string msg);
 
 	// TOPIC
-  STR_VEC		 	cutTopicCmd(void);
+  		STR_VEC		 	cutTopicCmd(void);
 
 		void			topic_command(Client *currentUser);
 
@@ -158,6 +159,9 @@ class Server: public Client
 	// PONG
 		void			pong_command(Client *currentUser);
 
+	// PASS
+		void			pass_command(Client *currentUser);
+		void			pass(void);
 };
 
 class StrerrorException : public std::exception
