@@ -1,11 +1,12 @@
 #include "../../Server.hpp"
 
 void	Server::kick(std::string senderNick) {
+
 	STR_VEC cmdVec(splitCmd(_msg.command));
 
 	//* Check if there is enough args	
 	if (cmdVec.size() < 3) {
-		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "Invite :Not enough parameters");
+		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "KICK :Not enough parameters");
 		return;
 	}
 	

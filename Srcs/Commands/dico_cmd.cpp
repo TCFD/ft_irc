@@ -122,5 +122,6 @@ void	Server::kick_command(Client *currentUser)
 void	Server::pass_command(Client *currenUser)
 {
 	(void) currenUser;
-	pass();
+	pass(currenUser);
+
 }

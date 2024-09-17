@@ -35,7 +35,7 @@ void	Server::invite(std::string senderNick) {
 
 	//* Check if there is enough args	
 	if (cmdVec.size() < 3) {
-		_msg.response = printMessage("461", senderNick, "Invite :Not enough parameters");
+		_msg.response = printMessage("461", senderNick, "INVITE :Not enough parameters");
 		return;
 	}
 	//* Does channel exist ? 

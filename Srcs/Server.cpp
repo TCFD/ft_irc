@@ -2,6 +2,7 @@
 
 Server::Server(int port, std::string mdp) :  _mdp(mdp), _port(port)
 {
+	_quit = false;
 	socketDataSet();
 }
 
@@ -23,7 +24,7 @@ DICOCMD Server::getdicocmd()
 	dico["PONG"]	= &Server::pong_command;
 	dico["KICK"]	= &Server::kick_command;
 	dico["CAP"]		= &Server::cap_command;
-	dico["PASS"]	= &Server::pass_command;
+	// dico["PASS"]	= &Server::pass_command;
 
 	return (dico);
 }
@@ -71,8 +72,7 @@ int	Server::createClient(Polls &poll)
 }
 
 // Pas fini: gros travaux !!!
-void Server::clientDisconnected(int bytes_received, int id) {
-	(void)(bytes_received);
+void Server::clientDisconnected(int id) {
 	(void)(id);
 	//if (bytes_received == 0)
 		std::cout << "Client disconnected" << std::endl;
@@ -95,7 +95,6 @@ void	Server::handleClientCommand(int client_fd)
 	_msg.prefixNick = ":" + currentUser->getNickname();
 
 	currentUser->setActualClientFd(client_fd); // Pour nick
-
 	// Verification pour voir si la commande envoyee existe dans le dico
 	DICOCMD::iterator it = dico.begin();
 	while (it != dico.end())
