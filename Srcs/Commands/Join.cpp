@@ -58,6 +58,7 @@ int  Server::join(std::string senderNick)
 
 		if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit()) {
 			_msg.response = _msg.prefixNick + " 471 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+l)\r\n";
+			//printMessage("471", senderNick, currChan->gName() + " :Cannot join channel (+l)");
 			return (1); }
 		else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword()))) {
 			_msg.response = _msg.prefixNick + " 475 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";

@@ -59,8 +59,7 @@ void	Server::nick_command(Client *currentUser)
 
 void	Server::topic_command(Client *currentUser)
 {
-	(void)currentUser;
-	topicHandle();
+	topicHandle(currentUser);
 }
 
 

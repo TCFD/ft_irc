@@ -38,7 +38,7 @@ void	Server::kick(std::string senderNick) {
 
 	//* Is target on channel ?
 	else if (!targetChan->isUserOnMe(cmdVec[2])) {
-		_msg.response = printMessage("441", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " " + cmdVec[2] + " :is not channel");
+		_msg.response = printMessage("441", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " " + cmdVec[2] + " :They aren't on that channel");
 	}
 
 	//* Is channel operator ? 

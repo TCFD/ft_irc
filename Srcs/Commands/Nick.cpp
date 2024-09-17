@@ -34,7 +34,7 @@ std::string	printMessage(std::string num, std::string nickname, std::string mess
 {
 	if (nickname.empty())
 		nickname = "*";
-	return (":localhost " + num + " " + nickname + " " + message + "\r\n");
+	return (":server " + num + " " + nickname + " " + message + "\r\n");
 }
 
 void    printListUser(CLIENT_VEC&   clients)
@@ -68,9 +68,10 @@ void	Server::nick(int client_fd) {
 	if (name.empty()) {
 		_msg.response = printMessage("431", currentUser->getNickname(), " :No nickname given");}
 	else if (!isValidNick(name)) {
-		_msg.response = printMessage("432", currentUser->getNickname(), name + " :Erroneous nickname"); }
+		_msg.response = printMessage("432", "*", name + " :Erroneous nickname"); }
 	else if (isAlreadyExists(name, client_fd, _clients)) {
-		_msg.response = ":server 433 * " + name + " :Nickname is already in use\r\n";
+		_msg.response = printMessage("433", "", name + " :");
+		//?":server 433 * " + name + " :Nickname is already in use\r\n";
 		}
 	else if (!currentUser->getRegistered()) {
 		currentUser->setRegistered(true);

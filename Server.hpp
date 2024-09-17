@@ -119,9 +119,9 @@ class Server: public Client
 
 		void			topic_command(Client *currentUser);
 
-		void			topicHandle(void);
+		void			topicHandle(Client *currentUser);
 		
-		bool			errorsTopic(STR_VEC split);
+		bool			errorsTopic(STR_VEC split, Client *currentUser);
 
 	// NAMES
 		void			names_command(Client *currentUSer);
