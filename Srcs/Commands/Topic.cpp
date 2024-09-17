@@ -25,7 +25,7 @@ bool	Server::errorsTopic(STR_VEC split, Client *currentUser)
 
 	if (split.size() == 1) {
 		_msg.response = _msg.prefixNick + " 461 " + currentUser->getNickname() + " TOPIC :Not enough parameters\r\n"; }
-	else if ((split[1].find("#") == std::string::npos && !isChanExists(split[1])) || current->gName().empty()) {
+	else if ((split[1].find("#") != std::string::npos && !isChanExists(split[1])) || current->gName().empty()) {
 		_msg.response = _msg.prefixNick + " 403 " + currentUser->getNickname() + " " + split[1] + " :No such channel\r\n"; }
 	else if (isChanExists(split[1]) && !isUserInChan(currentUser->getNickname(), split[1])) {
 		_msg.response = _msg.prefixNick + " 442 " + currentUser->getNickname() + " " + split[1] + " :You're not on that channel\r\n"; }
