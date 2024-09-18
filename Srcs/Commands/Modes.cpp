@@ -11,8 +11,8 @@ bool	Server::errorLenModes(STR_VEC& split)
 	std::cout << "AFFICHE SPLIT --> " << split.size() << std::endl; 
 	if ((isFourArgs(split) && split.size() < 4) || split.size() < 3 || (split.size() > 2 && split[2].length() < 2)) {
 		_msg.response = _msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
-	if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
-		_msg.response = _msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407 // BIG PROBLEM dans les conditions je pense !!
+	else if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
+		_msg.response = _msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407
 	else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
 		_msg.response = _msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
 	else
@@ -30,7 +30,6 @@ bool	Server::errorModes(STR_VEC& split)
 {
 	Channel	*curr = &_channels[_msg.currentChan];
 
-	// std::cout << "TEST: " << _channels[_msg.currentChan].gOperators(). _clients[_msg.currentIndex].getNickname()
 	if (split[1] != _clients[_msg.currentIndex].getNickname())
 	{
 		if (!isChanExists(split[1])) {
@@ -69,8 +68,6 @@ int	Server::modesHandle(void)
 		modesOptions(split);
 
 		//Affichage pour le client 
-		// if (split.size() == 2 && !split[1].find("#"))
-			// _msg.response = _msg.prefixNick + " MODE " + split[1] + "\r\n";
 		if (split.size() == 4) {
 			std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
 			_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
@@ -79,8 +76,6 @@ int	Server::modesHandle(void)
 		if (isChanExists(split[1]))
 			sendToEveryone(_msg.response);
 	}
-	std::cout << "Response MODE: " << _msg.response;
-
 	split.clear();
 	return(0);
 }

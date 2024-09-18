@@ -118,7 +118,6 @@ void Polls::mainPoll(Server& server)
           
 					if (bytes_received <= 0)
 					{
-						std::cout << "Deleting elmt " << server.getMsg().currentIndex << "\n";
 						server.clientDisconnected(server.getMsg().currentIndex); 
 						erasePoll(i);
 						//close(_pollFds[server.getMsg().currentIndex].fd); 
@@ -154,9 +153,15 @@ void Polls::mainPoll(Server& server)
 								std::cout << e.what() << std::endl;
 								parsingtools.err_write_correct_form("");
 							}
-							std::cout << "command client buffer: " << _clientsBuffer[_pollFds[i].fd] << std::endl;
-							std::cout << "Received command: " << server.getMsg().command << std::endl;
 							server.setMsgIdx(i - 1);
+							std::string nickOfCurrentUser = server.getNickOfCurrentClient();
+							if (nickOfCurrentUser == "")
+								nickOfCurrentUser = "new user";
+							if (_clientsBuffer[_pollFds[i].fd] != "")
+								std::cout << BLUE << nickOfCurrentUser << "'s command buffer: " << NC << "'" << _clientsBuffer[_pollFds[i].fd] << "'" << std::endl;
+							else
+								std::cout << BLUE << nickOfCurrentUser << "'s command buffer is empty\n" << NC;
+							std::cout << GREEN <<  "Received command: '" << NC << server.getMsg().command << GREEN << "'" << NC << std::endl;
 							server.handleClientCommand(_pollFds[i].fd);
 						}
 					}
