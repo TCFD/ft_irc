@@ -1,4 +1,4 @@
-#include "../../Server.hpp"
+#include "../../Includes/Server.hpp"
 
 void    	Server::pass(Client *currenUser)
 {
@@ -6,13 +6,13 @@ void    	Server::pass(Client *currenUser)
     std::string currNick = _clients[_msg.currentIndex].getNickname();
 
     if (cmdVec.empty()) {
-        _msg.response = printMessage("461", "", " PASS : Not enough parameters");
+        _msg.response = print_message("461", "", " PASS :Not enough parameters");
 		sendResponse(currenUser->getFd());
 		_msg.response += ":server KILL * : Invalid password, please retry.\r\n";
 		}
 
     else if (cmdVec[1] != _mdp) {
-        _msg.response = printMessage("464", "", ": Password incorrect");
+        _msg.response = print_message("464", "", ":Password incorrect");
 		sendResponse(currenUser->getFd());
 		_msg.response += ":server KILL * : Invalid password, please retry.\r\n";
 	}

@@ -1,4 +1,4 @@
-# include "../Server.hpp"
+# include "../Includes/Server.hpp"
 
 Server::Server(int port, std::string mdp) :  _mdp(mdp), _port(port)
 {
@@ -6,24 +6,24 @@ Server::Server(int port, std::string mdp) :  _mdp(mdp), _port(port)
 	socketDataSet();
 }
 
-DICOCMD Server::getdicocmd()
+DICOCMD Server::getDicoCmd()
 {
 	DICOCMD dico;
 
-	dico["PRIVMSG"]	= &Server::privmsg_command;
-	dico["INVITE"]	= &Server::invite_command;
-	dico["MODE"]	= &Server::modes_command;
-	dico["NAMES"]	= &Server::names_command;
-	dico["TOPIC"]	= &Server::topic_command;
-	dico["WHOIS"]	= &Server::whois_command;
-	dico["USER"]	= &Server::user_command;
-	dico["JOIN"]	= &Server::join_command;
-	dico["NICK"]	= &Server::nick_command;
-	dico["PING"]	= &Server::ping_command;
-	dico["QUIT"]	= &Server::quit_command;
-	dico["PONG"]	= &Server::pong_command;
-	dico["KICK"]	= &Server::kick_command;
-	dico["CAP"]		= &Server::cap_command;
+	dico["PRIVMSG"]	= &Server::privMsgCommand;
+	dico["INVITE"]	= &Server::inviteCommand;
+	dico["MODE"]	= &Server::modesCommand;
+	dico["NAMES"]	= &Server::namesCommand;
+	dico["TOPIC"]	= &Server::topicCommand;
+	dico["WHOIS"]	= &Server::whoisCommand;
+	dico["USER"]	= &Server::userCommand;
+	dico["JOIN"]	= &Server::joinCommand;
+	dico["NICK"]	= &Server::nickCommand;
+	dico["PING"]	= &Server::pingCommand;
+	dico["QUIT"]	= &Server::quitCommand;
+	dico["PONG"]	= &Server::pongCommand;
+	dico["KICK"]	= &Server::kickCommand;
+	dico["CAP"]		= &Server::capCommand;
 	dico["PASS"]	= &Server::pass;
 
 	return (dico);
@@ -67,28 +67,21 @@ int	Server::createClient(Polls &poll)
 	Client	client(clientFd);
 	_clients.push_back(client);
 	
-	// std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
 	return (clientFd);
 }
 
 // Pas fini: gros travaux !!!
 void Server::clientDisconnected(int id) {
 	(void)(id);
-	//if (bytes_received == 0)
 		std::cout << "Client disconnected" << std::endl;
-	//else
-	//	perror("recv");
-	_clients.erase(_clients.begin() + id); //? clear user's buffer
-	//// _pollFds[currentIndex].fd = -1;
-	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
-	//// Jpense que c'est plus simple que de decaller tous les indexs
+	_clients.erase(_clients.begin() + id);
 }
 
 
 void	Server::handleClientCommand(int client_fd)
 {
 	// Recuperation du dictionnaire de commandes
-	DICOCMD	dico = getdicocmd();
+	DICOCMD	dico = getDicoCmd();
 	bool founded = false;
 
 	Client	*currentUser = &_clients[_msg.currentIndex];
@@ -99,7 +92,6 @@ void	Server::handleClientCommand(int client_fd)
 	DICOCMD::iterator it = dico.begin();
 	while (it != dico.end())
 	{
-		// Attention il faudra gerer le cas avec netcat ou il faut enlever le '/' du debut
 		if (_msg.command.rfind(it->first, 0) == 0)
 		{
 			ServerMemberFunction func = it->second;
@@ -109,8 +101,6 @@ void	Server::handleClientCommand(int client_fd)
 		}
 		it++ ;
 	}
-
-	// Si la commande ne correspond a aucune commande dans le dico
 	if (!founded)
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 

@@ -32,7 +32,7 @@
 
 */
 
-Parsing::Parsing()
+Parsing::Parsing(void)
 {
 
 	_duplicates_found = 0;	// Pour identifier si on est sur une piste de commande a syntaxe multiple.
@@ -98,7 +98,7 @@ Parsing::Parsing()
 
 */
 
-Parsing::~Parsing(){};
+Parsing::~Parsing(void){};
 
 
 /*
@@ -108,7 +108,7 @@ Parsing::~Parsing(){};
 
 */
 
-std::pair<std::string, std::string> Parsing::parsing_get_cmd(void)
+std::pair<std::string, std::string> Parsing::parsingGetCmd(void)
 {
 	std::string cmd_title	= "";
 	std::string cmd_form	= "";
@@ -145,7 +145,7 @@ std::pair<std::string, std::string> Parsing::parsing_get_cmd(void)
 
 */
 
-void	Parsing::_cmd_reset_status(void)
+void	Parsing::cmdResetStatus(void)
 {
 	// Pour les commandes
 	PARSING_MAP_CMD::iterator it = _cmd.begin();
@@ -171,44 +171,44 @@ void	Parsing::_cmd_reset_status(void)
 
 */
 
-void	Parsing::cmd_treat_test(std::string brut_cmd)
+void	Parsing::cmdTreatTest(std::string brut_cmd)
 {
-	_brut_cmd = brut_cmd;
+	_brutCmd = brut_cmd;
 
 	PARSING_VECTOR_SPLIT string_split = split(brut_cmd, ' ');
 
-	err_miss_elmt(string_split);
+	errMissElmt(string_split);
 
 	std::string const command = byidx(string_split, 0).substr(1);
 
-	_cmd_reset_status();
+	cmdResetStatus();
 
 	if (find_key_in_container(_cmd, command))
 	{
 		_cmd[command].first = 1;
 
-		std::pair<std::string, std::string> result = parsing_get_cmd();
+		std::pair<std::string, std::string> result = parsingGetCmd();
 
-		_actual_cmd = result.first;
-		_actual_brut_form = result.second;
+		_actualCmd = result.first;
+		_actualBrutForm = result.second;
 
 		//:::::: TEST ::::::://
 
-		if (_any_duplicates(string_split, result.second).empty())
+		if (anyDuplicates(string_split, result.second).empty())
 		{
 			_duplicates_found = 0;
 			PARSING_VECTOR_SPLIT form_split = split(result.second, ' ');
 			_actual_split_form = form_split;
-			if(!form_verification(string_split, form_split))
+			if(!formVerification(string_split, form_split))
 				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");		
 		}
 
-		std::cout << "\t | Command  : "  << parsing_get_command()  << std::endl;
-		std::cout << "\t | Channel  : "  << parsing_get_channel()  << std::endl;
-		std::cout << "\t | Username : "  << parsing_get_username() << std::endl;
-		std::cout << "\t | Msg      : "  << parsing_get_message()  << std::endl;
-		std::cout << "\t | Option   : "  << parsing_get_option()   << std::endl;
-		std::cout << "\t | Password : "  << parsing_get_password() << std::endl;
+		std::cout << "\t | Command  : "  << parsingGetCommand()  << std::endl;
+		std::cout << "\t | Channel  : "  << parsingGetChannel()  << std::endl;
+		std::cout << "\t | Username : "  << parsingGetUsername() << std::endl;
+		std::cout << "\t | Msg      : "  << parsingGetMessage()  << std::endl;
+		std::cout << "\t | Option   : "  << parsingGetOption()   << std::endl;
+		std::cout << "\t | Password : "  << parsingGetPassword() << std::endl;
 		
 		std::cout << "\n" << std::endl;
 		

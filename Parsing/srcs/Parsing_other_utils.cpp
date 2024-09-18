@@ -121,7 +121,7 @@ int len_of_tab_with_intervals(PARSING_VECTOR_SPLIT tab, char cara1, char cara2)
     return (tab.size() - (eidx - sidx));
 }
 
-PARSING_VECTOR_SPLIT removeBetweenAngles(const PARSING_VECTOR_SPLIT& input)
+PARSING_VECTOR_SPLIT remove_between_angles(const PARSING_VECTOR_SPLIT& input)
 {
     PARSING_VECTOR_SPLIT result;
     bool inAngleBrackets = false;
