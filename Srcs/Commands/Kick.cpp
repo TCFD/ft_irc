@@ -1,11 +1,12 @@
 #include "../../Server.hpp"
 
 void	Server::kick(std::string senderNick) {
+
 	STR_VEC cmdVec(splitCmd(_msg.command));
 
 	//* Check if there is enough args	
 	if (cmdVec.size() < 3) {
-		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "Invite :Not enough parameters");
+		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "KICK :Not enough parameters");
 		return;
 	}
 	
@@ -38,7 +39,7 @@ void	Server::kick(std::string senderNick) {
 
 	//* Is target on channel ?
 	else if (!targetChan->isUserOnMe(cmdVec[2])) {
-		_msg.response = printMessage("441", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " " + cmdVec[2] + " :is not channel");
+		_msg.response = printMessage("441", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " " + cmdVec[2] + " :They aren't on that channel");
 	}
 
 	//* Is channel operator ? 

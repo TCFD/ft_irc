@@ -78,8 +78,19 @@ Polls::Polls(int fd)
 // 	_msg.response.clear();
 // }
 
+void	Polls::erasePoll(int i) {
+	_pollFds.erase(_pollFds.begin() + i);
+}
+
+void Polls::disconnectClient(int i, Server & server) {
+	server.clientDisconnected(server.getMsg().currentIndex);
+	// _poll.erasePoll(i);
+	_pollFds.erase(_pollFds.begin() + i);
+}
+
+
 void Polls::mainPoll(Server& server)
-{	
+{
     while (true)
 	{
         _pollCount = poll(_pollFds.data(), _pollFds.size(), -1);
@@ -87,6 +98,7 @@ void Polls::mainPoll(Server& server)
         if (_pollCount == -1) throw StrerrorException("Poll Error");
 
 		server.setMsg();
+		//server._quit = 0;
         for (size_t i = 0; i < _pollFds.size(); i++)
 		{
             if (_pollFds[i].revents & POLLIN) 
@@ -107,8 +119,8 @@ void Polls::mainPoll(Server& server)
 					if (bytes_received <= 0)
 					{
 						std::cout << "Deleting elmt " << server.getMsg().currentIndex << "\n";
-						server.clientDisconnected(bytes_received, server.getMsg().currentIndex); 
-						_pollFds.erase(_pollFds.begin() + i);
+						server.clientDisconnected(server.getMsg().currentIndex); 
+						erasePoll(i);
 						//close(_pollFds[server.getMsg().currentIndex].fd); 
 					}
 					else
@@ -132,7 +144,7 @@ void Polls::mainPoll(Server& server)
 
 							try
 							{
-								std::string concat = "/" + server.getMsg().command;
+								std::string concat = server.getMsg().command;
 								if (concat == "/HELP")
 									parsingtools.parsing_help();
 								parsingtools.cmd_treat_test(concat);

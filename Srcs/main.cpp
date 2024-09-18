@@ -10,7 +10,7 @@ int main(int ac, char **av)
 	}
 	try
 	{
-		Server server(atoi(av[1]));
+		Server server(atoi(av[1]), av[2]);
 		std::cout << "Server is running on port " << server.getPort() << std::endl;
 		Polls poll(server.getServerSocket());
 		server.setPoll(poll);

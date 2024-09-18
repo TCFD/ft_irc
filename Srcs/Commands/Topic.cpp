@@ -19,32 +19,37 @@ STR_VEC	Server::cutTopicCmd(void)
 	return split;
 }
 
-bool	Server::errorsTopic(STR_VEC split)
+bool	Server::errorsTopic(STR_VEC split, Client *currentUser)
 {
 	Channel	*current = &_channels[_msg.currentChan];
 
 	if (split.size() == 1) {
-		_msg.response = _msg.prefixNick + " 461 " + _clients[_msg.currentIndex].getNickname() + " TOPIC :Not enough parameters\r\n"; }
-	else if ((split[1].find("#") == std::string::npos && !isChanExists(split[1])) || current->gName().empty()) {
-		_msg.response = _msg.prefixNick + " 403 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :No such channel\r\n"; }
-	else if (split[1].find("#") && isChanExists(split[1]) && !isUserInChan(_clients[_msg.currentIndex].getNickname(), *current)) {
-		_msg.response = _msg.prefixNick + " 442 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :You're not on that channel\r\n"; }
-	else if (foundModeInChan('t', current->gModes()) && !isUserAnOperator(_clients[_msg.currentIndex].getNickname(), *current)) {
-		_msg.response = _msg.prefixNick + " 482 " + _clients[_msg.currentIndex].getNickname() + " " + current->gName() + " :You're not channel operator\r\n"; }
+		_msg.response = _msg.prefixNick + " 461 " + currentUser->getNickname() + " TOPIC :Not enough parameters\r\n"; }
+	else if ((split[1].find("#") != std::string::npos && !isChanExists(split[1])) || current->gName().empty()) {
+		_msg.response = _msg.prefixNick + " 403 " + currentUser->getNickname() + " " + split[1] + " :No such channel\r\n"; }
+	else if (isChanExists(split[1]) && !isUserInChan(currentUser->getNickname(), split[1])) {
+		_msg.response = _msg.prefixNick + " 442 " + currentUser->getNickname() + " " + split[1] + " :You're not on that channel\r\n"; }
+	else if (foundModeInChan('t', current->gModes()) && !isUserAnOperator(currentUser->getNickname(), split[1])) {
+		_msg.response = _msg.prefixNick + " 482 " + currentUser->getNickname() + " " + current->gName() + " :You're not channel operator\r\n"; }
 	else
 		return false;
+	sendResponse(currentUser->getFd());
 	return true;
 }
 
-void	Server::topicHandle(void)
+void	Server::topicHandle(Client *currentUser)
 {
 	STR_VEC split = cutTopicCmd();
 	Channel	*current = &_channels[_msg.currentChan];
 
-	if (!errorsTopic(split))
+	std::cout << "Topic command :\n";
+	for (STR_VEC::iterator it = split.begin(); it != split.end(); it++)
+		std::cout << "[" << *it << "]";
+	std::cout << std::endl;
+	if (!errorsTopic(split, currentUser))
 	{
 		current->sTopic(split[2]);
-		current->sTopicName(_clients[_msg.currentIndex].getNickname());
+		current->sTopicName(currentUser->getNickname());
 		sendToEveryone(_msg.prefixNick + " TOPIC " + current->gName() + " " + current->gTopic() + "\r\n");
 	}
 }

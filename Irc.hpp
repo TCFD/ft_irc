@@ -70,7 +70,7 @@ struct Msg {
 };
 
 //Useful to commands
-std::string	printMessage(std::string num, std::string nickname, std::string message);
+std::string		printMessage(std::string num, std::string nickname, std::string message);
 
 bool			isUserExists(std::string target, CLIENT_VEC clients);
 bool			isUserInChan(std::string target, Channel chan);

@@ -1,7 +1,8 @@
 # include "../Server.hpp"
 
-Server::Server(int port) : _port(port)
+Server::Server(int port, std::string mdp) :  _mdp(mdp), _port(port)
 {
+	_quit = false;
 	socketDataSet();
 }
 
@@ -11,7 +12,7 @@ DICOCMD Server::getdicocmd()
 
 	dico["PRIVMSG"]	= &Server::privmsg_command;
 	dico["INVITE"]	= &Server::invite_command;
-	dico["MODES"]	= &Server::modes_command;
+	dico["MODE"]	= &Server::modes_command;
 	dico["NAMES"]	= &Server::names_command;
 	dico["TOPIC"]	= &Server::topic_command;
 	dico["WHOIS"]	= &Server::whois_command;
@@ -23,6 +24,7 @@ DICOCMD Server::getdicocmd()
 	dico["PONG"]	= &Server::pong_command;
 	dico["KICK"]	= &Server::kick_command;
 	dico["CAP"]		= &Server::cap_command;
+	dico["PASS"]	= &Server::pass;
 
 	return (dico);
 }
@@ -70,8 +72,7 @@ int	Server::createClient(Polls &poll)
 }
 
 // Pas fini: gros travaux !!!
-void Server::clientDisconnected(int bytes_received, int id) {
-	(void)(bytes_received);
+void Server::clientDisconnected(int id) {
 	(void)(id);
 	//if (bytes_received == 0)
 		std::cout << "Client disconnected" << std::endl;
@@ -94,7 +95,6 @@ void	Server::handleClientCommand(int client_fd)
 	_msg.prefixNick = ":" + currentUser->getNickname();
 
 	currentUser->setActualClientFd(client_fd); // Pour nick
-
 	// Verification pour voir si la commande envoyee existe dans le dico
 	DICOCMD::iterator it = dico.begin();
 	while (it != dico.end())
@@ -143,9 +143,4 @@ STR_VEC Server::splitCmd(std::string s)
 	std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 	vec.push_back(s);
 	return vec;
-}
-
-void	Server::setInChan(bool type)
-{
-	_msg.inChan = type;
 }

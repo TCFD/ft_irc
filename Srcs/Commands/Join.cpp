@@ -37,10 +37,12 @@ int  Server::join(std::string senderNick)
 {
 	STR_VEC split = cutModeCommand();
 	int		opCodon = 0;
+
 	if (split.size() != 2 && split.size() != 3)
 		return (1);
 	else if (!isChanExists(split[1]))
 	{ //Creation du channel
+		std::cout << "OR MAYBE HERE ??\n";
 		Channel temp(split[1]);
 		temp.sName(split[1]);
 		if (split.size() == 2) {
@@ -58,6 +60,7 @@ int  Server::join(std::string senderNick)
 
 		if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit()) {
 			_msg.response = _msg.prefixNick + " 471 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+l)\r\n";
+			//printMessage("471", senderNick, currChan->gName() + " :Cannot join channel (+l)");
 			return (1); }
 		else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword()))) {
 			_msg.response = _msg.prefixNick + " 475 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";

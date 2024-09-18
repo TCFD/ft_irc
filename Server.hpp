@@ -32,33 +32,38 @@ class Polls
 		// void						setPollCount(int count) {_pollCount = count; };
 		void			mainPoll(Server& server);
 		void			addClientPoll(int clientFd);
+		void			erasePoll(int i);
+		std::vector<struct pollfd>	getPollFds(void){return(_pollFds);};
+		void			disconnectClient(int i, Server &server);
 
 };
 
 class Server: public Client
 {
 	private:
-		int							_port;
 		int							_serverSocket;
 		int							_limitUsers;
 		int							getFdOfUser(std::string nick);
 		
 		struct sockaddr_in			_serverAddr;
-		Polls						_poll;
-		Msg							_msg;
 
 		DICOCMD						_dicocmd;
-		std::vector<std::string>	splitCmd(std::string s);
 
 		bool						isUserOnChannel(std::string nick, std::string targetChannel);
-		
+		bool						_quit;
+		std::string					_mdp;
+		Polls						_poll;
+		int							_port;
+		std::vector<std::string>	splitCmd(std::string s);
+		Msg							_msg;
 		CLIENT_VEC					_clients;
+		
 		CHAN_VEC					_channels;
 		CHAN_IT						DoesChanExist (std::string target);
 
 	public:
-		Server(int port);
 		~Server(void) {};
+		Server(int port, std::string mdp);
 
 
 	// Getters / Setters
@@ -66,6 +71,7 @@ class Server: public Client
 
 		int			 	getPort(void)				{return(_port); };
 		int			 	getServerSocket(void)		{return(_serverSocket); };
+
 		
 		Msg			 	getMsg()					{return(_msg); };
 		
@@ -79,10 +85,8 @@ class Server: public Client
 		void			socketDataSet(void);
 
 		int			 	createClient(Polls &poll);
-   		void			clientDisconnected(int bytes_received, int id);
-
+   		void			clientDisconnected(int id);
 	//-//-//-// TEST
-		void	test_handleClientCommand(int client_fd);
 	//-//-//-// FIN TEST
 
 		void			handleClientCommand(int client_fd);
@@ -119,13 +123,13 @@ class Server: public Client
 		void			sendToEveryone(std::string msg);
 
 	// TOPIC
-  STR_VEC		 	cutTopicCmd(void);
+  		STR_VEC		 	cutTopicCmd(void);
 
 		void			topic_command(Client *currentUser);
 
-		void			topicHandle(void);
+		void			topicHandle(Client *currentUser);
 		
-		bool			errorsTopic(STR_VEC split);
+		bool			errorsTopic(STR_VEC split, Client *currentUser);
 
 	// NAMES
 		void			names_command(Client *currentUSer);
@@ -162,6 +166,9 @@ class Server: public Client
 	// PONG
 		void			pong_command(Client *currentUser);
 
+	// PASS
+		void			pass_command(Client *currentUser);
+		void	    	pass(Client *currenUser);
 };
 
 class StrerrorException : public std::exception
