@@ -27,11 +27,11 @@
 class Client;
 class Channel;
 
-# define CLIENT_VEC		 std::vector<Client>
-# define MAP_TAB			std::map<std::string, int>
-# define CHAR_LIST		  std::vector<char>
-# define STR_VEC			std::vector<std::string>
-# define CHAN_VEC		   std::vector<Channel>
+# define CLIENT_VEC		std::vector<Client>
+# define MAP_TAB		std::map<std::string, int>
+# define CHAR_LIST		std::vector<char>
+# define STR_VEC		std::vector<std::string>
+# define CHAN_VEC		std::vector<Channel>
 
 # define NC			"\033[0m"
 # define BOLD		"\033[1m"
