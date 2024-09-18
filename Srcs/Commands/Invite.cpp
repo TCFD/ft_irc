@@ -31,7 +31,6 @@ void	Server::addClienttoInviteList(std::string name) {
 
 void	Server::invite(std::string senderNick) {
 	STR_VEC cmdVec(splitCmd(_msg.command));
-	std::cout << RED "MESSAGE = " << _msg.command << NC << std::endl;
 
 	//* Check if there is enough args	
 	if (cmdVec.size() < 3) {
@@ -62,7 +61,6 @@ void	Server::invite(std::string senderNick) {
 	}
 
 	//* Successfull invite
-	//TODO On doit aussi envoyer au client invite
 	int userFd = getFdOfUser(cmdVec[1]);
 	if (userFd != -1) {
 		_msg.response = printMessage("341", senderNick, cmdVec[1] + " " + cmdVec[2]);
@@ -70,7 +68,6 @@ void	Server::invite(std::string senderNick) {
 		_msg.response = std::string(BOLD) + "Whats up " + std::string(BLUE) + cmdVec[1] + std::string(NC) + std::string(BOLD) + ", " + std::string(BLUE) + senderNick + std::string(NC) + std::string(BOLD) + " invited you to channel " + std::string(BLUE) + cmdVec[2] + std::string(NC) + "\r\n";
 		sendResponse(userFd);
 		addClienttoInviteList(cmdVec[1]);
-
 	}
 	_msg.response = printMessage("341", senderNick, cmdVec[1] + " " + cmdVec[2]);
 }	

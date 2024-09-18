@@ -31,7 +31,6 @@ void	Server::kick(std::string senderNick) {
 		
 	//}
 	//* Does channel exist ? 
-	std::cout <<  "does channel exist\n";
 	CHAN_IT targetChan = DoesChanExist(cmdVec[1]);
 	if (targetChan == _channels.end()) {
 		_msg.response = printMessage("403", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " :No such channel");

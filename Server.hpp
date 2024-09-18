@@ -164,7 +164,6 @@ class Server: public Client
 		void			pong_command(Client *currentUser);
 
 	// PASS
-		void			pass_command(Client *currentUser);
 		void	    	pass(Client *currenUser);
 };
 

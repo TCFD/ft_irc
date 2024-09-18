@@ -67,21 +67,14 @@ int	Server::createClient(Polls &poll)
 	Client	client(clientFd);
 	_clients.push_back(client);
 	
-	// std::cout << "New connection from " << inet_ntoa(clientAddr.sin_addr) << " (internal id = " << temp.indexInPollFd << ")\n";
 	return (clientFd);
 }
 
 // Pas fini: gros travaux !!!
 void Server::clientDisconnected(int id) {
 	(void)(id);
-	//if (bytes_received == 0)
 		std::cout << "Client disconnected" << std::endl;
-	//else
-	//	perror("recv");
-	_clients.erase(_clients.begin() + id); //? clear user's buffer
-	//// _pollFds[currentIndex].fd = -1;
-	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
-	//// Jpense que c'est plus simple que de decaller tous les indexs
+	_clients.erase(_clients.begin() + id);
 }
 
 
@@ -99,7 +92,6 @@ void	Server::handleClientCommand(int client_fd)
 	DICOCMD::iterator it = dico.begin();
 	while (it != dico.end())
 	{
-		// Attention il faudra gerer le cas avec netcat ou il faut enlever le '/' du debut
 		if (_msg.command.rfind(it->first, 0) == 0)
 		{
 			ServerMemberFunction func = it->second;
@@ -109,8 +101,6 @@ void	Server::handleClientCommand(int client_fd)
 		}
 		it++ ;
 	}
-
-	// Si la commande ne correspond a aucune commande dans le dico
 	if (!founded)
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 
@@ -137,10 +127,8 @@ STR_VEC Server::splitCmd(std::string s)
 	while ((pos = s.find(delimiter)) != std::string::npos)
 	{
 		vec.push_back(s.substr(0, pos));
-		std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 		s.erase(0, pos + delimiter.length());
 	}
-	std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 	vec.push_back(s);
 	return vec;
 }

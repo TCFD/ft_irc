@@ -8,11 +8,9 @@ bool	Server::isChanExists(std::string target)
 	if (target[0] != '#')
 		target = "#" + target;
 	if (!_channels.empty()) {
-		std::cout << "HELLOOOOOOOOO\n";
 		for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, it++)
 		{
 			if (target == it->gName()) {
-				std::cout << RED "Current Chan is: " << _msg.currentChan << NC << std::endl;
 				_msg.currentChan = len;
 				return true; }
 		}
@@ -34,7 +32,6 @@ bool	isUserExists(std::string target, CLIENT_VEC clients)
 // Check if the target is already in the channel or not
 bool	isUserInChan(std::string target, Channel chan)
 {	
-	std::cout << "target \'" << target << "\'" << std::endl;
 	for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
 		if (it->getNickname() == target)
 			return true;
@@ -55,13 +52,10 @@ bool	foundModeInChan(char mod, CHAR_LIST modList)
 /* 
  * Check if the third arg is +k, +l or +/-o
 */
-//probablement un probleme !!
 bool	isFourArgs(STR_VEC& split)
 {
-	std::cout << "is the problem here ???\n";
-	if (split.size() > 2 && (split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o")) {
-		std::cout << "can we check that ?\n";
-		return true; }
+	if (split.size() > 2 && (split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
+		return true;
 	return false;
 }
 

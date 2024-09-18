@@ -19,7 +19,6 @@ void	Server::sendToEveryone(std::string msg)
 {
 	for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); ++it)
 	{
-		// std::cout << "IT : " << it->getNickname() << std::endl;
 		_msg.response = msg;
 		sendResponse(it->getFd());
 	}
@@ -41,14 +40,13 @@ int  Server::join(std::string senderNick)
 	if (split.size() != 2 && split.size() != 3)
 		return (1);
 	else if (!isChanExists(split[1]))
-	{ //Creation du channel
-		std::cout << "OR MAYBE HERE ??\n";
+	{
 		Channel temp(split[1]);
 		temp.sName(split[1]);
 		if (split.size() == 2) {
-			temp.sPwd(""); } // Entree libre dans le channel
+			temp.sPwd(""); }
 		else {
-			temp.sPwd(split[2]); } // Mot de passe requis
+			temp.sPwd(split[2]); }
 		temp.addOperator(_clients[_msg.currentIndex]);
 		temp.addClient(_clients[_msg.currentIndex]);
 		temp.addLenClient();
@@ -60,7 +58,6 @@ int  Server::join(std::string senderNick)
 
 		if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit()) {
 			_msg.response = _msg.prefixNick + " 471 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+l)\r\n";
-			//printMessage("471", senderNick, currChan->gName() + " :Cannot join channel (+l)");
 			return (1); }
 		else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword()))) {
 			_msg.response = _msg.prefixNick + " 475 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";
@@ -96,6 +93,5 @@ int  Server::join(std::string senderNick)
 	sendResponse(_clients[_msg.currentIndex].getFd());
 
 	namesHandle();
-	std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
 	return (0);
 }
