@@ -8,9 +8,10 @@ bool	Server::errorLenModes(STR_VEC& split)
 {
 	const char* init[] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
 	STR_VEC flags(init, init+ sizeof(init) / sizeof(init[0]));
-	if ((isFourArgs(split) && split.size() < 4) || split.size() < 3 || split[2].length() < 2) {
+	std::cout << "AFFICHE SPLIT --> " << split.size() << std::endl; 
+	if ((isFourArgs(split) && split.size() < 4) || split.size() < 3 || (split.size() > 2 && split[2].length() < 2)) {
 		_msg.response = _msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
-	else if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
+	if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
 		_msg.response = _msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407 // BIG PROBLEM dans les conditions je pense !!
 	else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
 		_msg.response = _msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501

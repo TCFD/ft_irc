@@ -37,10 +37,12 @@ int  Server::join(std::string senderNick)
 {
 	STR_VEC split = cutModeCommand();
 	int		opCodon = 0;
+
 	if (split.size() != 2 && split.size() != 3)
 		return (1);
 	else if (!isChanExists(split[1]))
 	{ //Creation du channel
+		std::cout << "OR MAYBE HERE ??\n";
 		Channel temp(split[1]);
 		temp.sName(split[1]);
 		if (split.size() == 2) {
