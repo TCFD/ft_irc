@@ -62,6 +62,7 @@ class Channel;
 struct Msg {
 	int			currentIndex;
 	int		 	currentChan;
+	bool		inChan;
 	std::string response;
 	std::string command;
 	std::string prefixServer;

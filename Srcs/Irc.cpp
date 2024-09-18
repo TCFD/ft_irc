@@ -145,7 +145,7 @@ void Polls::mainPoll(Server& server)
 							std::cout << "command client buffer: " << _clientsBuffer[_pollFds[i].fd] << std::endl;
 							std::cout << "Received command: " << server.getMsg().command << std::endl;
 							server.setMsgIdx(i - 1);
-							server.test_handleClientCommand(_pollFds[i].fd);
+							server.handleClientCommand(_pollFds[i].fd);
 						}
 					}
 				}

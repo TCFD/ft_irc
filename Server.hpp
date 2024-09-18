@@ -60,7 +60,10 @@ class Server: public Client
 		Server(int port);
 		~Server(void) {};
 
+
 	// Getters / Setters
+		void			setInChan(bool type);
+
 		int			 	getPort(void)				{return(_port); };
 		int			 	getServerSocket(void)		{return(_serverSocket); };
 		
