@@ -62,12 +62,12 @@ int  Server::join(std::string senderNick)
 		else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword()))) {
 			_msg.response = _msg.prefixNick + " 475 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";
 			return (1); }
-		else if (foundModeInChan('i', currChan->gModes()) && !currChan->isUserInvite(senderNick)) {
+		else if (found_mode_in_chan('i', currChan->gModes()) && !currChan->isUserInvite(senderNick)) {
 			_msg.response = _msg.prefixNick + " 473 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+i)\r\n";
 			return (1); }
 		else
 		{
-			if (foundModeInChan('i', currChan->gModes()))
+			if (found_mode_in_chan('i', currChan->gModes()))
 				currChan->dltInvite(senderNick);
 			currChan->addClient(_clients[_msg.currentIndex]);
 			currChan->addLenClient();
@@ -87,7 +87,7 @@ int  Server::join(std::string senderNick)
 	if (_channels[_msg.currentChan].gTopic() != "") {
 		_msg.response += _msg.prefixNick + " 332 " + senderNick + " " + _channels[_msg.currentChan].gName() + " :" + _channels[_msg.currentChan].gTopic() + "\r\n";
 		sendResponse(_clients[_msg.currentIndex].getFd());
-		_msg.response += _msg.prefixNick + " 333 " + senderNick + " " + _channels[_msg.currentChan].gName() + " " + _channels[_msg.currentChan].gTopicName() + " " + timeToStr(std::time(0)) + "\r\n"; }
+		_msg.response += _msg.prefixNick + " 333 " + senderNick + " " + _channels[_msg.currentChan].gName() + " " + _channels[_msg.currentChan].gTopicName() + " " + time_to_str(std::time(0)) + "\r\n"; }
 	else {
 		_msg.response += _msg.prefixNick + " 331 " + senderNick + " " + _channels[_msg.currentChan].gName() + " :No topic set\r\n"; }
 	sendResponse(_clients[_msg.currentIndex].getFd());

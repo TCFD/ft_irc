@@ -1,10 +1,8 @@
 #pragma once
 
 # include "Irc.hpp"
-# include <map>
 
 class Client;
-class Server;
 
 // Define a typedef for a member function pointer
 typedef void (Server::*ServerMemberFunction)(Client*);
@@ -12,156 +10,115 @@ typedef void (Server::*ServerMemberFunction)(Client*);
 // Define the map type
 typedef std::map<std::string, ServerMemberFunction> DICOCMD;
 
+class Server {
 
-class Polls
-{
 	private:
-		std::vector<struct pollfd>		_pollFds;
-		struct pollfd					_clientPollFds;
-		struct pollfd					_serverPollFds;
-		int								_pollCount;
-		std::map<int, std::string>		_clientsBuffer;
-
-	public:
-		Polls() {};
-		Polls(int fd);
-		~Polls() {};
-
-		// int						 getPollCount() { return(_pollCount); };
-		// std::vector<struct pollfd>  getPollsFds(void) {return (_pollFds); };
-		// void						setPollCount(int count) {_pollCount = count; };
-		void			mainPoll(Server& server);
-		void			addClientPoll(int clientFd);
-		void			erasePoll(int i);
-		std::vector<struct pollfd>	getPollFds(void){return(_pollFds);};
-		void			disconnectClient(int i, Server &server);
-
-};
-
-class Server: public Client
-{
-	private:
+		struct sockaddr_in			_serverAddr;
+		std::string					_mdp;
+		CLIENT_VEC					_clients;
+		CHAN_VEC					_channels;
+		DICOCMD						_dicocmd;
+		Polls						_poll;
+		bool						_quit;
+		Msg							_msg;
 		int							_serverSocket;
 		int							_limitUsers;
-		int							getFdOfUser(std::string nick);
-		
-		struct sockaddr_in			_serverAddr;
-
-		DICOCMD						_dicocmd;
-
-		bool						isUserOnChannel(std::string nick, std::string targetChannel);
-		bool						_quit;
-		std::string					_mdp;
-		Polls						_poll;
 		int							_port;
-		std::vector<std::string>	splitCmd(std::string s);
-		Msg							_msg;
-		CLIENT_VEC					_clients;
-		
-		CHAN_VEC					_channels;
-		CHAN_IT						DoesChanExist (std::string target);
 
 	public:
-		~Server(void) {};
 		Server(int port, std::string mdp);
+		~Server(void) {};
 
-	// Getters / Setters
-		int			 	getPort(void)				{return(_port); };
-		int			 	getServerSocket(void)		{return(_serverSocket); };
-
+	// Getters
+		int				getFdOfUser(std::string nick);
+		int			 	getPort(void)					{return(_port); };
+		int			 	getServerSocket(void)			{return(_serverSocket); };
+		Msg			 	getMsg(void)					{return(_msg); };
+		DICOCMD			getDicoCmd(void);
 		
-		Msg			 	getMsg()					{return(_msg); };
+	// Setters
+		void			setMsgIdx(int idx)				{_msg.currentIndex = idx; };
+		void			setMsgCmd(std::string cmd)		{_msg.command = cmd; };
+		void			setMsg(void)					{_msg.currentChan = 0; _msg.prefixServer = ":server "; };
+		void			setPoll(Polls& poll)			{_poll = poll; };
 		
-		void			setMsgIdx(int idx)			{_msg.currentIndex = idx; };
-		void			setMsgCmd(std::string cmd)	{_msg.command = cmd; };
-		void			setMsg()					{_msg.currentChan = 0; _msg.prefixServer = ":server "; };
-		void			setPoll(Polls& poll)		{_poll = poll; };
-		
-		DICOCMD			getdicocmd();
-
-		void			socketDataSet(void);
-
-		int			 	createClient(Polls &poll);
-   		void			clientDisconnected(int id);
-	//-//-//-// TEST
-	//-//-//-// FIN TEST
-
-		void			handleClientCommand(int client_fd);
-		void			sendResponse(int client_fd);
-		STR_VEC			cutModeCommand(void);
+	// Main Methods
+		int			 				createClient(Polls &poll);
+		void						socketDataSet(void);
+   		void						clientDisconnected(int id);
+		void						handleClientCommand(int client_fd);
+		void						sendResponse(int client_fd);
+		bool						isUserOnChannel(std::string nick, std::string targetChannel);
+		STR_VEC						cutModeCommand(void);
+		CHAN_IT						DoesChanExist (std::string target);
+		std::vector<std::string>	splitCmd(std::string s);
 
 	/* * * Command * * */
 	// MODE
 		int			 	modesHandle(void);
-
-		bool			errorModes(STR_VEC& split);
-		bool			errorLenModes(STR_VEC& split);
-
-		void			modes_command(Client *currentUser);
+		void			modesCommand(Client *currentUser);
 		void			modesOptions(STR_VEC& split);
 		void			modeK(STR_VEC& split);
 		void			modeO(STR_VEC& split);
 		void			modeL(STR_VEC& split);
 		void			modeT(STR_VEC& split);
 		void			modeI(STR_VEC& split);
+		bool			errorLenModes(STR_VEC& split);
+		bool			errorModes(STR_VEC& split);
 
 	// NICK
-		void			nick_command(Client *currentUser);
+		void			nickCommand(Client *currentUser);
 		void			nick(int client_fd);
 		void			setNick(Client* currentUser, std::string name);
 
 	// JOIN
 		int			 	join(std::string senderNick);
-		
-		bool			isChanExists(std::string target);
-
-		void			join_command(Client *currentUser);
+		void			joinCommand(Client *currentUser);
 		void			sendToChan(std::string message);
 		void			sendToEveryone(std::string msg);
+		bool			isChanExists(std::string target);
 
 	// TOPIC
   		STR_VEC		 	cutTopicCmd(void);
-
-		void			topic_command(Client *currentUser);
-
+		void			topicCommand(Client *currentUser);
 		void			topicHandle(Client *currentUser);
-		
 		bool			errorsTopic(STR_VEC split, Client *currentUser);
 
 	// NAMES
-		void			names_command(Client *currentUSer);
 		void			namesHandle(void);
+		void			namesCommand(Client *currentUSer);
 
 	// PRIVMSG 
-		void			privmsg_command(Client *currentUser);
 		void			privmsg(std::string senderNick);
+		void			privmsgCommand(Client *currentUser);
 
 	// INVITE
-		void			invite_command(Client *currentUser);
 		void			invite(std::string senderNick);
+		void			inviteCommand(Client *currentUser);
 		void			addClienttoInviteList(std::string name);
 	
 	// KICK
-		void			kick_command(Client *currentUser);
 		void			kick(std::string senderNick);
+		void			kickCommand(Client *currentUser);
 
 	// USER
-		void			user_command(Client *currentUser);
+		void    		userHandle(Client   *currentUser);
+		void			userCommand(Client *currentUser);
 
 	// CAP
-		void			cap_command(Client *currentUser);
+		void			capCommand(Client *currentUser);
 
 	// PING
-		void			ping_command(Client *currentUser);
+		void			pingCommand(Client *currentUser);
 
 	// QUIT
-		void			quit_command(Client *currentUser);
+		void			quitCommand(Client *currentUser);
 
 	// WHOIS
-		void			whois_command(Client *currentUser);
+		void			whoisCommand(Client *currentUser);
 
 	// PONG
-		void			pong_command(Client *currentUser);
+		void			pongCommand(Client *currentUser);
 
 	// PASS
 		void	    	pass(Client *currenUser);

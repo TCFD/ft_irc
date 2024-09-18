@@ -6,7 +6,7 @@ void	Server::kick(std::string senderNick) {
 
 	//* Check if there is enough args	
 	if (cmdVec.size() < 3) {
-		_msg.response = printMessage("461", _clients[_msg.currentIndex].getNickname(), "KICK :Not enough parameters");
+		_msg.response = print_message("461", _clients[_msg.currentIndex].getNickname(), "KICK :Not enough parameters");
 		return;
 	}
 	
@@ -33,18 +33,18 @@ void	Server::kick(std::string senderNick) {
 	//* Does channel exist ? 
 	CHAN_IT targetChan = DoesChanExist(cmdVec[1]);
 	if (targetChan == _channels.end()) {
-		_msg.response = printMessage("403", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " :No such channel");
+		_msg.response = print_message("403", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " :No such channel");
 	}
 
 	//* Is target on channel ?
 	else if (!targetChan->isUserOnMe(cmdVec[2])) {
-		_msg.response = printMessage("441", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " " + cmdVec[2] + " :They aren't on that channel");
+		_msg.response = print_message("441", _clients[_msg.currentIndex].getNickname(), cmdVec[2] + " " + cmdVec[2] + " :They aren't on that channel");
 	}
 
 	//* Is channel operator ? 
-	else if (!isUserAnOperator(senderNick, _channels[_msg.currentChan])) {
+	else if (!is_user_an_operator(senderNick, _channels[_msg.currentChan])) {
 		// _msg.prefixNick + " 482 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :You're not channel operator\r\n";
-		_msg.response = printMessage("482", senderNick, cmdVec[1] + " :You're not channel operator");
+		_msg.response = print_message("482", senderNick, cmdVec[1] + " :You're not channel operator");
 	}
 
 	else {

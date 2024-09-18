@@ -8,9 +8,9 @@ bool	Server::errorLenModes(STR_VEC& split)
 {
 	const char* init[] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
 	STR_VEC flags(init, init+ sizeof(init) / sizeof(init[0]));
-	if ((isFourArgs(split) && split.size() < 4) || split.size() < 3 || (split.size() > 2 && split[2].length() < 2)) {
+	if ((is_four_args(split) && split.size() < 4) || split.size() < 3 || (split.size() > 2 && split[2].length() < 2)) {
 		_msg.response = _msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; }
-	if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
+	if ((is_four_args(split) && split.size() > 4) || (!is_four_args(split) && split.size() > 3)) {
 		_msg.response = _msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; }
 	else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
 		_msg.response = _msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
@@ -33,7 +33,7 @@ bool	Server::errorModes(STR_VEC& split)
 	{
 		if (!isChanExists(split[1])) {
 			_msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; }
-		else if (split.size() > 2 && !isUserAnOperator(_clients[_msg.currentIndex].getNickname(), _channels[_msg.currentChan])) {
+		else if (split.size() > 2 && !is_user_an_operator(_clients[_msg.currentIndex].getNickname(), _channels[_msg.currentChan])) {
 			_msg.response = _msg.prefixNick + " 482 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :You're not channel operator\r\n"; }
 		else if (split.size() == 2 && isChanExists(split[1]) && split[1] == curr->gName()) {
 			_msg.response = _msg.prefixServer + "324 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " " + 

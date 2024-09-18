@@ -26,11 +26,11 @@ $(NAME): $(OBJ)
 	@echo $(CYAN) "\t>>> Compilation Done <<<\n" $(NC)
 
 clean:
-	@rm -rf $(OBJDIR)
+	@-rm -rf $(OBJDIR)
 	@echo $(YELLOW) "\t-->Clean Done" $(NC)
 
 fclean: clean
-	@rm $(NAME)
+	@-rm $(NAME)
 	@echo $(YELLOW) "\t-->Fclean Done" $(NC)
 
 re: fclean

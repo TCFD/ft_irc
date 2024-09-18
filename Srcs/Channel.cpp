@@ -42,7 +42,7 @@ void	Channel::dltLenClient(void)
 
 void	Channel::dltMode(char mod)
 {
-	for (MODES_VEC::iterator it = _modes.begin(); it != _modes.end(); ++it)
+	for (CHAR_VEC::iterator it = _modes.begin(); it != _modes.end(); ++it)
 	{
 		if (*it == mod) {
 			_modes.erase(it); return ;}
@@ -94,7 +94,7 @@ std::string		Channel::gModesActives(void) {
 	int limit=0;
 	int key=0;
 
-	for (MODES_VEC::iterator it = _modes.begin(); it != _modes.end(); ++it) {
+	for (CHAR_VEC::iterator it = _modes.begin(); it != _modes.end(); ++it) {
 	
 		if (*it == 'k')
 			key = 1;
@@ -105,11 +105,11 @@ std::string		Channel::gModesActives(void) {
 	}
 	
 	if (limit == 1 && key == 1)
-		mods += "lk " + intToStr(_limit) + " " + _password;
+		mods += "lk " + int_to_str(_limit) + " " + _password;
 	else if (key == 1)
 		mods += "k " + _password;
 	else if (limit == 1)
-		mods += "l " + intToStr(_limit);
+		mods += "l " + int_to_str(_limit);
 	return mods;
 }
 

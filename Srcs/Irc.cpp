@@ -45,7 +45,7 @@ Polls::Polls(int fd)
 // 			// 	{currentUser->userName += "_";}
 // 			currentUser->registered = true;
 // 			currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
-// 			_msg.response = printMessage("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id);
+// 			_msg.response = print_message("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id);
 // 		}
 // 	}
 

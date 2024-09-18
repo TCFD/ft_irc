@@ -1,7 +1,14 @@
 #ifndef IRC_HPP
 # define IRC_HPP
 
-// # include "Server.hpp"
+# define CHAN_VEC		   	std::vector<Channel>
+# define CHAN_IT			CHAN_VEC::iterator
+# define CLIENT_VEC		 	std::vector<Client>
+# define CLIENT_IT		  	CLIENT_VEC::iterator
+# define CHAR_VEC		  	std::vector<char>
+# define MAP_TAB			std::map<std::string, int>
+# define STR_VEC			std::vector<std::string>
+
 # include <algorithm>
 # include <arpa/inet.h>
 # include <cstdio>
@@ -21,17 +28,10 @@
 # include <sys/socket.h>
 # include <unistd.h>
 # include <vector>
+
+# include "Poll.hpp"
 # include "Client.hpp"
 # include "Channel.hpp"
-
-class Client;
-class Channel;
-
-# define CLIENT_VEC		 std::vector<Client>
-# define MAP_TAB			std::map<std::string, int>
-# define CHAR_LIST		  std::vector<char>
-# define STR_VEC			std::vector<std::string>
-# define CHAN_VEC		   std::vector<Channel>
 
 # define NC			"\033[0m"
 # define BOLD		"\033[1m"
@@ -43,21 +43,7 @@ class Channel;
 # define MAGENTA	"\033[35m"	  /* Magenta */
 # define CYAN		"\033[36m"	  /* Cyan */
 
-// struct User {
-// 	int			indexInPollFd;
-// 	std::string	userName;
-// 	std::string	nickName;
-// 	std::string	realName;
-// 	bool		newUser;
-// 	bool		nickDone;
-//	 VEC_LIST	modes;
-//	 std::string oldName;
-// 	std::string	id;
-// 	std::string	host;
-// 	bool		registered;
-//	 int		 operators;
-//	 int		 fd;
-// };
+class Channel;
 
 struct Msg {
 	int			currentIndex;
@@ -69,25 +55,22 @@ struct Msg {
 };
 
 //Useful to commands
-std::string		printMessage(std::string num, std::string nickname, std::string message);
+int	 			user_in_chan_fd(std::string nick, CLIENT_VEC clients);
 
-bool			isUserExists(std::string target, CLIENT_VEC clients);
-bool			isUserInChan(std::string target, Channel chan);
-bool			foundModeInChan(char mod, CHAR_LIST modList);
-bool			isUserAnOperator(std::string target, Channel chan);
+bool			is_user_exists(std::string target, CLIENT_VEC clients);
+bool			is_user_in_chan(std::string target, Channel chan);
+bool			found_mode_in_chan(char mod, CHAR_VEC modList);
+bool			is_user_an_operator(std::string target, Channel chan);
+bool			is_four_args(STR_VEC& split);
+bool			is_valid_nick(const std::string& nick);
+bool			is_already_exists(std::string name, int clientFd, CLIENT_VEC clients);
 
-int	 			userInChanFd(std::string nick, CLIENT_VEC clients);
-bool			isFourArgs(STR_VEC& split);
-
-bool			isValidNick(const std::string& nick);
-bool			isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients);
-
-std::string		intToStr(int nb);
-std::string		charToStr(char nb);
-std::string		timeToStr(time_t nb);
+std::string		int_to_str(int nb);
+std::string		char_to_str(char nb);
+std::string		time_to_str(time_t nb);
+std::string		print_message(std::string num, std::string nickname, std::string message);
 
 // DEBUG
-void			printListUser(CLIENT_VEC&   clients);
-
+void			print_list_user(CLIENT_VEC&   clients);
 
 #endif

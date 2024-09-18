@@ -1,33 +1,17 @@
 #include "../../Server.hpp"
 
-
 // ──────────────- ALL COMMANDS -────────────── //
 
 		// - USER COMMAND - //
 
-void	Server::user_command(Client *currentUser)
+void	Server::userCommand(Client	*currentUser)
 {
-	if (currentUser->getPasswd()) {
-		currentUser->setUsername(_msg.command.substr(5, _msg.command.find(" ", 5) - 5));
-		currentUser->setRealname(_msg.command.substr(_msg.command.find(":")));
-		if (currentUser->getNickname() != "") {
-			currentUser->setRegistered(true);
-			currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
-			_msg.response = printMessage("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
-		}
-	}
-	else
-	{
-		_msg.response = ":server Please set your password first\r\n";
-		sendResponse(currentUser->getFd());
-		_msg.response += ":server KILL * :Invalid password, please retry.\r\n";
-		sendResponse(currentUser->getFd());
-	}
+	userHandle(currentUser);
 }
 
 		// - NAMES COMMAND - //
 
-void	Server::names_command(Client *currentUSer)
+void	Server::namesCommand(Client *currentUSer)
 {
 	(void)currentUSer;
 	namesHandle();
@@ -35,7 +19,7 @@ void	Server::names_command(Client *currentUSer)
 
 		// - MODES COMMAND - //
 
-void	Server::modes_command(Client *currentUser)
+void	Server::modesCommand(Client *currentUser)
 {
 	(void)currentUser;
 	modesHandle();
@@ -43,14 +27,14 @@ void	Server::modes_command(Client *currentUser)
 
 		// - JOIN COMMAND - //
 
-void	Server::join_command(Client *currentUser)
+void	Server::joinCommand(Client *currentUser)
 {
 	join(currentUser->getNickname());
 }
 
 		// - CAP COMMAND - //
 
-void	Server::cap_command(Client *currentUser)
+void	Server::capCommand(Client *currentUser)
 {
 	(void)currentUser;
 	_msg.response = "\r\n";
@@ -58,7 +42,7 @@ void	Server::cap_command(Client *currentUser)
 
 		// - NICK COMMAND - //
 
-void	Server::nick_command(Client *currentUser)
+void	Server::nickCommand(Client *currentUser)
 {
 	if (currentUser->getPasswd()) {
 		nick(currentUser->getActualClientFd());
@@ -75,7 +59,7 @@ void	Server::nick_command(Client *currentUser)
 
 		// - TOPIC COMMAND - //
 
-void	Server::topic_command(Client *currentUser)
+void	Server::topicCommand(Client *currentUser)
 {
 	topicHandle(currentUser);
 }
@@ -83,7 +67,7 @@ void	Server::topic_command(Client *currentUser)
 
 		// - PING COMMAND - //
 
-void	Server::ping_command(Client *currentUser)
+void	Server::pingCommand(Client *currentUser)
 {
 	(void)currentUser;
 	_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
@@ -92,7 +76,7 @@ void	Server::ping_command(Client *currentUser)
 
 		// - QUIT COMMAND - //
 
-void	Server::quit_command(Client *currentUser)
+void	Server::quitCommand(Client *currentUser)
 {
 	(void)currentUser;
 	_msg.currentChan = 0;
@@ -100,7 +84,7 @@ void	Server::quit_command(Client *currentUser)
 
 		// - WHOIS COMMAND - //
 
-void	Server::whois_command(Client *currentUser)
+void	Server::whoisCommand(Client *currentUser)
 {
 	(void)currentUser;
 	return ;
@@ -108,7 +92,7 @@ void	Server::whois_command(Client *currentUser)
 
 		// - PONG COMMAND - //
 
-void	Server::pong_command(Client *currentUser)
+void	Server::pongCommand(Client *currentUser)
 {
 	(void)currentUser;
 	return ;
@@ -116,21 +100,21 @@ void	Server::pong_command(Client *currentUser)
 
 		// - INVITE COMMAND - //
 
-void	Server::invite_command(Client *currentUser)
+void	Server::inviteCommand(Client *currentUser)
 {
 	invite(currentUser->getNickname());
 }
 
 		// - PRIVMSG COMMAND - //
 
-void	Server::privmsg_command(Client *currentUser)
+void	Server::privmsgCommand(Client *currentUser)
 {
 	privmsg(currentUser->getNickname());
 }
 
 		// - KICK COMMAND - //
 
-void	Server::kick_command(Client *currentUser)
+void	Server::kickCommand(Client *currentUser)
 {
 	kick(currentUser->getNickname());
 }

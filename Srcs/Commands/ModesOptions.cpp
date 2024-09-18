@@ -31,11 +31,11 @@ void	Server::modeK(STR_VEC& split)
 
 	if (split[2].find("+") != std::string::npos) {
 		current->sPwd(split[3]);
-		if (!foundModeInChan(split[2][1], current->gModes())) {
+		if (!found_mode_in_chan(split[2][1], current->gModes())) {
 			current->addMode('k'); }
 	}
 	else {
-		if (foundModeInChan(split[2][1], current->gModes())) {
+		if (found_mode_in_chan(split[2][1], current->gModes())) {
 			current->sPwd("");
 			current->dltMode('k'); }
 	}
@@ -49,10 +49,10 @@ void	Server::modeK(STR_VEC& split)
 */
 void	Server::modeO(STR_VEC& split)
 {
-	if (isUserInChan(split[3], _channels[_msg.currentChan])) {
+	if (is_user_in_chan(split[3], _channels[_msg.currentChan])) {
 		if (split[2].find("+") != std::string::npos) {
 			_channels[_msg.currentChan].addOperatorByName(split[3], _clients);
-			if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
+			if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 				_channels[_msg.currentChan].addMode('o'); }
 		}
 		else {
@@ -64,7 +64,7 @@ void	Server::modeO(STR_VEC& split)
 // Just add 'i' to the modList
 void			Server::modeI(STR_VEC& split) {
 	if (split[2].find("+") != std::string::npos) {
-		if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
+		if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].addMode('i'); }
 	}
 	else {
@@ -75,7 +75,7 @@ void			Server::modeI(STR_VEC& split) {
 void			Server::modeT(STR_VEC& split) {
 
 	if (split[2].find("+") != std::string::npos) {
-		if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
+		if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].addMode('t'); }
 	}
 	else {
@@ -90,11 +90,11 @@ void			Server::modeL(STR_VEC& split)
 {
 	if (split[2].find("+") != std::string::npos) {
 		_channels[_msg.currentChan].sLimit(atoi(split[3].c_str()));
-		if (!foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
+		if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].addMode('l'); }
 	}
 	else {
-		if (foundModeInChan(split[2][1], _channels[_msg.currentChan].gModes())) {
+		if (found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].dltMode('l');
 			_channels[_msg.currentChan].sLimit(0);
 		}
@@ -107,6 +107,6 @@ void	Server::sendToChan(std::string message)
 	{
 		//if (it->getNickname() != _clients[_msg.currentIndex].getNickname()) {
 			_msg.response = message;
-			sendResponse(userInChanFd(it->getNickname(), _channels[_msg.currentChan].gClients()));
+			sendResponse(user_in_chan_fd(it->getNickname(), _channels[_msg.currentChan].gClients()));
 	}
 }

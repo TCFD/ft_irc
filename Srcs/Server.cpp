@@ -6,24 +6,24 @@ Server::Server(int port, std::string mdp) :  _mdp(mdp), _port(port)
 	socketDataSet();
 }
 
-DICOCMD Server::getdicocmd()
+DICOCMD Server::getDicoCmd()
 {
 	DICOCMD dico;
 
-	dico["PRIVMSG"]	= &Server::privmsg_command;
-	dico["INVITE"]	= &Server::invite_command;
-	dico["MODE"]	= &Server::modes_command;
-	dico["NAMES"]	= &Server::names_command;
-	dico["TOPIC"]	= &Server::topic_command;
-	dico["WHOIS"]	= &Server::whois_command;
-	dico["USER"]	= &Server::user_command;
-	dico["JOIN"]	= &Server::join_command;
-	dico["NICK"]	= &Server::nick_command;
-	dico["PING"]	= &Server::ping_command;
-	dico["QUIT"]	= &Server::quit_command;
-	dico["PONG"]	= &Server::pong_command;
-	dico["KICK"]	= &Server::kick_command;
-	dico["CAP"]		= &Server::cap_command;
+	dico["PRIVMSG"]	= &Server::privmsgCommand;
+	dico["INVITE"]	= &Server::inviteCommand;
+	dico["MODE"]	= &Server::modesCommand;
+	dico["NAMES"]	= &Server::namesCommand;
+	dico["TOPIC"]	= &Server::topicCommand;
+	dico["WHOIS"]	= &Server::whoisCommand;
+	dico["USER"]	= &Server::userCommand;
+	dico["JOIN"]	= &Server::joinCommand;
+	dico["NICK"]	= &Server::nickCommand;
+	dico["PING"]	= &Server::pingCommand;
+	dico["QUIT"]	= &Server::quitCommand;
+	dico["PONG"]	= &Server::pongCommand;
+	dico["KICK"]	= &Server::kickCommand;
+	dico["CAP"]		= &Server::capCommand;
 	dico["PASS"]	= &Server::pass;
 
 	return (dico);
@@ -81,7 +81,7 @@ void Server::clientDisconnected(int id) {
 void	Server::handleClientCommand(int client_fd)
 {
 	// Recuperation du dictionnaire de commandes
-	DICOCMD	dico = getdicocmd();
+	DICOCMD	dico = getDicoCmd();
 	bool founded = false;
 
 	Client	*currentUser = &_clients[_msg.currentIndex];
