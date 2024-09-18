@@ -8,11 +8,9 @@ bool	Server::isChanExists(std::string target)
 	if (target[0] != '#')
 		target = "#" + target;
 	if (!_channels.empty()) {
-		std::cout << "HELLOOOOOOOOO\n";
 		for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, it++)
 		{
 			if (target == it->gName()) {
-				std::cout << RED "Current Chan is: " << _msg.currentChan << NC << std::endl;
 				_msg.currentChan = len;
 				return true; }
 		}
