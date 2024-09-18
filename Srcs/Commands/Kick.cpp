@@ -1,4 +1,4 @@
-#include "../../Server.hpp"
+#include "../../Includes/Server.hpp"
 
 void	Server::kick(std::string senderNick) {
 

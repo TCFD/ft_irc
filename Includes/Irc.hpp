@@ -73,5 +73,4 @@ std::string		print_message(std::string num, std::string nickname, std::string me
 // DEBUG
 void			print_list_user(CLIENT_VEC&   clients);
 
-
 #endif

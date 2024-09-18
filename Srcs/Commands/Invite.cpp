@@ -1,4 +1,4 @@
-#include "../../Server.hpp"
+#include "../../Includes/Server.hpp"
 
 CHAN_IT Server::DoesChanExist (std::string target) {
 	CHAN_IT it = _channels.begin();

@@ -9,7 +9,7 @@
 
 //////////////// INFO CHANNEL ////////////////
 
-bool	Parsing::_attribution_info_channel(std::string& CMDSplit_value)
+bool	Parsing::attributionInfoChannel(std::string& CMDSplit_value)
 {
 	if (CMDSplit_value.size() >= 2)
 	{
@@ -31,7 +31,7 @@ bool	Parsing::_attribution_info_channel(std::string& CMDSplit_value)
 
 //////////////// INFO OPTION ////////////////
 
-bool	Parsing::_attribution_info_option(std::string& CMDSplit_value)
+bool	Parsing::attributionInfoOption(std::string& CMDSplit_value)
 {
 	if (CMDSplit_value[0] == '-')
 	{
@@ -50,15 +50,15 @@ bool	Parsing::_attribution_info_option(std::string& CMDSplit_value)
 
 //////////////// INFO MESSAGE ////////////////
 
-bool	Parsing::_attribution_info_message(std::string& CMDSplit_value)
+bool	Parsing::attributionInfoMessage(std::string& CMDSplit_value)
 {
-	int end_idx   = _brut_cmd.find(']');
+	int end_idx   = _brutCmd.find(']');
 
 	if (CMDSplit_value[0] == ':' && CMDSplit_value[1] == '[' && (long unsigned int)end_idx != std::string::npos)
 	{
-		int start_idx = _brut_cmd.find('[') + 1;
+		int start_idx = _brutCmd.find('[') + 1;
 
-		_infos["message"] = str_cut(_brut_cmd, start_idx, end_idx);;
+		_infos["message"] = str_cut(_brutCmd, start_idx, end_idx);;
 		return (true);
 	}
 	if (!_duplicates_found)
@@ -68,7 +68,7 @@ bool	Parsing::_attribution_info_message(std::string& CMDSplit_value)
 
 //////////////// INFO USERNAME ////////////////
 
-bool	Parsing::_attribution_info_username(std::string& CMDSplit_value)
+bool	Parsing::attributionInfoUsername(std::string& CMDSplit_value)
 {
 	if (!find_one_of_them("/#:-", CMDSplit_value))
 	{
@@ -82,7 +82,7 @@ bool	Parsing::_attribution_info_username(std::string& CMDSplit_value)
 
 //////////////// INFO PASSWORD ////////////////
 
-bool	Parsing::_attribution_info_password(std::string& CMDSplit_value)
+bool	Parsing::attributionInfoPassword(std::string& CMDSplit_value)
 {
 	if (!find_one_of_them("/#:-", CMDSplit_value))
 	{
@@ -101,20 +101,20 @@ bool	Parsing::_attribution_info_password(std::string& CMDSplit_value)
 
 */
 
-bool	Parsing::_elmt_attribution(char identifier, std::string CMDSplit_value)
+bool	Parsing::elmtAttribution(char identifier, std::string CMDSplit_value)
 {
 	switch (identifier)
 	{
 		case '#':
-			return (_attribution_info_channel(CMDSplit_value));
+			return (attributionInfoChannel(CMDSplit_value));
 		case 'U':
-			return (_attribution_info_username(CMDSplit_value));
+			return (attributionInfoUsername(CMDSplit_value));
 		case 'M':
-			return (_attribution_info_message(CMDSplit_value));
+			return (attributionInfoMessage(CMDSplit_value));
 		case 'P':
-			return (_attribution_info_password(CMDSplit_value));
+			return (attributionInfoPassword(CMDSplit_value));
 		case 'O':
-			return (_attribution_info_option(CMDSplit_value));
+			return (attributionInfoOption(CMDSplit_value));
 	}
 	return (false);
 }
@@ -125,7 +125,7 @@ bool	Parsing::_elmt_attribution(char identifier, std::string CMDSplit_value)
 
 */
 
-bool	Parsing::form_verification(PARSING_VECTOR_SPLIT& cmd_split,
+bool	Parsing::formVerification(PARSING_VECTOR_SPLIT& cmd_split,
             PARSING_VECTOR_SPLIT& form_split)
 {
 	int t_min = 1;
@@ -147,12 +147,12 @@ bool	Parsing::form_verification(PARSING_VECTOR_SPLIT& cmd_split,
 			c = form_split[i][0];
 			str = cmd_split[i - msg_found];
 
-			if (!_elmt_attribution(c, str))
+			if (!elmtAttribution(c, str))
 				return (false);
 
 			if (c == 'M')
 			{
-				cmd_split = removeBetweenAngles(cmd_split);
+				cmd_split = remove_between_angles(cmd_split);
 				msg_found++ ;
 			}
 		}
@@ -179,7 +179,7 @@ bool	Parsing::form_verification(PARSING_VECTOR_SPLIT& cmd_split,
 
 */
 
-void Parsing::_err_form_writing(PARSING_VECTOR_SPLIT& form)
+void Parsing::errFormWriting(PARSING_VECTOR_SPLIT& form)
 {
 	std::string	cara;
 
@@ -197,18 +197,18 @@ void Parsing::_err_form_writing(PARSING_VECTOR_SPLIT& form)
 	std::cout << std::endl;
 }
 
-void	Parsing::err_write_correct_form(std::string gap)
+void	Parsing::errWriteCorrectForm(std::string gap)
 {
 
-	if (_actual_cmd.empty())
+	if (_actualCmd.empty())
 		return ;
 
 
-	_err_map["/"] = "🔸 /" + _actual_cmd + gap;
+	_err_map["/"] = "🔸 /" + _actualCmd + gap;
 
 	if (_duplicates_found)
 	{
-		PARSING_VECTOR_SPLIT cmd_all_form = split(_actual_brut_form, ',');
+		PARSING_VECTOR_SPLIT cmd_all_form = split(_actualBrutForm, ',');
 		
 		std::cout << "\n\033[35m// Multiple syntaxe\033[0m" << std::endl;
 
@@ -216,7 +216,7 @@ void	Parsing::err_write_correct_form(std::string gap)
 		{
 			std::cout << (i+1) << ".";
 			PARSING_VECTOR_SPLIT cmd_all_form_split = split(byidx(cmd_all_form, i), ' ');
-			_err_form_writing(cmd_all_form_split);
+			errFormWriting(cmd_all_form_split);
 		}
 
 		std::cout << "\n\033[35m-------------------\033[0m" << std::endl;
@@ -224,13 +224,13 @@ void	Parsing::err_write_correct_form(std::string gap)
 		return ;
 	}
 	
-	_err_form_writing(_actual_split_form);
+	errFormWriting(_actual_split_form);
 	return ;
 
 	
 }
 
-void	Parsing::err_miss_elmt(PARSING_VECTOR_SPLIT& cmd_split)
+void	Parsing::errMissElmt(PARSING_VECTOR_SPLIT& cmd_split)
 {
 	std::string elmt = "";
 
@@ -249,7 +249,7 @@ void	Parsing::err_miss_elmt(PARSING_VECTOR_SPLIT& cmd_split)
 
 */
 
-std::string	Parsing::_any_duplicates(PARSING_VECTOR_SPLIT& cmd_split, std::string& cmd_form)
+std::string	Parsing::anyDuplicates(PARSING_VECTOR_SPLIT& cmd_split, std::string& cmd_form)
 {
 	PARSING_VECTOR_SPLIT	separator_found;
 	PARSING_VECTOR_SPLIT	form_split;
@@ -265,7 +265,7 @@ std::string	Parsing::_any_duplicates(PARSING_VECTOR_SPLIT& cmd_split, std::strin
 		form_split = split(byidx(separator_found, i), ' ');
 
 		_actual_split_form = form_split;
-		if (form_verification(cmd_split, form_split))
+		if (formVerification(cmd_split, form_split))
 		{
 			return (byidx(separator_found, i));
 		}

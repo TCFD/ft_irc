@@ -1,6 +1,6 @@
 #include "../includes/Parsing.hpp"
 
-void    Parsing::parsing_help()
+void    Parsing::parsingHelp()
 {
     // Pour tous les elmts dans _cmd, afficher la commande et la forme requise
 
@@ -11,26 +11,26 @@ void    Parsing::parsing_help()
 
     PARSING_VECTOR_SPLIT actual_split_form_save;
 
-    actual_cmd_save = _actual_cmd;
-    actual_brut_form_save = _actual_brut_form;
+    actual_cmd_save = _actualCmd;
+    actual_brut_form_save = _actualBrutForm;
     actual_split_form_save = _actual_split_form;
 
     for (PARSING_MAP_CMD::iterator elmt = _cmd.begin(); elmt != _cmd.end(); elmt++)
     {
         _duplicates_found = 0;
 
-        _actual_cmd = (*elmt).first;
-        _actual_brut_form = (*elmt).second.second;
-        _actual_split_form = split(_actual_brut_form, ' ');
+        _actualCmd = (*elmt).first;
+        _actualBrutForm = (*elmt).second.second;
+        _actual_split_form = split(_actualBrutForm, ' ');
 
-        if (_actual_brut_form.find(',') != std::string::npos)
+        if (_actualBrutForm.find(',') != std::string::npos)
             _duplicates_found = 1;
 
-        err_write_correct_form("");
+        errWriteCorrectForm("");
     }
 
-    _actual_cmd = actual_cmd_save;
-    _actual_brut_form = actual_brut_form_save;
+    _actualCmd = actual_cmd_save;
+    _actualBrutForm = actual_brut_form_save;
     _actual_split_form = actual_split_form_save;
     _duplicates_found = save_duplicate;
 }

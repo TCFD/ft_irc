@@ -1,5 +1,5 @@
-#include "../../Server.hpp"
-#include "../../Channel.hpp"
+#include "../../Includes/Server.hpp"
+// #include "../../Includes/Channel.hpp"
 
 /* Use of function pointer
  * Access of each mode by their own functions

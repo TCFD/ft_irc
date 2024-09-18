@@ -1,4 +1,4 @@
-#include "../Server.hpp"
+#include "../Includes/Server.hpp"
 #include "../Parsing/includes/Parsing.hpp"
 
 Polls::Polls(int fd)
@@ -7,76 +7,6 @@ Polls::Polls(int fd)
     _serverPollFds.events = POLLIN;
     _pollFds.push_back(_serverPollFds);
 }
-
-// void Polls::send_response(int client_fd) {
-// 	std::cout << "Server sent " << _msg.response << std::endl;
-// 	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
-// 	_msg.response.erase();
-// }
-
-// void Polls::clientDisconnected(int bytes_received) {
-// 	if (bytes_received == 0)
-// 		std::cout << "Client disconnected" << std::endl;
-// 	else
-// 		perror("recv");
-// 	_clientsBuffer.erase(_pollFds[_msg.currentIndex].fd); //? clear user's buffer
-// 	close(_pollFds[_msg.currentIndex].fd);
-// 	//// _pollFds[currentIndex].fd = -1; 
-// 	//// User on index x isn't connected anymore. For future reference, when fd = -1, ignore user.
-// 	//// Jpense que c'est plus simple que de decaller tous les indexs
-// }
-
-// void	Polls::handle_client_command(int client_fd) {
-// 	User	*currentUser = &tab[_msg.currentIndex];
-
-// 	_msg.prefixNick = currentUser->nickName;
-// 	if (_msg.command.rfind("CAP", 0) == 0)
-// 		_msg.response = "\r\n"; //! On ignore CAP (notre serveur ne possède aucune capacité de négociation)
-
-// 	else if (_msg.command.rfind("NICK", 0) == 0) { /////TODO Il n'y a pas encore de sécurité. A faire.
-// 		nick(client_fd);
-// 	}
-
-// 	else if (_msg.command.rfind("USER", 0) == 0) {
-// 		currentUser->userName = _msg.command.substr(5, _msg.command.find(" ", 5) - 5);
-// 		currentUser->realName = _msg.command.substr(_msg.command.find(":"));
-// 		if (currentUser->nickName != "") {
-// 			// if (currentUser->nickName.find("_") != std::string::npos && currentUser->userName.find("_") == std::string::npos)
-// 			// 	{currentUser->userName += "_";}
-// 			currentUser->registered = true;
-// 			currentUser->id = currentUser->nickName + "!" + currentUser->userName + "@" + currentUser->host;
-// 			_msg.response = print_message("001", currentUser->nickName, ":Welcome to the Internet Relay Network " + currentUser->id);
-// 		}
-// 	}
-
-// 	else if (_msg.command.rfind("MODE", 0) == 0) {
-// 		modesHandle(); // faire la reponse du serveur vers le client
-// 	}
-// 	else if (_msg.command.rfind("JOIN", 0) == 0) {
-// 		join(); }
-
-// 	else if (_msg.command.rfind("PING", 0) == 0) {
-// 		_msg.response = _msg.prefixServer + "PONG :" + _msg.command.substr(5) + "\r\n"; //? Done.
-// 	}
-
-// 	else if (_msg.command.rfind("QUIT", 0) == 0) {
-// 		_msg.currentChan = 0; }
-// 	else if (_msg.command.rfind("WHOIS", 0) == 0) {
-//  		// std::string user = command.substr(6);
-// 		/* User temp = findUser(user);
-// 		if (temp != NULL)
-
-// 		else */
-
-// 	}
-// 	else if (_msg.command.rfind("PONG", 0) == 0) {}
-// 	else {
-// 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
-// 	}
-
-// 	send_response(client_fd);
-// 	_msg.response.clear();
-// }
 
 void	Polls::erasePoll(int i) {
 	_pollFds.erase(_pollFds.begin() + i);
@@ -146,13 +76,13 @@ void Polls::mainPoll(Server& server)
 							{
 								std::string concat = server.getMsg().command;
 								if (concat == "/HELP")
-									parsingtools.parsing_help();
-								parsingtools.cmd_treat_test(concat);
+									parsingtools.parsingHelp();
+								parsingtools.cmdTreatTest(concat);
 							}
 							catch (std::exception &e)
 							{
 								std::cout << e.what() << std::endl;
-								parsingtools.err_write_correct_form("");
+								parsingtools.errWriteCorrectForm("");
 							}
 							std::cout << "command client buffer: " << _clientsBuffer[_pollFds[i].fd] << std::endl;
 							std::cout << "Received command: " << server.getMsg().command << std::endl;
