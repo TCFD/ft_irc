@@ -115,14 +115,28 @@ void	Server::handleClientCommand(int client_fd)
 		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 
 	sendResponse(client_fd);
-	std::cout << "----------------------\n";
+	std::cout << "\n===========================================\n\n";
 
 }
 
+void Server::sendResponse(int client_fd, std::string name)
+{
+
+	if (_msg.response == "")
+		std::cout << CYAN << "Server didn't send anything.\n" << NC;
+	else
+		std::cout << CYAN << "Server sent  '" << NC << _msg.response.substr(0, _msg.response.size()-2) << CYAN << "' to "<< BOLD << name << NC << "\n";
+	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
+	_msg.response.erase();
+}
 
 void Server::sendResponse(int client_fd)
 {
-	std::cout << "Server sent " << _msg.response << std::endl;
+
+	if (_msg.response == "")
+		std::cout << CYAN << "Server didn't send anything.\n" << NC;
+	else
+		std::cout << CYAN << "Server sent  '" << NC << _msg.response.substr(0, _msg.response.size()-2) << CYAN << "' to "<< BOLD << _clients[_msg.currentIndex].getNickname() << NC << "\n";
 	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
 	_msg.response.erase();
 }
@@ -137,10 +151,8 @@ STR_VEC Server::splitCmd(std::string s)
 	while ((pos = s.find(delimiter)) != std::string::npos)
 	{
 		vec.push_back(s.substr(0, pos));
-		std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 		s.erase(0, pos + delimiter.length());
 	}
-	std::cout << "new elmt : " << s.substr(0, pos) << std::endl;
 	vec.push_back(s);
 	return vec;
 }

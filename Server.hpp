@@ -88,6 +88,7 @@ class Server: public Client
 
 		void			handleClientCommand(int client_fd);
 		void			sendResponse(int client_fd);
+		void			sendResponse(int client_fd, std::string name);
 		STR_VEC			cutModeCommand(void);
 
 	/* * * Command * * */
@@ -166,6 +167,8 @@ class Server: public Client
 	// PASS
 		void			pass_command(Client *currentUser);
 		void	    	pass(Client *currenUser);
+
+		std::string			getNickOfCurrentClient(void) {return _clients[_msg.currentIndex].getNickname();};
 };
 
 class StrerrorException : public std::exception

@@ -105,7 +105,6 @@ void	Server::sendToChan(std::string message)
 {
 	for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it ++)
 	{
-		//if (it->getNickname() != _clients[_msg.currentIndex].getNickname()) {
 			_msg.response = message;
 			sendResponse(userInChanFd(it->getNickname(), _channels[_msg.currentChan].gClients()));
 	}
