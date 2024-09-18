@@ -73,7 +73,7 @@ void	Server::nick(int client_fd) {
 		_msg.response = printMessage("433", "", name + " :");
 		//?":server 433 * " + name + " :Nickname is already in use\r\n";
 		}
-	else if (!currentUser->getRegistered()) {
+	else if (!currentUser->getRegistered() && currentUser->getUsername() != "") {
 		currentUser->setRegistered(true);
 		setNick(currentUser, name); 
 		currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());

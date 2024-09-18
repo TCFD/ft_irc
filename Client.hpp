@@ -14,6 +14,7 @@ class Client
 		bool		_registered;
 		int			_actual_client_fd;
 		int		 	_fd;
+		bool		passwd;
 
 	public:
 		Client() {};
@@ -29,6 +30,8 @@ class Client
 		bool		getRegistered(void) 	{ return _registered; };
 		int			getFd(void) 			{ return _fd; };
 		int			getActualClientFd(void)	{ return _actual_client_fd; };
+		bool		getPasswd(void)			{ return passwd; };
+		
 
 		void		setId(std::string identity) 	{ _id = identity; };
 		void		setNickname(std::string name) 	{ _nickname = name; };
@@ -38,7 +41,7 @@ class Client
 		void		setOldname(std::string name) 	{ _oldname = name; };
 		void		setRegistered(bool type) 		{ _registered = type; };
 		void		setActualClientFd(int c_fd)		{ _actual_client_fd = c_fd; };
-
-		int		 parseNickname(std::string);
+		void		setPasswd(bool arg)				{ passwd = arg; };
+		int		 	parseNickname(std::string);
 };
 		

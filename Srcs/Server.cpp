@@ -24,7 +24,7 @@ DICOCMD Server::getdicocmd()
 	dico["PONG"]	= &Server::pong_command;
 	dico["KICK"]	= &Server::kick_command;
 	dico["CAP"]		= &Server::cap_command;
-	// dico["PASS"]	= &Server::pass_command;
+	dico["PASS"]	= &Server::pass;
 
 	return (dico);
 }
