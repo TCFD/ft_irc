@@ -2,16 +2,25 @@
 
 void	printChanInfos(Channel chan, int idx)
 {
-	std::cout << "CHAN INFOS:\n";
-	std::cout << MAGENTA "* Name: " << chan.gName() << std::endl;
-	std::cout << "* Users: ";
+	std::cout << "\nCHAN INFOS:\n";
+	std::cout << MAGENTA "- Name: " << chan.gName() << std::endl;
+	std::cout << "- Users: ";
 	for (CLIENT_IT it = chan.gClients().begin(); it != chan.gClients().end(); ++it) {
 		std::cout << it->getNickname() << " "; }
-	std::cout << "\n* Limit: " << chan.gLimit() << std::endl;
-	std::cout << "* Len: " << chan.gLenClients() << std::endl;
-	std::cout << "* Password: " << chan.gPassword() << std::endl;
-	std::cout << "* Topic: " << chan.gTopic() << std::endl;
-	std::cout << "\n* NUM CHAN: " << idx << std::endl;
+	std::cout << "\n- Limit: " << chan.gLimit() << std::endl;
+	std::cout << "- Nb of users: " << chan.gLenClients() << std::endl;
+	if (chan.gPassword() != "")
+		std::cout << "- Password: " << chan.gPassword() << std::endl;
+	if (chan.gTopic() != "")
+		std::cout << "- Topic: " << chan.gTopic() << std::endl;
+	std::cout << "- NUM CHAN: " << idx << std::endl;
+	if (chan.gPassword() == "" && chan.gTopic() == "")
+	std::cout << "- This channel has no password and no topic." << std::endl;
+	else if (chan.gTopic() == "")
+		std::cout << "- This channel has no topic." << std::endl;
+	else if (chan.gPassword() == "" )
+	std::cout << "- This channel has no password." << std::endl;
+
 	std::cout << NC << std::endl;
 }
 
@@ -77,8 +86,6 @@ int  Server::join(std::string senderNick)
 		}
 	}
 	printChanInfos(_channels[_msg.currentChan], _msg.currentChan);
-	std::cout << RED "\nNEW CHANNEL ENTERING . . . " NC << std::endl;
-		
 	// Loop to send the arrival of a new client to everyone in that channel
 	for (CLIENT_IT it=_channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it++)
 	{
@@ -96,6 +103,5 @@ int  Server::join(std::string senderNick)
 	sendResponse(_clients[_msg.currentIndex].getFd());
 
 	namesHandle();
-	std::cout << "MESSAGE SENT: " << _msg.response << std::endl;
 	return (0);
 }

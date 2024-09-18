@@ -18,7 +18,7 @@ void	Server::send_primsg_to_channel(std::string senderNick, std::string destinat
 		if (it->getNickname() != senderNick)
 		{
 			std::cout << "Sending msg to " << it->getNickname() << std::endl;
-			sendResponse(it->getFd());
+				sendResponse(it->getFd(), it->getNickname());
 		}
 	}
 	_msg.response = "";
@@ -36,7 +36,7 @@ void	Server::send_privmsg_to_user(std::string senderNick, std::string destinatai
 		//_msg.response = printMessage("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel");
 	
 	_msg.response = ":" + senderNick + "!~" + senderNick + "@host PRIVMSG " + destinataire + " :" + msg.substr(1) + "\r\n";
-	sendResponse(targetUser);
+	sendResponse(targetUser, destinataire);
 }
 
 
