@@ -69,16 +69,17 @@ class Server: public Client
 	// Getters / Setters
 		void			setInChan(bool type);
 
-		int			 	getPort(void)				{return(_port); };
-		int			 	getServerSocket(void)		{return(_serverSocket); };
+		int			 	getPort(void)						{return(_port); };
+		int			 	getServerSocket(void)				{return(_serverSocket); };
 
 		
-		Msg			 	getMsg()					{return(_msg); };
+		Msg			 	getMsg()							{return(_msg); };
+		void			setMsgReponse(std::string response)	{getMsg().response = response;};
 		
-		void			setMsgIdx(int idx)			{_msg.currentIndex = idx; };
-		void			setMsgCmd(std::string cmd)	{_msg.command = cmd; };
-		void			setMsg()					{_msg.currentChan = 0; _msg.prefixServer = ":server "; };
-		void			setPoll(Polls& poll)		{_poll = poll; };
+		void			setMsgIdx(int idx)					{_msg.currentIndex = idx; };
+		void			setMsgCmd(std::string cmd)			{_msg.command = cmd; };
+		void			setMsg()							{_msg.currentChan = 0; _msg.prefixServer = ":server "; };
+		void			setPoll(Polls& poll)				{_poll = poll; };
 		
 		DICOCMD			getdicocmd();
 
@@ -136,8 +137,10 @@ class Server: public Client
 		void			names_command(Client *currentUSer);
 		void			namesHandle(void);
 
-	// PRIVMSG 
+	// PRIVMSG
 		void			privmsg_command(Client *currentUser);
+		void			send_privmsg_to_user(std::string senderNick, std::string destinataire, std::string msg);
+		void			send_primsg_to_channel(std::string senderNick, std::string destinataire, std::string msg);
 		void			privmsg(std::string senderNick);
 
 	// INVITE
