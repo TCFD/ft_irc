@@ -158,7 +158,7 @@ void Polls::mainPoll(Server& server)
 							if (nickOfCurrentUser == "")
 								nickOfCurrentUser = "new user";
 							if (_clientsBuffer[_pollFds[i].fd] != "")
-								std::cout << BLUE << nickOfCurrentUser << "'s command buffer: " << NC << "'" << _clientsBuffer[_pollFds[i].fd] << "'" << std::endl;
+								std::cout << BLUE << nickOfCurrentUser << "'s command buffer: " << "'" << NC << _clientsBuffer[_pollFds[i].fd] << BLUE << "'" << NC << std::endl;
 							else
 								std::cout << BLUE << nickOfCurrentUser << "'s command buffer is empty\n" << NC;
 							std::cout << GREEN <<  "Received command: '" << NC << server.getMsg().command << GREEN << "'" << NC << std::endl;
