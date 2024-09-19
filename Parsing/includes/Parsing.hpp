@@ -1,6 +1,5 @@
 #pragma once
 
-
 	#include <iostream>
 	#include <stdexcept>
 	#include <vector>
@@ -29,30 +28,32 @@
 	#define HELP_OPTION				"<-/+option>"
 
 
+	//////////// CLASS PARSING ////////////
 	class Parsing
 	{
 
 		public:
 
-			Parsing();
-			~Parsing();
+			Parsing(void);
+			~Parsing(void);
 
-			std::pair<std::string, std::string> parsing_get_cmd(void);
+		// GETTERS
+			std::string parsingGetCommand(void);
+			std::string parsingGetMessage(void);
+			std::string parsingGetPassword(void);
+			std::string parsingGetOption(void);
+			std::string parsingGetUsername(void);
+			std::string parsingGetChannel(void);
 
-			std::string parsing_get_command(void);
-			std::string parsing_get_message(void);
-			std::string parsing_get_password(void);
-			std::string parsing_get_option(void);
-			std::string parsing_get_username(void);
-			std::string parsing_get_channel(void);
+		// MAIN METHODS
+			void    	parsingHelp();
+			void		errMissElmt(PARSING_VECTOR_SPLIT& cmd_split);
+			void		errWriteCorrectForm(std::string gap);
+			void		cmdTreatTest(std::string brut_cmd);
+			bool		formVerification(PARSING_VECTOR_SPLIT& cmd_split,
+							PARSING_VECTOR_SPLIT& form_split);
 
-			void    parsing_help();
-			void	err_miss_elmt(PARSING_VECTOR_SPLIT& cmd_split);
-			void	err_write_correct_form(std::string gap);
-			void	cmd_treat_test(std::string brut_cmd);
-
-			bool	form_verification(PARSING_VECTOR_SPLIT& cmd_split,
-						PARSING_VECTOR_SPLIT& form_split);
+			std::pair<std::string, std::string> parsingGetCmd(void);
 
 			// EXCEPTION
 			class ParsingInvalidSyntax : public std::exception
@@ -60,54 +61,49 @@
 				public:
 
 			  		ParsingInvalidSyntax(const std::string& str1)
-			    		: _m_msg(str1){}
+			    		: _mMsg(str1){}
 
 			  		virtual const char* what() const throw()
 			  		{
-			    		return (_m_msg.c_str());
+			    		return (_mMsg.c_str());
 			  		}
 
-					 virtual ~ParsingInvalidSyntax() throw() {}
+					 virtual ~ParsingInvalidSyntax(void) throw() {}
 				
 				private:
 					
-					std::string	_m_msg;
+					std::string	_mMsg;
 			};
 
 		private:
 
-			std::string		_any_duplicates(PARSING_VECTOR_SPLIT& cmd_split, std::string& cmd_form);
-			std::string		_actual_cmd;
-			std::string		_actual_brut_form;
-			std::string		_brut_cmd;
-
-
-			void 	_err_form_writing(PARSING_VECTOR_SPLIT& form);
-
-			void	_check_form(PARSING_VECTOR_SPLIT cmd_split, PARSING_VECTOR_SPLIT form_split);
-			void	_cmd_reset_status(void);
-			
-			bool	_elmt_attribution(char identifier, std::string CMDSplit_value);
-			bool	_attribution_info_channel(std::string& CMDSplit_value);
-			bool	_attribution_info_option(std::string& CMDSplit_value);
-			bool	_attribution_info_message(std::string& CMDSplit_value);
-			bool	_attribution_info_username(std::string& CMDSplit_value);
-			bool	_attribution_info_password(std::string& CMDSplit_value);
-
-
-			bool	_duplicates_found;
-
+			bool					_duplicates_found;
+			std::string				_actualCmd;
+			std::string				_actualBrutForm;
+			std::string				_brutCmd;
 			PARSING_VECTOR_SPLIT	_actual_split_form;
 			PARSING_MAP_ERR			_err_map;
-
 			PARSING_MAP_OPT			_options;
 			PARSING_MAP_CMD			_cmd;
 			PARSING_MAP_INFOS		_infos;
+			
+	
+			// void	_check_form(PARSING_VECTOR_SPLIT cmd_split, PARSING_VECTOR_SPLIT form_split);
+			std::string		anyDuplicates(PARSING_VECTOR_SPLIT& cmd_split, std::string& cmd_form);
+			void 			errFormWriting(PARSING_VECTOR_SPLIT& form);
+			void			cmdResetStatus(void);
+			bool			elmtAttribution(char identifier, std::string CMDSplit_value);
+			bool			attributionInfoChannel(std::string& CMDSplit_value);
+			bool			attributionInfoOption(std::string& CMDSplit_value);
+			bool			attributionInfoMessage(std::string& CMDSplit_value);
+			bool			attributionInfoUsername(std::string& CMDSplit_value);
+			bool			attributionInfoPassword(std::string& CMDSplit_value);
 	};
 
+	//////////// FUNCTIONS ////////////
 
 	PARSING_VECTOR_SPLIT	split(const std::string &str, char delimiter);
-	PARSING_VECTOR_SPLIT	removeBetweenAngles(const PARSING_VECTOR_SPLIT& input);
+	PARSING_VECTOR_SPLIT	remove_between_angles(const PARSING_VECTOR_SPLIT& input);
 	std::string const&		byidx(PARSING_VECTOR_SPLIT& v, int index);
 	std::string				str_cut(std::string str, int start_idx, int end_idx);
 	bool					find_one_of_them(std::string cara_search, std::string& str_origin);

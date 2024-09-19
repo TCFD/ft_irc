@@ -1,4 +1,4 @@
-#include "../../Server.hpp"
+#include "../../Includes/Server.hpp"
 
 /* 
  * Handling Error Modes #2
@@ -8,11 +8,10 @@ bool	Server::errorLenModes(STR_VEC& split)
 {
 	const char* init[] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
 	STR_VEC flags(init, init+ sizeof(init) / sizeof(init[0]));
-	std::cout << "AFFICHE SPLIT --> " << split.size() << std::endl; 
-	if ((isFourArgs(split) && split.size() < 4) || split.size() < 3 || (split.size() > 2 && split[2].length() < 2)) {
-		_msg.response = _msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; } //ERR_NEEDMOREPARAMS 461
-	else if ((isFourArgs(split) && split.size() > 4) || (!isFourArgs(split) && split.size() > 3)) {
-		_msg.response = _msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; } //ERR_TOOMANYTARGETS 407
+	if ((is_four_args(split) && split.size() < 4) || split.size() < 3 || (split.size() > 2 && split[2].length() < 2)) {
+		_msg.response = _msg.prefixNick + " 461 " + split[1] + " MODE :Not enough parameters\r\n"; }
+	if ((is_four_args(split) && split.size() > 4) || (!is_four_args(split) && split.size() > 3)) {
+		_msg.response = _msg.prefixNick + " 407 " + split[1] + " MODE :Too much parameters\r\n"; }
 	else if (std::find(flags.begin(), flags.end(), split[2]) == flags.end()) {
 		_msg.response = _msg.prefixNick + " 501 " + split[1] + " MODE :Unknown MODE flag\r\n"; } //ERR_UMODEUNKNOWNFLAG 501
 	else
@@ -33,12 +32,12 @@ bool	Server::errorModes(STR_VEC& split)
 	if (split[1] != _clients[_msg.currentIndex].getNickname())
 	{
 		if (!isChanExists(split[1])) {
-			_msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; } //ERR_NOSUCHCHANNEL 403
-		else if (split.size() > 2 && !isUserAnOperator(_clients[_msg.currentIndex].getNickname(), _channels[_msg.currentChan])) {
-			_msg.response = _msg.prefixNick + " 482 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :You're not channel operator\r\n"; } //ERR_CHANOPRIVSNEEDED 482
+			_msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; }
+		else if (split.size() > 2 && !is_user_an_operator(_clients[_msg.currentIndex].getNickname(), _channels[_msg.currentChan])) {
+			_msg.response = _msg.prefixNick + " 482 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :You're not channel operator\r\n"; }
 		else if (split.size() == 2 && isChanExists(split[1]) && split[1] == curr->gName()) {
 			_msg.response = _msg.prefixServer + "324 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " " + 
-			curr->gModesActives() + "\r\n"; } //Afficher les modes actifs du channel: RPL_CHANNELMODEIS 324
+			curr->gModesActives() + "\r\n"; }
 		else {
 			return (errorLenModes(split)); }
 	}
@@ -61,13 +60,10 @@ int	Server::modesHandle(void)
 	_msg.response = "";
 	STR_VEC split = cutModeCommand();
 	
-	//Modes handling
 	if (!errorModes(split) && _msg.response.find("MODE") == std::string::npos)
 	{
-		//Traitement de mode option
 		modesOptions(split);
 
-		//Affichage pour le client 
 		if (split.size() == 4) {
 			std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
 			_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }

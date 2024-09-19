@@ -1,4 +1,4 @@
-#include "../../Server.hpp"
+#include "../../Includes/Server.hpp"
 
 /*
 * Erreurs pour la commande NICK :
@@ -9,7 +9,7 @@
 //! ERR_UNAVAILRESOURCE (437) : Le pseudonyme est temporairement indisponible (par exemple, en raison de restrictions du serveur).
 */
 
-bool isValidNick(const std::string& nick) {
+bool is_valid_nick(const std::string& nick) {
 	const std::string invalidChars = "@!#$%^&*()+=[]{}\\|:;'\"<>?,/";
 
 	for (std::string::const_iterator it = nick.begin(); it != nick.end(); ++it) {
@@ -21,7 +21,7 @@ bool isValidNick(const std::string& nick) {
 	return true;
 }
 
-bool	isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients)
+bool	is_already_exists(std::string name, int clientFd, CLIENT_VEC clients)
 {
 	for (CLIENT_IT it = clients.begin(); it < clients.end(); it++) {
 		if (it->getNickname() == name && it->getFd() != clientFd)
@@ -30,14 +30,14 @@ bool	isAlreadyExists(std::string name, int clientFd, CLIENT_VEC clients)
 	return false;
 }
 
-std::string	printMessage(std::string num, std::string nickname, std::string message)
+std::string	print_message(std::string num, std::string nickname, std::string message)
 {
 	if (nickname.empty())
 		nickname = "*";
 	return (":server " + num + " " + nickname + " " + message + "\r\n");
 }
 
-void    printListUser(CLIENT_VEC&   clients)
+void    print_list_user(CLIENT_VEC&   clients)
 {
     std::cout << "List of known users : ";
 	for (CLIENT_IT it = clients.begin(); it < clients.end(); it++) {
@@ -61,16 +61,16 @@ void	Server::nick(int client_fd) {
 	currentUser->setOldname(currentUser->getNickname());
 
 	for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
-		if (isUserInChan(currentUser->getNickname(), *it)) {
-			_msg.response = printMessage("421", currentUser->getNickname(), " :Can't use this command in a channel");
+		if (is_user_in_chan(currentUser->getNickname(), *it)) {
+			_msg.response = print_message("421", currentUser->getNickname(), " :Can't use this command in a channel");
 			return ;}
 	}
 	if (name.empty()) {
-		_msg.response = printMessage("431", currentUser->getNickname(), " :No nickname given");}
-	else if (!isValidNick(name)) {
-		_msg.response = printMessage("432", "*", name + " :Erroneous nickname"); }
-	else if (isAlreadyExists(name, client_fd, _clients)) {
-		_msg.response = printMessage("433", "", name + " :");
+		_msg.response = print_message("431", currentUser->getNickname(), " :No nickname given");}
+	else if (!is_valid_nick(name)) {
+		_msg.response = print_message("432", "*", name + " :Erroneous nickname"); }
+	else if (is_already_exists(name, client_fd, _clients)) {
+		_msg.response = print_message("433", "", name + " :");
 		//?":server 433 * " + name + " :Nickname is already in use\r\n";
 		}
 	else if (!currentUser->getRegistered() && currentUser->getUsername() != "") {
@@ -78,7 +78,7 @@ void	Server::nick(int client_fd) {
 		setNick(currentUser, name); 
 		currentUser->setId(currentUser->getNickname() + "!" + currentUser->getUsername() + "@" + currentUser->getHostname());
 		_msg.response = ":" + currentUser->getNickname() + "!" + currentUser->getUsername() + "@localhost NICK " + currentUser->getNickname() + "\r\n";
-		_msg.response += printMessage("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
+		_msg.response += print_message("001", currentUser->getNickname(), ":Welcome to the Internet Relay Network " + currentUser->getId());
 	}
 	else {
 		setNick(currentUser, name); 

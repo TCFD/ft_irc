@@ -1,4 +1,4 @@
-#include "../../Server.hpp"
+#include "../../Includes/Server.hpp"
 
 // Check if the current channel exists in the database tabChan<CHANNEL>
 bool	Server::isChanExists(std::string target)
@@ -20,7 +20,7 @@ bool	Server::isChanExists(std::string target)
 }
 
 // Check if the current user exists in the database tab<USER>
-bool	isUserExists(std::string target, CLIENT_VEC clients)
+bool	is_user_exists(std::string target, CLIENT_VEC clients)
 {
 	for (CLIENT_IT it=clients.begin(); it != clients.end(); ++it) {
 		if (target == it->getNickname())
@@ -30,20 +30,22 @@ bool	isUserExists(std::string target, CLIENT_VEC clients)
 }
 
 // Check if the target is already in the channel or not
-bool	isUserInChan(std::string target, Channel chan)
+bool	is_user_in_chan(std::string target, Channel chan)
 {	
-	std::cout << "target \'" << target << "\'" << std::endl;
+	std::cout << "chan Name: " << chan.gName() << std::endl;
 	for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
+		std::cout << "Name : " << target << " | Channel name: " << it->getNickname() << std::endl;
 		if (it->getNickname() == target)
 			return true;
 	}
+	std::cout << "je ne suis pas dans ce channel ??\n";
 	return false;
 }
 
 // Check if the mode is already activated in the channel or not
-bool	foundModeInChan(char mod, CHAR_LIST modList)
+bool	found_mode_in_chan(char mod, CHAR_VEC modList)
 {
-	for (CHAR_LIST::iterator it=modList.begin(); it != modList.end(); ++it) {
+	for (CHAR_VEC::iterator it=modList.begin(); it != modList.end(); ++it) {
 		if (*it == mod)
 			return true;
 	}
@@ -53,13 +55,10 @@ bool	foundModeInChan(char mod, CHAR_LIST modList)
 /* 
  * Check if the third arg is +k, +l or +/-o
 */
-//probablement un probleme !!
-bool	isFourArgs(STR_VEC& split)
+bool	is_four_args(STR_VEC& split)
 {
-	std::cout << "is the problem here ???\n";
-	if (split.size() > 2 && (split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o")) {
-		std::cout << "can we check that ?\n";
-		return true; }
+	if (split.size() > 2 && (split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
+		return true;
 	return false;
 }
 
@@ -84,7 +83,7 @@ STR_VEC	Server::cutModeCommand(void)
 	return split;
 }
 
-int	userInChanFd(std::string nick, CLIENT_VEC clients)
+int	user_in_chan_fd(std::string nick, CLIENT_VEC clients)
 {
 	int i = 0;
 	for (CLIENT_IT it = clients.begin(); it != clients.end(); i++, it++) {
@@ -94,7 +93,7 @@ int	userInChanFd(std::string nick, CLIENT_VEC clients)
 	return (-1);
 }
 
-bool	isUserAnOperator(std::string target, Channel chan)
+bool	is_user_an_operator(std::string target, Channel chan)
 {
 	for (CLIENT_IT it = chan.gOperators().begin(); it != chan.gOperators().end(); ++it) {
 		if (target == it->getNickname())
@@ -103,21 +102,21 @@ bool	isUserAnOperator(std::string target, Channel chan)
 	return false;
 }
 
-std::string		intToStr(int nb)
+std::string		int_to_str(int nb)
 {
 	std::ostringstream convert;
 	convert << nb;
 	return convert.str();
 }
 
-std::string		charToStr(char nb)
+std::string		char_to_str(char nb)
 {
 	std::ostringstream convert;
 	convert << nb;
 	return convert.str();
 }
 
-std::string		timeToStr(time_t nb)
+std::string		time_to_str(time_t nb)
 {
 	std::ostringstream convert;
 	convert << nb;

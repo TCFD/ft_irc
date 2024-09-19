@@ -6,7 +6,7 @@ SRCDIR = .
 OBJDIR = obj/
 SRC = $(shell find $(SRCDIR) -name '*.cpp')
 OBJ = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)%.o)
-LIBS = Parsing/includes/Parsing.hpp *.hpp
+LIBS = Parsing/includes/Parsing.hpp Includes/*.hpp
 
 RED = "\033[1;31m"
 GREEN = "\033[1;32m"
@@ -26,11 +26,11 @@ $(NAME): $(OBJ)
 	@echo $(CYAN) "\t>>> Compilation Done <<<\n" $(NC)
 
 clean:
-	@rm -rf $(OBJDIR)
+	@-rm -rf $(OBJDIR)
 	@echo $(YELLOW) "\t-->Clean Done" $(NC)
 
 fclean: clean
-	@rm $(NAME)
+	@-rm $(NAME)
 	@echo $(YELLOW) "\t-->Fclean Done" $(NC)
 
 re: fclean
