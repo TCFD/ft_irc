@@ -5,6 +5,7 @@
 # define CHAN_IT			CHAN_VEC::iterator
 # define CLIENT_VEC		 	std::vector<Client>
 # define CLIENT_IT		  	CLIENT_VEC::iterator
+# define CLIENT_ITC			CLIENT_VEC::const_iterator
 # define CHAR_VEC		  	std::vector<char>
 # define MAP_TAB			std::map<std::string, int>
 # define STR_VEC			std::vector<std::string>

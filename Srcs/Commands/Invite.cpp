@@ -13,7 +13,7 @@ CHAN_IT Server::DoesChanExist (std::string target) {
 
 // returns the fd of asked user, -1 if not found
 int	Server::getFdOfUser(std::string nick) {
-	CLIENT_IT it = _clients.begin();
+	CLIENT_ITC it = _clients.begin();
 
 	for (; it != _clients.end(); it++) {
 		if (it->getNickname() == nick)

@@ -22,16 +22,17 @@ class Client
 		~Client(void) {};
 
 	// Getters
-		std::string 	getUsername(void) 		{ return _username; };
-		std::string 	getNickname(void) 		{ return _nickname; };
-		std::string 	getRealname(void) 		{ return _realname; };
-		std::string 	getOldname(void) 		{ return _oldname; };
-		std::string 	getHostname(void) 		{ return _hostname; };
-		std::string 	getId(void) 			{ return _id; };
-		bool			getRegistered(void) 	{ return _registered; };
-		bool			getPasswd(void)			{ return _passwd; };
-		int				getFd(void) 			{ return _fd; };
-		int				getActualClientFd(void)	{ return _actualClientFd; };
+		std::string 	getUsername(void) const 		{ return _username; };
+		std::string 	getNickname(void) const 		{ return _nickname; };
+		std::string 	getRealname(void) const 		{ return _realname; };
+		std::string 	getOldname(void) const 			{ return _oldname; };
+		std::string 	getHostname(void) const 		{ return _hostname; };
+		std::string 	getId(void) const 				{ return _id; };
+		bool			getRegistered(void) const 		{ return _registered; };
+		bool			getPasswd(void) const			{ return _passwd; };
+		int				getFd(void) const 				{ return _fd; };
+		int				getFdC(void) const 				{ return _fd; };
+		int				getActualClientFd(void) const	{ return _actualClientFd; };
 		
 	// Setters
 		void			setId(std::string identity) 	{ _id = identity; };

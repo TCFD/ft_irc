@@ -22,7 +22,7 @@ bool	Server::isChanExists(std::string target)
 // Check if the current user exists in the database tab<USER>
 bool	is_user_exists(std::string target, CLIENT_VEC clients)
 {
-	for (CLIENT_IT it=clients.begin(); it != clients.end(); ++it) {
+	for (CLIENT_ITC it=clients.begin(); it != clients.end(); ++it) {
 		if (target == it->getNickname())
 			return true;
 	}
@@ -33,7 +33,7 @@ bool	is_user_exists(std::string target, CLIENT_VEC clients)
 bool	is_user_in_chan(std::string target, Channel chan)
 {	
 	std::cout << "chan Name: " << chan.gName() << std::endl;
-	for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
+	for (CLIENT_ITC it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
 		std::cout << "Name : " << target << " | Channel name: " << it->getNickname() << std::endl;
 		if (it->getNickname() == target)
 			return true;
@@ -86,7 +86,7 @@ STR_VEC	Server::cutModeCommand(void)
 int	user_in_chan_fd(std::string nick, CLIENT_VEC clients)
 {
 	int i = 0;
-	for (CLIENT_IT it = clients.begin(); it != clients.end(); i++, it++) {
+	for (CLIENT_ITC it = clients.begin(); it != clients.end(); i++, it++) {
 		if (clients[i].getNickname() == nick)
 			return (clients[i].getFd()); 
 	}
@@ -95,7 +95,7 @@ int	user_in_chan_fd(std::string nick, CLIENT_VEC clients)
 
 bool	is_user_an_operator(std::string target, Channel chan)
 {
-	for (CLIENT_IT it = chan.gOperators().begin(); it != chan.gOperators().end(); ++it) {
+	for (CLIENT_ITC it = chan.gOperators().begin(); it != chan.gOperators().end(); ++it) {
 		if (target == it->getNickname())
 			return true;
 	}

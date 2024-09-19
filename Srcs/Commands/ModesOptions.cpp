@@ -103,7 +103,7 @@ void			Server::modeL(STR_VEC& split)
 
 void	Server::sendToChan(std::string message)
 {
-	for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it ++)
+	for (CLIENT_ITC it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it ++)
 	{
 			_msg.response = message;
 			sendResponse(user_in_chan_fd(it->getNickname(), _channels[_msg.currentChan].gClients()));
