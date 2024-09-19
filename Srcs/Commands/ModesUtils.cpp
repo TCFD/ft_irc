@@ -30,15 +30,12 @@ bool	is_user_exists(std::string target, CLIENT_VEC clients)
 }
 
 // Check if the target is already in the channel or not
-bool	is_user_in_chan(std::string target, Channel chan)
+bool	is_user_in_chan(std::string target, Channel* chan)
 {	
-	std::cout << "chan Name: " << chan.gName() << std::endl;
-	for (CLIENT_IT it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
-		std::cout << "Name : " << target << " | Channel name: " << it->getNickname() << std::endl;
+	for (CLIENT_IT it=chan->gClients().begin(); it != chan->gClients().end(); ++it) {
 		if (it->getNickname() == target)
 			return true;
 	}
-	std::cout << "je ne suis pas dans ce channel ??\n";
 	return false;
 }
 

@@ -58,7 +58,7 @@ struct Msg {
 int	 			user_in_chan_fd(std::string nick, CLIENT_VEC clients);
 
 bool			is_user_exists(std::string target, CLIENT_VEC clients);
-bool			is_user_in_chan(std::string target, Channel chan);
+bool			is_user_in_chan(std::string target, Channel* chan);
 bool			found_mode_in_chan(char mod, CHAR_VEC modList);
 bool			is_user_an_operator(std::string target, Channel chan);
 bool			is_four_args(STR_VEC& split);
