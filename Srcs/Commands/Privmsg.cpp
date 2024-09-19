@@ -11,7 +11,7 @@ void	Server::sendPrimsgToChannel(std::string senderNick, std::string destinatair
 		//_msg.response = print_message("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel");
 	
 	CLIENT_VEC clients = targetChan->gClients();
-	CLIENT_IT it = clients.begin();
+	CLIENT_ITC it = clients.begin();
 	for (; it < clients.end(); it++)
 	{
 		_msg.response = ":" + senderNick + "!~" + senderNick + "@host PRIVMSG " + destinataire + " :" + msg.substr(1) + "\r\n";

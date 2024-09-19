@@ -17,7 +17,7 @@ void	Channel::addOperator(Client& client)
 void	Channel::addOperatorByName(std::string name, CLIENT_VEC cli)
 {
 	int len=0;
-	for (CLIENT_IT it = _clients.begin(); it != _clients.end(); it++, len++)
+	for (CLIENT_ITC it = _clients.begin(); it != _clients.end(); it++, len++)
 	{
 		if (it->getNickname() == name)
 			break ;
@@ -116,7 +116,7 @@ std::string		Channel::gModesActives(void) {
 //**** Utils in chan ****//
 bool	Channel::isUserOnMe(std::string nick)
 {
-	CLIENT_IT it = _clients.begin();
+	CLIENT_ITC it = _clients.begin();
 
 	for (; it != _clients.end(); it++) {
 		if (it->getNickname() == nick) {
@@ -128,7 +128,7 @@ bool	Channel::isUserOnMe(std::string nick)
 
 bool	Channel::isUserInvite(std::string name)
 {
-	for (CLIENT_IT it = _invite.begin(); it != _invite.end(); ++it) {
+	for (CLIENT_ITC it = _invite.begin(); it != _invite.end(); ++it) {
 		if (it->getNickname() == name)
 			return true;
 	}

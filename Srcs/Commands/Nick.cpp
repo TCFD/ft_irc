@@ -23,7 +23,7 @@ bool is_valid_nick(const std::string& nick) {
 
 bool	is_already_exists(std::string name, int clientFd, CLIENT_VEC clients)
 {
-	for (CLIENT_IT it = clients.begin(); it < clients.end(); it++) {
+	for (CLIENT_ITC it = clients.begin(); it < clients.end(); it++) {
 		if (it->getNickname() == name && it->getFd() != clientFd)
 			return true;
 	}
@@ -40,7 +40,7 @@ std::string	print_message(std::string num, std::string nickname, std::string mes
 void    print_list_user(CLIENT_VEC&   clients)
 {
     std::cout << "List of known users : ";
-	for (CLIENT_IT it = clients.begin(); it < clients.end(); it++) {
+	for (CLIENT_ITC it = clients.begin(); it < clients.end(); it++) {
 		std::cout << it->getNickname() << ",";}
 	std::cout << "\n";
 }

@@ -1,12 +1,12 @@
 #include "../../Includes/Server.hpp"
 
-void	printChanInfos(Channel chan, int idx)
+void	printChanInfos(const Channel & chan , int idx)
 {
 	std::cout << "\nCHAN INFOS:\n";
 	std::cout << MAGENTA "- Name: " << chan.gName() << std::endl;
 	std::cout << "- Users: ";
-	for (CLIENT_IT it = chan.gClients().begin(); it != chan.gClients().end(); ++it) {
-		std::cout << it->getNickname() << " "; }
+	//for (CLIENT_ITC it = chan.gClients().begin(); it != chan.gClients().end(); ++it) {
+	//	std::cout << it->getNickname() << " "; }
 	std::cout << "\n- Limit: " << chan.gLimit() << std::endl;
 	std::cout << "- Nb of users: " << chan.gLenClients() << std::endl;
 	if (chan.gPassword() != "")
@@ -26,7 +26,7 @@ void	printChanInfos(Channel chan, int idx)
 
 void	Server::sendToEveryone(std::string msg)
 {
-	for (CLIENT_IT it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); ++it)
+	for (CLIENT_ITC it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); ++it)
 	{
 		_msg.response = msg;
 		sendResponse(it->getFd());
@@ -84,10 +84,10 @@ int  Server::join(std::string senderNick)
 	}
 	printChanInfos(_channels[_msg.currentChan], _msg.currentChan);
 	// Loop to send the arrival of a new client to everyone in that channel
-	for (CLIENT_IT it=_channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it++)
+	for (CLIENT_ITC it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); ++it)
 	{
-		_msg.response += ":" + senderNick + " JOIN " + _channels[_msg.currentChan].gName() + "\r\n";
-		sendResponse(it->getFd());
+		_msg.response = ":" + senderNick + " JOIN " + _channels[_msg.currentChan].gName() + "\r\n";
+		sendResponse(it->getFdC());
 	}
 	if (opCodon == 1)
 		_msg.response += _msg.prefixNick + " MODE " + _channels[_msg.currentChan].gName() + " +o " + senderNick + "\r\n";

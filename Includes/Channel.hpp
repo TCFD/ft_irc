@@ -23,18 +23,18 @@ class Channel {
 		~Channel(void) {};
 
 	// Getters
-		int				gLenClients() 		{ return _lenClients; };
-		int			 	gLimit() 			{ return _limit; };
-		std::string		gModesActives(void);
-		std::string	 	gName() 			{ return _name; };
-		std::string	 	gTopic() 			{ return _topic; };
-		std::string	 	gTopicName() 		{ return _topicName; };
-		std::string	 	gPassword() 		{ return _password; };
-		Client&			gClientIdx(int idx) { return _clients[idx]; };
-		CHAR_VEC		gModes() 			{ return _modes; };
-		CLIENT_VEC		gClients() 			{ return _clients; };
-		CLIENT_VEC		gOperators() 		{ return _operators; };
-		CLIENT_VEC		gInvite() 			{ return _invite; };
+		int					gLenClients() const  		{ return _lenClients; };
+		int			 		gLimit() const  			{ return _limit; };
+		std::string			gModesActives(void);
+		std::string	 		gName() const 				{ return _name; };
+		std::string	 		gTopic() const 				{ return _topic; };
+		std::string	 		gTopicName() const 			{ return _topicName; };
+		std::string	 		gPassword() const 			{ return _password; };
+		const Client&		gClientIdx(int idx) const 	{ return _clients[idx]; };
+		CHAR_VEC			gModes() const 				{ return _modes; };
+		const CLIENT_VEC&	gClients() const			{ return _clients; };
+		const CLIENT_VEC&	gOperators() const			{ return _operators; };
+		CLIENT_VEC			gInvite() const 			{ return _invite; };
 
 	// Setters
 		void			sName(std::string name) {_name = name; };

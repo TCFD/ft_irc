@@ -11,8 +11,8 @@ void			Server::namesHandle(void)
 	{
 		Channel *chan = &_channels[_msg.currentChan];
 		std::string nicks = "";
-		for (CLIENT_IT it = chan->gClients().begin(); it != chan->gClients().end(); it++){
-		for (CLIENT_IT ite = chan->gOperators().begin(); ite != chan->gOperators().end(); ++ite) {
+		for (CLIENT_ITC it = chan->gClients().begin(); it != chan->gClients().end(); it++){
+		for (CLIENT_ITC ite = chan->gOperators().begin(); ite != chan->gOperators().end(); ++ite) {
 			if (it->getNickname() == ite->getNickname())
 				nicks += "@"; }
 		nicks += it->getNickname() + " "; }
