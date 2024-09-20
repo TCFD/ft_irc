@@ -81,6 +81,7 @@ void Polls::mainPoll(Server& server)
 							catch (std::exception &e)
 							{
 								std::cout << e.what() << std::endl;
+								parsingtools.cmdStatus();
 								parsingtools.errWriteCorrectForm("");
 							}
 							server.setMsgIdx(i - 1);

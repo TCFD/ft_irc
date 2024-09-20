@@ -24,8 +24,9 @@
 	#define HELP_CHANNEL			"<#channel>"
 	#define HELP_USERNAME			"<username>"
 	#define HELP_PASSWORD			"<password>"
-	#define HELP_MESSAGE			"<:[message]>"
+	#define HELP_MESSAGE			"<:message>"
 	#define HELP_OPTION				"<-/+option>"
+	#define HELP_HOST				"<host>"
 
 
 	//////////// CLASS PARSING ////////////
@@ -44,6 +45,8 @@
 			std::string parsingGetOption(void);
 			std::string parsingGetUsername(void);
 			std::string parsingGetChannel(void);
+			std::string parsingGetHost(void);
+			void		cmdStatus(void);
 
 		// MAIN METHODS
 			void    	parsingHelp();
@@ -98,6 +101,7 @@
 			bool			attributionInfoMessage(std::string& CMDSplit_value);
 			bool			attributionInfoUsername(std::string& CMDSplit_value);
 			bool			attributionInfoPassword(std::string& CMDSplit_value);
+			bool			attributionInfoHost(std::string& CMDSplit_value);
 	};
 
 	//////////// FUNCTIONS ////////////
@@ -106,8 +110,10 @@
 	PARSING_VECTOR_SPLIT	remove_between_angles(const PARSING_VECTOR_SPLIT& input);
 	std::string const&		byidx(PARSING_VECTOR_SPLIT& v, int index);
 	std::string				str_cut(std::string str, int start_idx, int end_idx);
+	std::string				concat_vector_elmt(PARSING_VECTOR_SPLIT tab);
 	bool					find_one_of_them(std::string cara_search, std::string& str_origin);
 	int						len_of_tab_with_intervals(PARSING_VECTOR_SPLIT tab, char cara1, char cara2);
+	int						tab_idx_elmt(PARSING_VECTOR_SPLIT tab, char cara);
 
 	//////////// TEMPLATES ////////////
 
