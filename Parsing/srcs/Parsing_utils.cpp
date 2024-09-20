@@ -52,18 +52,12 @@ bool	Parsing::attributionInfoOption(std::string& CMDSplit_value)
 
 bool	Parsing::attributionInfoMessage(std::string& CMDSplit_value)
 {
-	int end_idx   = _brutCmd.find(']');
+	_infos["message"] = CMDSplit_value;
+	return (true);
 
-	if (CMDSplit_value[0] == ':' && CMDSplit_value[1] == '[' && (long unsigned int)end_idx != std::string::npos)
-	{
-		int start_idx = _brutCmd.find('[') + 1;
-
-		_infos["message"] = str_cut(_brutCmd, start_idx, end_idx);;
-		return (true);
-	}
-	if (!_duplicates_found)
-		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <message> form.");
-	return (false);
+	//if (!_duplicates_found)
+	//	throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <message> form.");
+	//return (false);
 }
 
 //////////////// INFO USERNAME ////////////////
@@ -94,6 +88,30 @@ bool	Parsing::attributionInfoPassword(std::string& CMDSplit_value)
 	return (false);
 }
 
+
+bool	Parsing::attributionInfoHost(std::string& CMDSplit_value)
+{
+	if (CMDSplit_value == "localhost" || CMDSplit_value == "127.0.0.1")
+	{
+		_infos["host"] = "localhost";
+		return (true);
+	}
+	return (false);
+
+	//PARSING_VECTOR_SPLIT network_id;
+	//network_id = split(CMDSplit_value, '.');
+	//if (network_id.size() != 4)
+	//	return (false);
+	//
+	//for (size_t i = 0; i < network_id.size(); i++)
+	//{
+	//	int nt_len = network_id[i].size();
+	//	if (nt_len < 1 && nt_len > 3)
+	//		return (false);
+	//}
+	//return (true);
+}
+
 /*
 
     Permet d'initialiser les valeurs associés aux différentes clés pour _infos.
@@ -115,6 +133,8 @@ bool	Parsing::elmtAttribution(char identifier, std::string CMDSplit_value)
 			return (attributionInfoPassword(CMDSplit_value));
 		case 'O':
 			return (attributionInfoOption(CMDSplit_value));
+		case 'H':
+			return (attributionInfoHost(CMDSplit_value));
 	}
 	return (false);
 }
@@ -135,10 +155,9 @@ bool	Parsing::formVerification(PARSING_VECTOR_SPLIT& cmd_split,
 	char		c;
 	std::string	str;
 
-	long unsigned int cmd_len = len_of_tab_with_intervals(cmd_split, '[', ']');
+	int form_len = form_split.size();
+	int len_cmd = cmd_split.size();
 
-	if (cmd_len > form_split.size())
-		return (false);
 
 	for (long unsigned int i=1; i < form_split.size(); i++)
 	{
@@ -147,14 +166,18 @@ bool	Parsing::formVerification(PARSING_VECTOR_SPLIT& cmd_split,
 			c = form_split[i][0];
 			str = cmd_split[i - msg_found];
 
-			if (!elmtAttribution(c, str))
-				return (false);
-
 			if (c == 'M')
 			{
 				cmd_split = remove_between_angles(cmd_split);
+
+				if (cmd_split.size() > 1)
+					len_cmd = (size_t)len_cmd - (size_t)cmd_split.size() + 1;
+				str = concat_vector_elmt(cmd_split);
 				msg_found++ ;
 			}
+
+			if (!elmtAttribution(c, str))
+				return (false);
 		}
 		else
 		{
@@ -167,9 +190,15 @@ bool	Parsing::formVerification(PARSING_VECTOR_SPLIT& cmd_split,
 		t_max++ ;
 	}
 
-	if (!((long unsigned int)t_min <= cmd_len && cmd_len <= (long unsigned int)t_max))
+	if (msg_found) 
+	{
+
+		if (len_cmd != t_min && len_cmd != form_len)
+			throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax.");
+	}
+	if (!(t_min <= form_len && form_len <= t_max))
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax.");
-	
+
 	return (true);
 }
 

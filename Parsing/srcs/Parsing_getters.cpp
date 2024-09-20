@@ -29,3 +29,8 @@ std::string Parsing::parsingGetChannel(void)
 {
     return (this->_infos["channel"]);
 }
+
+std::string Parsing::parsingGetHost(void)
+{
+    return (this->_infos["host"]);
+}

@@ -65,8 +65,10 @@ void Polls::mainPoll(Server& server)
 							}
 							catch (std::exception &e)
 							{
-								//std::cout << e.what() << std::endl;
+//								std::cout << e.what() << std::endl;
+								parsingtools.cmdStatus();
 								parsingtools.errWriteCorrectForm("");
+								continue;
 							}
 							server.setMsgIdx(i - 1);
 							std::string nickOfCurrentUser = server.gNickClient();

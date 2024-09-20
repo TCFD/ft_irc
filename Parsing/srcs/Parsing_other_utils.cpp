@@ -115,32 +115,34 @@ int len_of_tab_with_intervals(PARSING_VECTOR_SPLIT tab, char cara1, char cara2)
     int sidx = tab_idx_elmt(tab, cara1);
     int eidx = tab_idx_elmt(tab, cara2);
 
-    if (sidx == eidx)
-        return (tab.size());
-
     return (tab.size() - (eidx - sidx));
+}
+
+std::string concat_vector_elmt(PARSING_VECTOR_SPLIT tab)
+{
+    std::string concat;
+
+    for (size_t i=0; i < tab.size(); i++)
+        concat = concat + " " + std::string(tab[i]);
+    return (concat.substr(1));
 }
 
 PARSING_VECTOR_SPLIT remove_between_angles(const PARSING_VECTOR_SPLIT& input)
 {
     PARSING_VECTOR_SPLIT result;
     bool inAngleBrackets = false;
-    bool done = false;
 
     for (size_t i = 0; i < input.size(); ++i)
     {
         const std::string& element = input[i];
 
-        if (element.find('[') != std::string::npos && done == false)
-            inAngleBrackets = true;
-
-        if (!inAngleBrackets)
+        if (inAngleBrackets)
             result.push_back(element);
 
-        if (element.find(']') != std::string::npos && done == false)
+        if (element.find(':') != std::string::npos && !inAngleBrackets)
         {
-            inAngleBrackets = false;
-            done = true;
+            result.push_back(element.substr(1));
+            inAngleBrackets = true;
         }
     }
     return (result);
