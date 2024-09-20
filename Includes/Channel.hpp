@@ -59,6 +59,6 @@ class Channel {
 		void			dltInvite(std::string name);
 
 	// Utils
-		bool			isUserOnMe(std::string nick);
+		bool			isUserOnMe(std::string nick) const;
 		bool			isUserInvite(std::string name);
 };	

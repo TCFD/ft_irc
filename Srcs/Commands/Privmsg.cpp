@@ -4,7 +4,7 @@
 
 void	Server::sendPrimsgToChannel(std::string senderNick, std::string destinataire, std::string msg)
 {
-	CHAN_IT targetChan = DoesChanExist(destinataire);
+	CHAN_ITC targetChan = DoesChanExist(destinataire);
 
 	if (targetChan == _channels.end())
 		return (setMsgResponse(print_message("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel")));
@@ -33,7 +33,6 @@ void	Server::sendPrivmsgToUser(std::string senderNick, std::string destinataire,
 
 	if (targetUser == -1)
 		return (setMsgResponse(print_message("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel")));
-		//_msg.response = print_message("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel");
 	
 	_msg.response = ":" + senderNick + "!~" + senderNick + "@host PRIVMSG " + destinataire + " :" + msg.substr(1) + "\r\n";
 	sendResponse(targetUser, destinataire);
@@ -48,11 +47,9 @@ void	Server::privmsg(std::string senderNick)
 	std::cout << "destinataire : \'" << destinataire << "\'\n";
 	if (destinataire.empty())
 		return (setMsgResponse(print_message("401", _clients[_msg.currentIndex].getNickname(), " :No such nick/channel")));
-		//_msg.response = print_message("401", _clients[_msg.currentIndex].getNickname(), " :No such nick/channel");
 	
 	if (msg.empty())
 		return (setMsgResponse(print_message("412", _clients[_msg.currentIndex].getNickname(), " :No text to send")));
-		//_msg.response = print_message("412", _clients[_msg.currentIndex].getNickname(), " :No text to send");
 	
 	// Envoie vers un channel
 	if (destinataire[0] == '#')

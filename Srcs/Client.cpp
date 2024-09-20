@@ -10,7 +10,7 @@ Client::Client(int clientFd)
 	_oldname	= "";
 	_id			= "";
 	_hostname	= "server";
-	_passwd 		= false;
+	_passwd 	= false;
 }
 
 int Client::parseNickname(std::string name)

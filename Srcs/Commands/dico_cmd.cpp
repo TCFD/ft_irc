@@ -78,8 +78,7 @@ void	Server::pingCommand(Client *currentUser)
 
 void	Server::quitCommand(Client *currentUser)
 {
-	(void)currentUser;
-	_msg.currentChan = 0;
+	clientDisconnected(getMsg().currentIndex, currentUser); 
 }
 
 		// - WHOIS COMMAND - //

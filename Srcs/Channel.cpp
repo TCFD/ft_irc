@@ -63,7 +63,9 @@ void	Channel::dltClient(std::string name)
 	for (CLIENT_IT it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->getNickname() == name) {
-			_clients.erase(it); return; }
+			_clients.erase(it); 
+			std::cout << "we just deleted " << it->getNickname() << " from " << gName() << std::endl;
+			return; }
 	}
 }
 
@@ -114,7 +116,7 @@ std::string		Channel::gModesActives(void) {
 }
 
 //**** Utils in chan ****//
-bool	Channel::isUserOnMe(std::string nick)
+bool	Channel::isUserOnMe(std::string nick) const
 {
 	CLIENT_ITC it = _clients.begin();
 

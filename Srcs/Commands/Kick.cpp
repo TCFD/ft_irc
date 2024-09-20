@@ -31,7 +31,7 @@ void	Server::kick(std::string senderNick) {
 		
 	//}
 	//* Does channel exist ? 
-	CHAN_IT targetChan = DoesChanExist(cmdVec[1]);
+	CHAN_ITC targetChan = DoesChanExist(cmdVec[1]);
 	if (targetChan == _channels.end()) {
 		_msg.response = print_message("403", _clients[_msg.currentIndex].getNickname(), cmdVec[1] + " :No such channel");
 	}
@@ -55,9 +55,7 @@ void	Server::kick(std::string senderNick) {
 		_channels[_msg.currentChan].dltOperator(cmdVec[2]);
 
 		int userFd = getFdOfUser(cmdVec[2]);
-		if (userFd != -1) {
-			_msg.response = "PART " + cmdVec[2] + "\r\n" ;
+		if (userFd != -1)
 			sendResponse(userFd);
-		}
 	}
 }

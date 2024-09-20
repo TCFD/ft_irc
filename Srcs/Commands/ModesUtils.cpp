@@ -8,7 +8,7 @@ bool	Server::isChanExists(std::string target)
 	if (target[0] != '#')
 		target = "#" + target;
 	if (!_channels.empty()) {
-		for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, it++)
+		for (CHAN_ITC it = _channels.begin(); it != _channels.end(); len++, it++)
 		{
 			if (target == it->gName()) {
 				_msg.currentChan = len;
@@ -30,9 +30,9 @@ bool	is_user_exists(std::string target, CLIENT_VEC clients)
 }
 
 // Check if the target is already in the channel or not
-bool	is_user_in_chan(std::string target, Channel* chan)
+bool	is_user_in_chan(std::string target, Channel & chan)
 {	
-	for (CLIENT_ITC it=chan->gClients().begin(); it != chan->gClients().end(); ++it) {
+	for (CLIENT_ITC it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
 		if (it->getNickname() == target)
 			return true;
 	}
