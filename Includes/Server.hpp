@@ -48,6 +48,7 @@ class Server {
 		void						socketDataSet(void);
    		void						clientDisconnected(int id);
 		void						handleClientCommand(int client_fd);
+		bool						isClientTryingToConnect(Client &currentUser, std:: string command);
 		void 						sendResponse(int client_fd);
 		void						sendResponse(int client_fd, std::string name);
 		bool						isUserOnChannel(std::string nick, std::string targetChannel);
@@ -117,6 +118,7 @@ class Server {
 
 	// QUIT
 		void			quitCommand(Client *currentUser);
+		void			quit(Client *currentUser);
 
 	// WHOIS
 		void			whoisCommand(Client *currentUser);
@@ -127,7 +129,9 @@ class Server {
 	// PASS
 		void	    	pass(Client *currenUser);
 
-		std::string			getNickOfCurrentClient(void) {return _clients[_msg.currentIndex].getNickname();};
+		std::string		getNickOfCurrentClient(void) {return _clients[_msg.currentIndex].getNickname();};
+
+	// QUIT
 };
 
 class StrerrorException : public std::exception

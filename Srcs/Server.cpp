@@ -73,10 +73,18 @@ int	Server::createClient(Polls &poll)
 // Pas fini: gros travaux !!!
 void Server::clientDisconnected(int id) {
 	(void)(id);
-		std::cout << "Client disconnected" << std::endl;
+	std::cout << "Client disconnected" << std::endl;
 	_clients.erase(_clients.begin() + id);
 }
 
+
+bool	Server::isClientTryingToConnect(Client &currentUser, std:: string command) {
+	if (command.rfind("NICK", 0) == std::string::npos && command.rfind("USER", 0) == std::string::npos && command.rfind("PASS", 0) == std::string::npos && !currentUser.getRegistered()) {
+		_msg.response = ":server 451 * :You have not registered\r\n";
+		return false;
+	}
+	return true;
+}
 
 void	Server::handleClientCommand(int client_fd)
 {
@@ -90,20 +98,23 @@ void	Server::handleClientCommand(int client_fd)
 	currentUser->setActualClientFd(client_fd); // Pour nick
 	// Verification pour voir si la commande envoyee existe dans le dico
 	DICOCMD::iterator it = dico.begin();
-	while (it != dico.end())
+	//* Si le client n'essaye pas de s'enregistrer alors qu'il ne l'est pas, ciao.
+	if (isClientTryingToConnect(*currentUser, _msg.command))
 	{
-		if (_msg.command.rfind(it->first, 0) == 0)
+		while (it != dico.end())
 		{
-			ServerMemberFunction func = it->second;
-			(this->*func)(currentUser);
-			founded = true;
-			break;
+			if (_msg.command.rfind(it->first, 0) == 0)
+			{
+				ServerMemberFunction func = it->second;
+				(this->*func)(currentUser);
+				founded = true;
+				break;
+			}
+			it++ ;
 		}
-		it++ ;
+		if (!founded)
+			_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
 	}
-	if (!founded)
-		_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
-
 	sendResponse(client_fd);
 	std::cout << "\n===========================================\n\n";
 
