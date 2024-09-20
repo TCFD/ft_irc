@@ -21,7 +21,6 @@ class Polls
 		void			            mainPoll(Server& server);
 		void			            addClientPoll(int clientFd);
 		void			            erasePoll(int i);
-		void            			disconnectClient(int i, Server &server);
 		std::vector<struct pollfd>	getPollFds(void){return(_pollFds);};
 
 };

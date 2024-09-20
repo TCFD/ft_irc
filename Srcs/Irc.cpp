@@ -12,13 +12,6 @@ void	Polls::erasePoll(int i) {
 	_pollFds.erase(_pollFds.begin() + i);
 }
 
-void Polls::disconnectClient(int i, Server & server) {
-	server.clientDisconnected(server.getMsg().currentIndex);
-	// _poll.erasePoll(i);
-	_pollFds.erase(_pollFds.begin() + i);
-}
-
-
 void Polls::mainPoll(Server& server)
 {
     while (true)
@@ -76,7 +69,7 @@ void Polls::mainPoll(Server& server)
 								parsingtools.errWriteCorrectForm("");
 							}
 							server.setMsgIdx(i - 1);
-							std::string nickOfCurrentUser = server.getNickOfCurrentClient();
+							std::string nickOfCurrentUser = server.gNickClient();
 							if (nickOfCurrentUser == "")
 								nickOfCurrentUser = "new user";
 							if (_clientsBuffer[_pollFds[i].fd] != "")
@@ -89,6 +82,18 @@ void Polls::mainPoll(Server& server)
 					}
 				}
             }
+			//? Marche pas bien, a peut etre corriger plus tard.
+			//else {
+			//	if (!server.gResgistrationStatusClient())
+			//		{
+			//			server.setMsgResponse("Need help connecting ?\n" 
+			//			"Please do :n" 
+			//			"PASS 'password'n" 
+			//			"NICK 'your_nickname'" 
+			//			"USER 'your_username' 0 * :'your_real_namern");
+			//			server.sendResponse(_pollFds[i].fd, "");
+			//		}
+			//}
         }
     }
 	close(server.getServerSocket());

@@ -46,7 +46,7 @@ class Server {
 	// Main Methods
 		int			 				createClient(Polls &poll);
 		void						socketDataSet(void);
-   		void						clientDisconnected(int id);
+		void						clientDisconnected(int id, Client *currentUser);
 		void						handleClientCommand(int client_fd);
 		bool						isClientTryingToConnect(Client &currentUser, std:: string command);
 		void 						sendResponse(int client_fd);
@@ -129,7 +129,9 @@ class Server {
 	// PASS
 		void	    	pass(Client *currenUser);
 
-		std::string		getNickOfCurrentClient(void) {return _clients[_msg.currentIndex].getNickname();};
+		std::string		gNickClient(void) {return _clients[_msg.currentIndex].getNickname();};
+		bool			gResgistrationStatusClient(void) {return _clients[_msg.currentIndex].getRegistered();};
+
 
 	// QUIT
 };

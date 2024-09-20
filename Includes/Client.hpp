@@ -23,7 +23,7 @@ class Client
 
 	// Getters
 		std::string 	getUsername(void) const 		{ return _username; };
-		std::string 	getNickname(void) const 		{ return _nickname; };
+		std::string 	getNickname(void) const 		{ if (!_nickname.empty()) return _nickname; else return ("");};
 		std::string 	getRealname(void) const 		{ return _realname; };
 		std::string 	getOldname(void) const 			{ return _oldname; };
 		std::string 	getHostname(void) const 		{ return _hostname; };

@@ -71,15 +71,22 @@ int	Server::createClient(Polls &poll)
 }
 
 // Pas fini: gros travaux !!!
-void Server::clientDisconnected(int id) {
-	(void)(id);
+void Server::clientDisconnected(int id, Client *currentUser) {
 	std::cout << "Client disconnected" << std::endl;
+	//* Cleaning the channels he was in.
+	for (CHAN_IT it = _channels.begin(); it < _channels.end(); it++) {
+		if (is_user_in_chan(currentUser->getNickname(), *it)) {
+			sendToChan(":" + currentUser->getNickname() + " QUIT :leaving\r\n");
+			it->dltClient(currentUser->getNickname());
+		}
+	}
 	_clients.erase(_clients.begin() + id);
 }
 
 
 bool	Server::isClientTryingToConnect(Client &currentUser, std:: string command) {
-	if (command.rfind("NICK", 0) == std::string::npos && command.rfind("USER", 0) == std::string::npos && command.rfind("PASS", 0) == std::string::npos && !currentUser.getRegistered()) {
+	std::cout << "is user registered ? "<< currentUser.getRegistered() << std::endl;
+	if (command.rfind("NICK", 0) == std::string::npos && command.rfind("USER", 0) == std::string::npos && command.rfind("PASS", 0) == std::string::npos && command.rfind("QUIT", 0) == std::string::npos && !currentUser.getRegistered()) {
 		_msg.response = ":server 451 * :You have not registered\r\n";
 		return false;
 	}
@@ -127,18 +134,17 @@ void Server::sendResponse(int client_fd, std::string name)
 		std::cout << CYAN << "Server didn't send anything.\n" << NC;
 	else
 		std::cout << CYAN << "Server sent  '" << NC << _msg.response.substr(0, _msg.response.size()-2) << CYAN << "' to "<< BOLD << name << NC << "\n";
-	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
+	send(client_fd, _msg.response.c_str(), _msg.response.size(), MSG_NOSIGNAL);
 	_msg.response.erase();
 }
 
 void Server::sendResponse(int client_fd)
 {
-
 	if (_msg.response == "")
 		std::cout << CYAN << "Server didn't send anything.\n" << NC;
 	else
 		std::cout << CYAN << "Server sent  '" << NC << _msg.response.substr(0, _msg.response.size()-2) << CYAN << "' to "<< BOLD << _clients[_msg.currentIndex].getNickname() << NC << "\n";
-	send(client_fd, _msg.response.c_str(), _msg.response.size(), 0);
+	send(client_fd, _msg.response.c_str(), _msg.response.size(), MSG_NOSIGNAL);
 	_msg.response.erase();
 }
 
