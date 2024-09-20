@@ -26,7 +26,7 @@
 	#define HELP_PASSWORD			"<password>"
 	#define HELP_MESSAGE			"<:message>"
 	#define HELP_OPTION				"<-/+option>"
-	#define HELP_HOST				"<host>"
+	#define HELP_HOST				"<localhost>"
 
 
 	//////////// CLASS PARSING ////////////

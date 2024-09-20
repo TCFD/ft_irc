@@ -83,6 +83,7 @@ void Polls::mainPoll(Server& server)
 								std::cout << e.what() << std::endl;
 								parsingtools.cmdStatus();
 								parsingtools.errWriteCorrectForm("");
+								continue;
 							}
 							server.setMsgIdx(i - 1);
 							std::string nickOfCurrentUser = server.getNickOfCurrentClient();
