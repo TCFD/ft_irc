@@ -52,7 +52,7 @@ class Server {
 		void						sendResponse(int client_fd, std::string name);
 		bool						isUserOnChannel(std::string nick, std::string targetChannel);
 		STR_VEC						cutModeCommand(void);
-		CHAN_IT						DoesChanExist (std::string target);
+		CHAN_ITC					DoesChanExist (std::string target);
 		std::vector<std::string>	splitCmd(std::string s);
 
 	/* * * Command * * */

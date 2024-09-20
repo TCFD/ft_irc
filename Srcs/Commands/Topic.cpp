@@ -2,9 +2,9 @@
 
 STR_VEC	Server::cutTopicCmd(void)
 {
-	std::string delim = " ";
-	STR_VEC split;
-	for (size_t j=0; _msg.command.length() != 0; j++)
+	std::string	delim = " ";
+	STR_VEC		split;
+	for (size_t j = 0; _msg.command.length() != 0; j++)
 	{
 		if (j == 2)
 		{
@@ -42,9 +42,6 @@ void	Server::topicHandle(Client *currentUser)
 	STR_VEC split = cutTopicCmd();
 	Channel	*current = &_channels[_msg.currentChan];
 
-	std::cout << "Topic command :\n";
-	for (STR_VEC::iterator it = split.begin(); it != split.end(); it++)
-		std::cout << "[" << *it << "]";
 	std::cout << std::endl;
 	if (!errorsTopic(split, currentUser))
 	{

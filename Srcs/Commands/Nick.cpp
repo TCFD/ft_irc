@@ -60,7 +60,7 @@ void	Server::nick(int client_fd) {
 	Client		*currentUser			=	&_clients[_msg.currentIndex];
 	currentUser->setOldname(currentUser->getNickname());
 
-	for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
+	for (CHAN_ITC it = _channels.begin(); it != _channels.end(); ++it) {
 		if (is_user_in_chan(currentUser->getNickname(), *it)) {
 			_msg.response = print_message("421", currentUser->getNickname(), " :Can't use this command in a channel");
 			return ;}

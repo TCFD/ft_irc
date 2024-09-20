@@ -3,7 +3,9 @@
 
 # define CHAN_VEC		   	std::vector<Channel>
 # define CHAN_IT			CHAN_VEC::iterator
+# define CHAN_ITC			CHAN_VEC::const_iterator
 # define CLIENT_VEC		 	std::vector<Client>
+# define CLIENT_VECC	 	const std::vector<Client>
 # define CLIENT_IT		  	CLIENT_VEC::iterator
 # define CLIENT_ITC			CLIENT_VEC::const_iterator
 # define CHAR_VEC		  	std::vector<char>

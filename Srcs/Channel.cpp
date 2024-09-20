@@ -114,7 +114,7 @@ std::string		Channel::gModesActives(void) {
 }
 
 //**** Utils in chan ****//
-bool	Channel::isUserOnMe(std::string nick)
+bool	Channel::isUserOnMe(std::string nick) const
 {
 	CLIENT_ITC it = _clients.begin();
 

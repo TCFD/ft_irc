@@ -8,7 +8,7 @@ bool	Server::isChanExists(std::string target)
 	if (target[0] != '#')
 		target = "#" + target;
 	if (!_channels.empty()) {
-		for (CHAN_IT it=_channels.begin(); it != _channels.end(); len++, it++)
+		for (CHAN_ITC it = _channels.begin(); it != _channels.end(); len++, it++)
 		{
 			if (target == it->gName()) {
 				_msg.currentChan = len;
@@ -38,7 +38,6 @@ bool	is_user_in_chan(std::string target, Channel chan)
 		if (it->getNickname() == target)
 			return true;
 	}
-	std::cout << "je ne suis pas dans ce channel ??\n";
 	return false;
 }
 
