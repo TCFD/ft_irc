@@ -8,7 +8,7 @@ Polls::Polls(int fd)
     _pollFds.push_back(_serverPollFds);
 }
 
-void	Polls::erasePoll(int i) {
+void	Polls::erasePoll() {
 	_pollFds.erase(_pollFds.begin() + i);
 }
 
@@ -21,7 +21,7 @@ void Polls::mainPoll(Server& server)
         if (_pollCount == -1) throw StrerrorException("Poll Error");
 
 		server.setMsg();
-        for (size_t i = 0; i < _pollFds.size(); i++)
+        for (i = 0; i < _pollFds.size(); i++)
 		{
             if (_pollFds[i].revents & POLLIN) 
 			{
@@ -37,7 +37,7 @@ void Polls::mainPoll(Server& server)
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
           
 					if (bytes_received <= 0)
-						erasePoll(i);
+						erasePoll();
 					else
 					{
 
@@ -65,7 +65,7 @@ void Polls::mainPoll(Server& server)
 							}
 							catch (std::exception &e)
 							{
-								std::cout << e.what() << std::endl;
+								//std::cout << e.what() << std::endl;
 								parsingtools.errWriteCorrectForm("");
 							}
 							server.setMsgIdx(i - 1);

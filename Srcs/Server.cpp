@@ -81,11 +81,11 @@ void Server::clientDisconnected(int id, Client *currentUser) {
 		}
 	}
 	_clients.erase(_clients.begin() + id);
+	_poll.erasePoll();
 }
 
 
 bool	Server::isClientTryingToConnect(Client &currentUser, std:: string command) {
-	std::cout << "is user registered ? "<< currentUser.getRegistered() << std::endl;
 	if (command.rfind("NICK", 0) == std::string::npos && command.rfind("USER", 0) == std::string::npos && command.rfind("PASS", 0) == std::string::npos && command.rfind("QUIT", 0) == std::string::npos && !currentUser.getRegistered()) {
 		_msg.response = ":server 451 * :You have not registered\r\n";
 		return false;
