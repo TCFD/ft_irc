@@ -10,18 +10,16 @@ class Polls
 		int								_pollCount;
 		struct pollfd					_clientPollFds;
 		struct pollfd					_serverPollFds;
-		std::vector<struct pollfd>		_pollFds;
 		std::map<int, std::string>		_clientsBuffer;
-		int								i;
+		std::vector<struct pollfd>		_pollFds;
 	public:
 		Polls(void) {};
 		Polls(int fd);
 		~Polls(void) {};
 
-		int							getI() {return i};
 		void			            mainPoll(Server& server);
 		void			            addClientPoll(int clientFd);
-		void			            erasePoll();
+		void			            erasePoll(int i);
 		std::vector<struct pollfd>	getPollFds(void){return(_pollFds);};
 
 };

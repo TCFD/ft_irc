@@ -8,7 +8,7 @@ Polls::Polls(int fd)
     _pollFds.push_back(_serverPollFds);
 }
 
-void	Polls::erasePoll() {
+void	Polls::erasePoll(int i) {
 	_pollFds.erase(_pollFds.begin() + i);
 }
 
@@ -21,14 +21,14 @@ void Polls::mainPoll(Server& server)
         if (_pollCount == -1) throw StrerrorException("Poll Error");
 
 		server.setMsg();
-        for (i = 0; i < _pollFds.size(); i++)
+        for (size_t i = 0; i < _pollFds.size(); i++)
 		{
             if (_pollFds[i].revents & POLLIN) 
 			{
                 if (_pollFds[i].fd == server.getServerSocket())	//? Si quelqu'un essaie de se connecter
                 {
 					server.createClient(*this);
-					std::cout << "NEW INCOMING CONNECTION : " << _pollFds[i].fd << std::endl;
+					std::cout << "NEW INCOMING CONNECTION" << std::endl;
 				}
 				else
 				{
@@ -37,7 +37,7 @@ void Polls::mainPoll(Server& server)
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
           
 					if (bytes_received <= 0)
-						erasePoll();
+						erasePoll(i);
 					else
 					{
 

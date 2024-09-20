@@ -81,7 +81,7 @@ void Server::clientDisconnected(int id, Client *currentUser) {
 		}
 	}
 	_clients.erase(_clients.begin() + id);
-	_poll.erasePoll();
+	close(currentUser->getFd());
 }
 
 
