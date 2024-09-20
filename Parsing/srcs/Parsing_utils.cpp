@@ -156,10 +156,8 @@ bool	Parsing::formVerification(PARSING_VECTOR_SPLIT& cmd_split,
 	std::string	str;
 
 	int form_len = form_split.size();
-	std::cout << "CMD LEN : " << form_len << std::endl;
+	int len_cmd = cmd_split.size();
 
-	//if (cmd_len > form_split.size())
-	//	return (false);
 
 	for (long unsigned int i=1; i < form_split.size(); i++)
 	{
@@ -171,14 +169,15 @@ bool	Parsing::formVerification(PARSING_VECTOR_SPLIT& cmd_split,
 			if (c == 'M')
 			{
 				cmd_split = remove_between_angles(cmd_split);
+
+				if (cmd_split.size() > 1)
+					len_cmd = (size_t)len_cmd - (size_t)cmd_split.size() + 1;
 				str = concat_vector_elmt(cmd_split);
 				msg_found++ ;
 			}
 
 			if (!elmtAttribution(c, str))
 				return (false);
-
-			
 		}
 		else
 		{
@@ -191,9 +190,15 @@ bool	Parsing::formVerification(PARSING_VECTOR_SPLIT& cmd_split,
 		t_max++ ;
 	}
 
+	if (msg_found) 
+	{
+
+		if (len_cmd != t_min && len_cmd != form_len)
+			throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax.");
+	}
 	if (!(t_min <= form_len && form_len <= t_max))
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax.");
-	
+
 	return (true);
 }
 
