@@ -3,9 +3,18 @@
 
 Polls::Polls(int fd)
 {
+	// _quit = false;
     _serverPollFds.fd = fd;
     _serverPollFds.events = POLLIN;
+	_serverPollFds.revents = 0;
     _pollFds.push_back(_serverPollFds);
+}
+
+void	Polls::signalHandler(int sig)
+{
+	if (sig == SIGINT) {
+		std::cout << "CTRL C detected: quit the server\n";
+		_quit = true; }
 }
 
 void	Polls::erasePoll(int i) {
@@ -14,10 +23,8 @@ void	Polls::erasePoll(int i) {
 
 void Polls::disconnectClient(int i, Server & server) {
 	server.clientDisconnected(server.getMsg().currentIndex);
-	// _poll.erasePoll(i);
-	_pollFds.erase(_pollFds.begin() + i);
+	_pollFds.erase(_pollFds.begin(), _pollFds.begin() + i);
 }
-
 
 void Polls::mainPoll(Server& server)
 {
@@ -25,21 +32,23 @@ void Polls::mainPoll(Server& server)
 	{
         _pollCount = poll(_pollFds.data(), _pollFds.size(), -1);
 
-        if (_pollCount == -1) throw StrerrorException("Poll Error");
+        if (_pollCount == -1 || _quit == true)
+		{
+			// disconnectClient(_pollFds.size() -1, server);
+			// close(server.getServerSocket());
+			throw StrerrorException("Poll Error");
+		}
 
 		server.setMsg();
-		//server._quit = 0;
         for (size_t i = 0; i < _pollFds.size(); i++)
 		{
-            if (_pollFds[i].revents & POLLIN) 
+            if (_pollFds[i].revents & POLLIN)
 			{
-				// std::cout << RED "CLIENT FD IS " << _pollFds[i].fd << NC << std::endl;
                 if (_pollFds[i].fd == server.getServerSocket())	//? Si quelqu'un essaie de se connecter
                 {
 					server.createClient(*this);
 					std::cout << "NEW INCOMING CONNECTION : " << _pollFds[i].fd << std::endl;
 				}
-						// _clientsBuffer[idx] = "";}
 				else
 				{
 					char buffer[1024];
@@ -50,12 +59,9 @@ void Polls::mainPoll(Server& server)
 					{
 						server.clientDisconnected(server.getMsg().currentIndex); 
 						erasePoll(i);
-						//close(_pollFds[server.getMsg().currentIndex].fd); 
 					}
 					else
 					{
-						//std::cout << "buffer = " << buffer << std::endl;
-
 					//? Ajouter les données reçues au buffer du client
 						_clientsBuffer[_pollFds[i].fd].append(buffer, bytes_received);
 						memset(buffer, 0, sizeof(buffer));
@@ -68,7 +74,7 @@ void Polls::mainPoll(Server& server)
 							if (_clientsBuffer[_pollFds[i].fd].find("\r") != std::string::npos)
 								pos--;
 							server.setMsgCmd(_clientsBuffer[_pollFds[i].fd].substr(0, pos));
-							_clientsBuffer[_pollFds[i].fd].erase(0, pos + 2);
+							_clientsBuffer[_pollFds[i].fd].erase(0, pos + 2); 
 							Parsing	parsingtools;
 
 							try

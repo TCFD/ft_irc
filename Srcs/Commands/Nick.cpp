@@ -70,8 +70,7 @@ void	Server::nick(int client_fd) {
 	else if (!is_valid_nick(name)) {
 		_msg.response = print_message("432", "*", name + " :Erroneous nickname"); }
 	else if (is_already_exists(name, client_fd, _clients)) {
-		_msg.response = print_message("433", "", name + " :");
-		//?":server 433 * " + name + " :Nickname is already in use\r\n";
+		_msg.response = print_message("433", "", name + " :Nickname is already in use\r\n");
 		}
 	else if (!currentUser->getRegistered() && currentUser->getUsername() != "") {
 		currentUser->setRegistered(true);

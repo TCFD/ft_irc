@@ -1,6 +1,8 @@
 #include "../Includes/Server.hpp"
 // #include "../Client.hpp"
 
+bool	Polls::_quit = false;
+
 int main(int ac, char **av)
 {
 	if (ac != 3)
@@ -10,6 +12,7 @@ int main(int ac, char **av)
 	}
 	try
 	{
+		signal(SIGINT, Polls::signalHandler);
 		Server server(atoi(av[1]), av[2]);
 		std::cout << "Server is running on port " << server.getPort() << std::endl;
 		Polls poll(server.getServerSocket());
@@ -18,8 +21,8 @@ int main(int ac, char **av)
 	}
 	catch (const StrerrorException& e)
 	{
-		std::cout << e.what() << std::endl; exit(EXIT_FAILURE);
+		std::cout << e.what() << std::endl;
+		exit(EXIT_FAILURE);
 	}
-  
 	return 0;
 }
