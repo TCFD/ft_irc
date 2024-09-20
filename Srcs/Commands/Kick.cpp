@@ -43,7 +43,6 @@ void	Server::kick(std::string senderNick) {
 
 	//* Is channel operator ? 
 	else if (!is_user_an_operator(senderNick, _channels[_msg.currentChan])) {
-		// _msg.prefixNick + " 482 " + _clients[_msg.currentIndex].getNickname() + " " + split[1] + " :You're not channel operator\r\n";
 		_msg.response = print_message("482", senderNick, cmdVec[1] + " :You're not channel operator");
 	}
 
@@ -57,7 +56,7 @@ void	Server::kick(std::string senderNick) {
 
 		int userFd = getFdOfUser(cmdVec[2]);
 		if (userFd != -1) {
-			_msg.response = "PART " + cmdVec[2] ;
+			_msg.response = "PART " + cmdVec[2] + "\r\n" ;
 			sendResponse(userFd);
 		}
 	}

@@ -49,7 +49,7 @@ void	Server::modeK(STR_VEC& split)
 */
 void	Server::modeO(STR_VEC& split)
 {
-	if (is_user_in_chan(split[3], _channels[_msg.currentChan])) {
+	if (is_user_in_chan(split[3], &_channels[_msg.currentChan])) {
 		if (split[2].find("+") != std::string::npos) {
 			_channels[_msg.currentChan].addOperatorByName(split[3], _clients);
 			if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
