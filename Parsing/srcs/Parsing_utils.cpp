@@ -33,7 +33,7 @@ bool	Parsing::attributionInfoChannel(std::string& CMDSplit_value)
 
 bool	Parsing::attributionInfoOption(std::string& CMDSplit_value)
 {
-	if (CMDSplit_value[0] == '-')
+	if (CMDSplit_value[0] == '-' || CMDSplit_value[0] == '+')
 	{
 		if (!find_key_in_container(_options, CMDSplit_value))
 			throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <option>. (Must be one of : -i -t -k -o -l)");
