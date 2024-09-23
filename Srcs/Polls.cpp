@@ -3,9 +3,18 @@
 
 Polls::Polls(int fd)
 {
+	// _quit = false;
     _serverPollFds.fd = fd;
     _serverPollFds.events = POLLIN;
+	_serverPollFds.revents = 0;
     _pollFds.push_back(_serverPollFds);
+}
+
+void	Polls::signalHandler(int sig)
+{
+	if (sig == SIGINT) {
+		std::cout << "CTRL C detected: quit the server\n";
+		_quit = true; }
 }
 
 void	Polls::erasePoll(int i) {
@@ -18,12 +27,17 @@ void Polls::mainPoll(Server& server)
 	{
         _pollCount = poll(_pollFds.data(), _pollFds.size(), -1);
 
-        if (_pollCount == -1) throw StrerrorException("Poll Error");
+        if (_pollCount == -1 || _quit == true)
+		{
+			// disconnectClient(_pollFds.size() -1, server);
+			// close(server.getServerSocket());
+			throw std::exception();
+		}
 
-		server.setMsg();
+		server.setMsg();	
         for (size_t i = 0; i < _pollFds.size(); i++)
 		{
-            if (_pollFds[i].revents & POLLIN) 
+            if (_pollFds[i].revents & POLLIN)
 			{
                 if (_pollFds[i].fd == server.getServerSocket())	//? Si quelqu'un essaie de se connecter
                 {
@@ -53,7 +67,7 @@ void Polls::mainPoll(Server& server)
 							if (_clientsBuffer[_pollFds[i].fd].find("\r") != std::string::npos)
 								pos--;
 							server.setMsgCmd(_clientsBuffer[_pollFds[i].fd].substr(0, pos));
-							_clientsBuffer[_pollFds[i].fd].erase(0, pos + 2);
+							_clientsBuffer[_pollFds[i].fd].erase(0, pos + 2); 
 							Parsing	parsingtools;
 
 							try

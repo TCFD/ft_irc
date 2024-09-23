@@ -14,12 +14,12 @@ class Server {
 
 	private:
 		struct sockaddr_in			_serverAddr;
+		// static bool					_quit;
 		std::string					_mdp;
 		CLIENT_VEC					_clients;
 		CHAN_VEC					_channels;
 		DICOCMD						_dicocmd;
 		Polls						_poll;
-		bool						_quit;
 		Msg							_msg;
 		int							_serverSocket;
 		int							_limitUsers;
@@ -42,6 +42,7 @@ class Server {
 		void			setMsgCmd(std::string cmd)				{_msg.command = cmd; };
 		void			setMsg(void)							{_msg.currentChan = 0; _msg.prefixServer = ":server "; };
 		void			setPoll(Polls& poll)					{_poll = poll; };
+		// void			setQuit(void)							{_quit = true; };
 		
 	// Main Methods
 		int			 				createClient(Polls &poll);
@@ -51,10 +52,12 @@ class Server {
 		bool						isClientTryingToConnect(Client &currentUser, std:: string command);
 		void 						sendResponse(int client_fd);
 		void						sendResponse(int client_fd, std::string name);
+		// static void					signalHandler(int sig);
 		bool						isUserOnChannel(std::string nick, std::string targetChannel);
 		STR_VEC						cutModeCommand(void);
 		CHAN_ITC					DoesChanExist (std::string target);
 		std::vector<std::string>	splitCmd(std::string s);
+
 
 	/* * * Command * * */
 	// MODE

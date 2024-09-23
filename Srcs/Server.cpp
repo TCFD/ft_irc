@@ -2,7 +2,7 @@
 
 Server::Server(int port, std::string mdp) :  _mdp(mdp), _port(port)
 {
-	_quit = false;
+	// _quit = false;
 	socketDataSet();
 }
 
@@ -81,7 +81,7 @@ void Server::clientDisconnected(int id, Client *currentUser) {
 		}
 	}
 	_clients.erase(_clients.begin() + id);
-	close(currentUser->getFd());
+	// close(currentUser->getFd());
 }
 
 

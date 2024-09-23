@@ -14,6 +14,7 @@
 
 # include <algorithm>
 # include <arpa/inet.h>
+# include <csignal>
 # include <cstdio>
 # include <cstdlib>
 # include <cstring>
@@ -32,7 +33,7 @@
 # include <unistd.h>
 # include <vector>
 
-# include "Poll.hpp"
+# include "Polls.hpp"
 # include "Client.hpp"
 # include "Channel.hpp"
 
