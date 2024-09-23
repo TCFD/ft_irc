@@ -62,7 +62,7 @@ Parsing::Parsing(void)
 	
 	//_cmd["USER"]		= pair_it(0, "// ");
 
-	_cmd["KICK"]		= pair_it(0, "// ## UU M,// UU");					// Ejecter un client du channel
+	_cmd["KICK"]		= pair_it(0, "// ## UU MM,// UU");					// Ejecter un client du channel
 	_cmd["MODE"]		= pair_it(0, "// UU OO,// ## OO");			// Changer le mode du channel
 	_cmd["JOIN"]		= pair_it(0, "// ## P");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");
