@@ -46,13 +46,14 @@ class Server {
 	// Main Methods
 		int			 				createClient(Polls &poll);
 		void						socketDataSet(void);
-   		void						clientDisconnected(int id);
+		void						clientDisconnected(int id, Client *currentUser);
 		void						handleClientCommand(int client_fd);
+		bool						isClientTryingToConnect(Client &currentUser, std:: string command);
 		void 						sendResponse(int client_fd);
 		void						sendResponse(int client_fd, std::string name);
 		bool						isUserOnChannel(std::string nick, std::string targetChannel);
 		STR_VEC						cutModeCommand(void);
-		CHAN_IT						DoesChanExist (std::string target);
+		CHAN_ITC					DoesChanExist (std::string target);
 		std::vector<std::string>	splitCmd(std::string s);
 
 	/* * * Command * * */
@@ -119,6 +120,7 @@ class Server {
 
 	// QUIT
 		void			quitCommand(Client *currentUser);
+		void			quit(Client *currentUser);
 
 	// WHOIS
 		void			whoisCommand(Client *currentUser);
@@ -129,7 +131,11 @@ class Server {
 	// PASS
 		void	    	pass(Client *currenUser);
 
-		std::string			getNickOfCurrentClient(void) {return _clients[_msg.currentIndex].getNickname();};
+		std::string		gNickClient(void) {return _clients[_msg.currentIndex].getNickname();};
+		bool			gResgistrationStatusClient(void) {return _clients[_msg.currentIndex].getRegistered();};
+
+
+	// QUIT
 };
 
 class StrerrorException : public std::exception

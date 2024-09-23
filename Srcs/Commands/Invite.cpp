@@ -1,7 +1,7 @@
 #include "../../Includes/Server.hpp"
 
-CHAN_IT Server::DoesChanExist (std::string target) {
-	CHAN_IT it = _channels.begin();
+CHAN_ITC Server::DoesChanExist (std::string target) {
+	CHAN_ITC it = _channels.begin();
 
 	for (; it != _channels.end(); it++) {
 		if (it->gName() == target) {
@@ -38,7 +38,7 @@ void	Server::invite(std::string senderNick) {
 		return;
 	}
 	//* Does channel exist ? 
-	CHAN_IT targetChan = DoesChanExist(cmdVec[2]);
+	CHAN_ITC targetChan = DoesChanExist(cmdVec[2]);
 	if (targetChan == _channels.end()) {
 		_msg.response = print_message("403", senderNick, cmdVec[2] + " :No such channel");
 		return;

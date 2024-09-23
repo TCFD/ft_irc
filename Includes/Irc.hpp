@@ -3,7 +3,9 @@
 
 # define CHAN_VEC		   	std::vector<Channel>
 # define CHAN_IT			CHAN_VEC::iterator
+# define CHAN_ITC			CHAN_VEC::const_iterator
 # define CLIENT_VEC		 	std::vector<Client>
+# define CLIENT_VECC	 	const std::vector<Client>
 # define CLIENT_IT		  	CLIENT_VEC::iterator
 # define CLIENT_ITC			CLIENT_VEC::const_iterator
 # define CHAR_VEC		  	std::vector<char>
@@ -59,7 +61,7 @@ struct Msg {
 int	 			user_in_chan_fd(std::string nick, CLIENT_VEC clients);
 
 bool			is_user_exists(std::string target, CLIENT_VEC clients);
-bool			is_user_in_chan(std::string target, Channel* chan);
+bool			is_user_in_chan(std::string target, Channel& chan);
 bool			found_mode_in_chan(char mod, CHAR_VEC modList);
 bool			is_user_an_operator(std::string target, Channel chan);
 bool			is_four_args(STR_VEC& split);
