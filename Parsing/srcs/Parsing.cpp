@@ -43,6 +43,8 @@ Parsing::Parsing(void)
 	_options["-k"] = 0;		// Définir/supprimer la clé du canal (mot de passe)
 	_options["-o"] = 0;		// Donner/retirer le privilège de l’opérateur de canal
 	_options["-l"] = 0;		// Définir/supprimer la limite d’utilisateurs pour le canal
+	_options["-0"] = 0;
+	_options["+0"] = 0;
 	_options["+i"] = 0;
 	_options["+t"] = 0;
 	_options["+k"] = 0;
@@ -56,11 +58,11 @@ Parsing::Parsing(void)
 	_cmd["TOPIC"]		= pair_it(0, "// ## MM");
 	
 	//USER asalic asalic localhost :Awena Salic
-	_cmd["USER"]		= pair_it(0, "// UU UU HH MM");
+	_cmd["USER"]		= pair_it(0, "// UU UU HH MM,// UU OO UU MM");
 	
 	//_cmd["USER"]		= pair_it(0, "// ");
 
-	_cmd["KICK"]		= pair_it(0, "// ## UU M,// UU");					// Ejecter un client du channel
+	_cmd["KICK"]		= pair_it(0, "// ## UU MM,// UU");					// Ejecter un client du channel
 	_cmd["MODE"]		= pair_it(0, "// UU OO,// ## OO");			// Changer le mode du channel
 	_cmd["JOIN"]		= pair_it(0, "// ## P");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");

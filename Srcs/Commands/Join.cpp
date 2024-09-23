@@ -41,6 +41,48 @@ void	Server::sendToEveryone(std::string msg)
  * TO HANDLE : +l/ +k/ +i !!
 */
 
+void	Server::join_channel_check(STR_VEC split, int *opCodon)
+{
+	Channel temp(split[1]);
+	temp.sName(split[1]);
+	if (split.size() == 2)
+	{
+		temp.sPwd("");
+	}
+	else
+	{
+		temp.sPwd(split[2]);
+	}
+	temp.addOperator(_clients[_msg.currentIndex]);
+	temp.addClient(_clients[_msg.currentIndex]);
+	temp.addLenClient();
+	_channels.push_back(temp);
+	*opCodon = 1;
+}
+
+int	Server::join_error_handle(STR_VEC split, std::string senderNick)
+{
+	Channel	*currChan = &_channels[_msg.currentChan];
+
+	if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit()) {
+		_msg.response = _msg.prefixNick + " 471 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+l)\r\n";
+		return (1); }
+	else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword()))) {
+		_msg.response = _msg.prefixNick + " 475 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";
+		return (1); }
+	else if (found_mode_in_chan('i', currChan->gModes()) && !currChan->isUserInvite(senderNick)) {
+		_msg.response = _msg.prefixNick + " 473 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+i)\r\n";
+		return (1); }
+	else
+	{
+		if (found_mode_in_chan('i', currChan->gModes()))
+			currChan->dltInvite(senderNick);
+		currChan->addClient(_clients[_msg.currentIndex]);
+		currChan->addLenClient();
+	}
+	return (0);
+}
+
 int  Server::join(std::string senderNick)
 {
 	STR_VEC split = cutModeCommand();
@@ -50,37 +92,13 @@ int  Server::join(std::string senderNick)
 		return (1);
 	else if (!isChanExists(split[1]))
 	{
-		Channel temp(split[1]);
-		temp.sName(split[1]);
-		if (split.size() == 2) {
-			temp.sPwd(""); }
-		else {
-			temp.sPwd(split[2]); }
-		temp.addOperator(_clients[_msg.currentIndex]);
-		temp.addClient(_clients[_msg.currentIndex]);
-		temp.addLenClient();
-		_channels.push_back(temp);
-		opCodon = 1;
+		join_channel_check(split, &opCodon);
 	}
-	else { 
-		Channel	*currChan = &_channels[_msg.currentChan];
-
-		if (currChan->gLimit() > 0 && currChan->gLenClients() == currChan->gLimit()) {
-			_msg.response = _msg.prefixNick + " 471 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+l)\r\n";
-			return (1); }
-		else if (currChan->gPassword() != "" && (split.size() == 2 || (split.size() == 3 && split[2] != currChan->gPassword()))) {
-			_msg.response = _msg.prefixNick + " 475 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+k)\r\n";
-			return (1); }
-		else if (found_mode_in_chan('i', currChan->gModes()) && !currChan->isUserInvite(senderNick)) {
-			_msg.response = _msg.prefixNick + " 473 " + senderNick + " " + currChan->gName() + " :Cannot join channel (+i)\r\n";
-			return (1); }
-		else
-		{
-			if (found_mode_in_chan('i', currChan->gModes()))
-				currChan->dltInvite(senderNick);
-			currChan->addClient(_clients[_msg.currentIndex]);
-			currChan->addLenClient();
-		}
+	else
+	{ 
+		int tmp = join_error_handle(split, senderNick);
+		if (tmp)
+			return (tmp);
 	}
 	printChanInfos(_channels[_msg.currentChan], _msg.currentChan);
 	// Loop to send the arrival of a new client to everyone in that channel
