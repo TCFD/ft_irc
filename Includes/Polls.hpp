@@ -11,9 +11,8 @@ class Polls
 		struct pollfd					_clientPollFds;
 		struct pollfd					_serverPollFds;
 		static bool						_quit;
-		std::vector<struct pollfd>		_pollFds;
 		std::map<int, std::string>		_clientsBuffer;
-
+		std::vector<struct pollfd>		_pollFds;
 	public:
 		Polls(void) {};
 		Polls(int fd) ;

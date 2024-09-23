@@ -55,9 +55,7 @@ void	Server::kick(std::string senderNick) {
 		_channels[_msg.currentChan].dltOperator(cmdVec[2]);
 
 		int userFd = getFdOfUser(cmdVec[2]);
-		if (userFd != -1) {
-			_msg.response = "PART " + cmdVec[2] + "\r\n" ;
+		if (userFd != -1)
 			sendResponse(userFd);
-		}
 	}
 }

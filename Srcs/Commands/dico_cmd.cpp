@@ -78,13 +78,7 @@ void	Server::pingCommand(Client *currentUser)
 
 void	Server::quitCommand(Client *currentUser)
 {
-	(void)currentUser;
-	_msg.currentChan = 0;
-	// for (CHAN_IT it=_channels.begin(); it != _channels.end(); ++it) {
-	// 	if (is_user_in_chan(currentUser->getNickname(), &(*it))) {
-	// 			it->dltClient(currentUser->getNickname());
-	// 		return ; }
-	// }
+	clientDisconnected(getMsg().currentIndex, currentUser); 
 }
 
 		// - WHOIS COMMAND - //

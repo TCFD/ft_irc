@@ -12,6 +12,7 @@
 		PP 	= Password
 		UU 	= Username
 		OO 	= Options (Flags)
+		HH	= Host
 
 		When it's in double, it's an obligation,
 		if not, like
@@ -52,11 +53,14 @@ Parsing::Parsing(void)
 
 	_cmd["PRIVMSG"]		= pair_it(0, "// UU MM,// ## MM");			// Message privé
 	_cmd["INVITE"]		= pair_it(0, "// UU ##");					// Inviter un client au channel
-	_cmd["TOPIC"]		= pair_it(0, "// ## MM");					// Modifier ou afficher le thème du channel
+	_cmd["TOPIC"]		= pair_it(0, "// ## MM");
+	
+	//USER asalic asalic localhost :Awena Salic
+	_cmd["USER"]		= pair_it(0, "// UU UU HH MM");
 	
 	//_cmd["USER"]		= pair_it(0, "// ");
 
-	_cmd["KICK"]		= pair_it(0, "// ## UU M");					// Ejecter un client du channel
+	_cmd["KICK"]		= pair_it(0, "// ## UU M,// UU");					// Ejecter un client du channel
 	_cmd["MODE"]		= pair_it(0, "// UU OO,// ## OO");			// Changer le mode du channel
 	_cmd["JOIN"]		= pair_it(0, "// ## P");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");
@@ -74,6 +78,8 @@ Parsing::Parsing(void)
 	_infos["message"]	= "";
 	_infos["channel"]	= ""; 	// Pour le Channel ID
 	_infos["option"]	= "";
+	_infos["host"]		= "";
+
 	//_infos["status"]	= ""; 	// Pour le status (admin, etc)
 
 	// std::cout << "_info's map Set up." << std::endl;
@@ -84,6 +90,8 @@ Parsing::Parsing(void)
 	_err_map["M"] = std::string(HELP_MESSAGE);
 	_err_map["/"] = std::string(HELP_COMMAND);
 	_err_map["#"] = std::string(HELP_CHANNEL);
+	_err_map["H"] = std::string(HELP_HOST);
+
 
 	// std::cout << "_err_map's map Set up." << std::endl;
 
@@ -171,15 +179,30 @@ void	Parsing::cmdResetStatus(void)
 
 */
 
+
+void	Parsing::cmdStatus(void)
+{
+	std::cout << "\t | Command  : "  << parsingGetCommand()	 << std::endl;
+	std::cout << "\t | Channel  : "  << parsingGetChannel()	 << std::endl;
+	std::cout << "\t | Username : "  << parsingGetUsername() << std::endl;
+	std::cout << "\t | Host     : "  << parsingGetHost()	 << std::endl;
+	std::cout << "\t | Msg      : "  << parsingGetMessage()  << std::endl;
+	std::cout << "\t | Option   : "  << parsingGetOption()   << std::endl;
+	std::cout << "\t | Password : "  << parsingGetPassword() << std::endl;
+	std::cout << "\n" << std::endl;
+}
+
 void	Parsing::cmdTreatTest(std::string brut_cmd)
 {
 	_brutCmd = brut_cmd;
 
 	PARSING_VECTOR_SPLIT string_split = split(brut_cmd, ' ');
 
-	errMissElmt(string_split);
+	//errMissElmt(string_split);
 
-	std::string const command = byidx(string_split, 0).substr(1);
+	std::string const command = byidx(string_split, 0);
+	if (byidx(string_split, 0)[0] == '/')
+		std::string const command = command.substr(1);
 
 	cmdResetStatus();
 
@@ -200,17 +223,13 @@ void	Parsing::cmdTreatTest(std::string brut_cmd)
 			PARSING_VECTOR_SPLIT form_split = split(result.second, ' ');
 			_actual_split_form = form_split;
 			if(!formVerification(string_split, form_split))
+			{
+				Parsing::cmdStatus();
 				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");		
+			}
 		}
+		Parsing::cmdStatus();
 
-		std::cout << "\t | Command  : "  << parsingGetCommand()  << std::endl;
-		std::cout << "\t | Channel  : "  << parsingGetChannel()  << std::endl;
-		std::cout << "\t | Username : "  << parsingGetUsername() << std::endl;
-		std::cout << "\t | Msg      : "  << parsingGetMessage()  << std::endl;
-		std::cout << "\t | Option   : "  << parsingGetOption()   << std::endl;
-		std::cout << "\t | Password : "  << parsingGetPassword() << std::endl;
-		
-		std::cout << "\n" << std::endl;
 		
 		//::::::::::::::::::://
 

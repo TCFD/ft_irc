@@ -21,11 +21,6 @@ void	Polls::erasePoll(int i) {
 	_pollFds.erase(_pollFds.begin() + i);
 }
 
-void Polls::disconnectClient(int i, Server & server) {
-	server.clientDisconnected(server.getMsg().currentIndex);
-	_pollFds.erase(_pollFds.begin(), _pollFds.begin() + i);
-}
-
 void Polls::mainPoll(Server& server)
 {
     while (true)
@@ -47,7 +42,7 @@ void Polls::mainPoll(Server& server)
                 if (_pollFds[i].fd == server.getServerSocket())	//? Si quelqu'un essaie de se connecter
                 {
 					server.createClient(*this);
-					std::cout << "NEW INCOMING CONNECTION : " << _pollFds[i].fd << std::endl;
+					std::cout << "NEW INCOMING CONNECTION" << std::endl;
 				}
 				else
 				{
@@ -56,12 +51,10 @@ void Polls::mainPoll(Server& server)
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
           
 					if (bytes_received <= 0)
-					{
-						server.clientDisconnected(server.getMsg().currentIndex); 
 						erasePoll(i);
-					}
 					else
 					{
+
 					//? Ajouter les données reçues au buffer du client
 						_clientsBuffer[_pollFds[i].fd].append(buffer, bytes_received);
 						memset(buffer, 0, sizeof(buffer));
@@ -86,11 +79,13 @@ void Polls::mainPoll(Server& server)
 							}
 							catch (std::exception &e)
 							{
-								std::cout << e.what() << std::endl;
+//								std::cout << e.what() << std::endl;
+								parsingtools.cmdStatus();
 								parsingtools.errWriteCorrectForm("");
+								continue;
 							}
 							server.setMsgIdx(i - 1);
-							std::string nickOfCurrentUser = server.getNickOfCurrentClient();
+							std::string nickOfCurrentUser = server.gNickClient();
 							if (nickOfCurrentUser == "")
 								nickOfCurrentUser = "new user";
 							if (_clientsBuffer[_pollFds[i].fd] != "")
@@ -103,6 +98,18 @@ void Polls::mainPoll(Server& server)
 					}
 				}
             }
+			//? Marche pas bien, a peut etre corriger plus tard.
+			//else {
+			//	if (!server.gResgistrationStatusClient())
+			//		{
+			//			server.setMsgResponse("Need help connecting ?\n" 
+			//			"Please do :n" 
+			//			"PASS 'password'n" 
+			//			"NICK 'your_nickname'" 
+			//			"USER 'your_username' 0 * :'your_real_namern");
+			//			server.sendResponse(_pollFds[i].fd, "");
+			//		}
+			//}
         }
     }
 	close(server.getServerSocket());
