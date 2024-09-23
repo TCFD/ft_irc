@@ -43,6 +43,8 @@ Parsing::Parsing(void)
 	_options["-k"] = 0;		// Définir/supprimer la clé du canal (mot de passe)
 	_options["-o"] = 0;		// Donner/retirer le privilège de l’opérateur de canal
 	_options["-l"] = 0;		// Définir/supprimer la limite d’utilisateurs pour le canal
+	_options["-0"] = 0;
+	_options["+0"] = 0;
 	_options["+i"] = 0;
 	_options["+t"] = 0;
 	_options["+k"] = 0;
