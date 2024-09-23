@@ -31,10 +31,10 @@ void Polls::mainPoll(Server& server)
 		{
 			// disconnectClient(_pollFds.size() -1, server);
 			// close(server.getServerSocket());
-			throw StrerrorException("Poll Error");
+			throw std::exception();
 		}
 
-		server.setMsg();
+		server.setMsg();	
         for (size_t i = 0; i < _pollFds.size(); i++)
 		{
             if (_pollFds[i].revents & POLLIN)

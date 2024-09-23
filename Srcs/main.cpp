@@ -19,10 +19,9 @@ int main(int ac, char **av)
 		server.setPoll(poll);
 		poll.mainPoll(server);
 	}
-	catch (const StrerrorException& e)
+	catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
-		exit(EXIT_FAILURE);
 	}
 	return 0;
 }
