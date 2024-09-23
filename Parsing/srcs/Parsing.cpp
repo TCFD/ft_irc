@@ -56,7 +56,7 @@ Parsing::Parsing(void)
 	_cmd["TOPIC"]		= pair_it(0, "// ## MM");
 	
 	//USER asalic asalic localhost :Awena Salic
-	_cmd["USER"]		= pair_it(0, "// UU UU HH MM");
+	_cmd["USER"]		= pair_it(0, "// UU UU HH MM,// UU OO UU MM");
 	
 	//_cmd["USER"]		= pair_it(0, "// ");
 
