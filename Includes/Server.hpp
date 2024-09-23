@@ -75,6 +75,8 @@ class Server {
 
 	// JOIN
 		int			 	join(std::string senderNick);
+		int				join_error_handle(STR_VEC split, std::string senderNick);
+		void			join_channel_check(STR_VEC split, int *opCodon);
 		void			joinCommand(Client *currentUser);
 		void			sendToChan(std::string message);
 		void			sendToEveryone(std::string msg);
