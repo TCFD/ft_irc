@@ -31,6 +31,8 @@ bool	Server::errorModes(STR_VEC& split)
 
 	if (split.size() <= 1)
 		std::cout << RED "ERR SERVER: " NC " No channel detected\n";
+	else if (split[0] != "MODE")
+		std::cout << "ERREUR WESH\n";
 	else if (split[1] != _clients[_msg.currentIndex].getNickname())
 	{
 		if (!isChanExists(split[1])) {
