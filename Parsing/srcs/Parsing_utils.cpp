@@ -43,6 +43,11 @@ bool	Parsing::attributionInfoOption(std::string& CMDSplit_value)
 
 		return (true);
 	}
+	else
+	{
+		CMDSplit_value = '+' + CMDSplit_value;
+		return (Parsing::attributionInfoOption(CMDSplit_value));
+	}
 	if (!_duplicates_found)
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid <option> form.");
 	return (false);
