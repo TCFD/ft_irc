@@ -29,7 +29,9 @@ bool	Server::errorModes(STR_VEC& split)
 {
 	Channel	*curr = &_channels[_msg.currentChan];
 
-	if (split[1] != _clients[_msg.currentIndex].getNickname())
+	if (split.size() <= 1)
+		std::cout << RED "ERR SERVER: " NC " No channel detected\n";
+	else if (split[1] != _clients[_msg.currentIndex].getNickname())
 	{
 		if (!isChanExists(split[1])) {
 			_msg.response = _msg.prefixNick + " 403 " + split[1] + " MODE :No such channel\r\n"; }
