@@ -72,6 +72,7 @@ Parsing::Parsing(void)
 	_cmd["KILL"]		= pair_it(0, "// UU MM");
 	_cmd["NICK"]		= pair_it(0, "// UU");
 	_cmd["LIST"]		= pair_it(0, "// ##");
+	_cmd["NAMES"]		= pair_it(0, "// ##");
 
 	// std::cout << "_cmd's map Set up." << std::endl;
 
@@ -227,12 +228,11 @@ void	Parsing::cmdTreatTest(std::string brut_cmd)
 			if(!formVerification(string_split, form_split))
 			{
 				Parsing::cmdStatus();
-				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");		
+				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");
 			}
 		}
 		Parsing::cmdStatus();
 
-		
 		//::::::::::::::::::://
 
 		return ;
