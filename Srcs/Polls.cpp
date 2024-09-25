@@ -12,12 +12,15 @@ Polls::Polls(int fd)
 
 void	Polls::signalHandler(int sig)
 {
-	if (sig == SIGINT) {
+	if (sig == SIGINT)
+	{
 		std::cout << "CTRL C detected: quit the server\n";
-		_quit = true; }
+		_quit = true;
+	}
 }
 
-void	Polls::erasePoll(int i) {
+void	Polls::erasePoll(int i)
+{
 	_pollFds.erase(_pollFds.begin() + i);
 	// close (_pollFds[i].fd);
 }
@@ -99,18 +102,6 @@ void Polls::mainPoll(Server& server)
 					}
 				}
             }
-			//? Marche pas bien, a peut etre corriger plus tard.
-			//else {
-			//	if (!server.gResgistrationStatusClient())
-			//		{
-			//			server.setMsgResponse("Need help connecting ?\n" 
-			//			"Please do :n" 
-			//			"PASS 'password'n" 
-			//			"NICK 'your_nickname'" 
-			//			"USER 'your_username' 0 * :'your_real_namern");
-			//			server.sendResponse(_pollFds[i].fd, "");
-			//		}
-			//}
         }
     }
 	close(server.getServerSocket());
