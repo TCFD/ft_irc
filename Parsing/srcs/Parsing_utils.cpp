@@ -204,6 +204,9 @@ bool	Parsing::formVerification(PARSING_VECTOR_SPLIT& cmd_split,
 	if (!(t_min <= form_len && form_len <= t_max))
 		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax.");
 
+	if (len_cmd != form_len && t_min == t_max)
+		throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax.");
+
 	return (true);
 }
 
