@@ -49,16 +49,22 @@ void	Server::modeK(STR_VEC& split)
 */
 void	Server::modeO(STR_VEC& split)
 {
-	if (is_user_in_chan(split[3], _channels[_msg.currentChan])) {
+	Channel *curr = &_channels[_msg.currentChan];
+
+	std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
+	if (is_user_in_chan(split[3], *curr)) {
 		if (split[2].find("+") != std::string::npos) {
-			_channels[_msg.currentChan].addOperatorByName(split[3], _clients);
-			if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
-				_channels[_msg.currentChan].addMode('o'); }
-		}
+			if (!is_user_an_operator(split[3], *curr)) {
+				curr->addOperatorByName(split[3], _clients);
+				_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
+			else
+				std::cout << BOLD MAGENTA << split[3] << NC " is already an operator" << std::endl; }
 		else {
-			_channels[_msg.currentChan].dltOperator(split[3]);
-			_channels[_msg.currentChan].dltMode('o');
-		}
+			if (is_user_an_operator(split[3], _channels[_msg.currentChan])) {
+				curr->dltOperator(split[3]);
+				_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
+			else
+				std::cout << BOLD MAGENTA << split[3] << NC " is already a normal client" << std::endl; }
 	}
 }
 // Just add 'i' to the modList

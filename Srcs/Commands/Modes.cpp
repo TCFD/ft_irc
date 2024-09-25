@@ -68,7 +68,7 @@ int	Server::modesHandle(void)
 	{
 		modesOptions(split);
 
-		if (split.size() == 4) {
+		if (split.size() == 4 && split[2] != "-o" && split[2] != "+o") {
 			std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
 			_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
 		else if (split.size() == 3) {
