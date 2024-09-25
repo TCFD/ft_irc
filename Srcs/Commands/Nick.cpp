@@ -21,8 +21,9 @@ bool is_valid_nick(const std::string& nick) {
 	return true;
 }
 
-bool	is_already_exists(std::string name, int clientFd, CLIENT_VEC clients)
+bool	is_already_exists(const std::string name, const int clientFd, CLIENT_VECC clients)
 {
+
 	for (CLIENT_ITC it = clients.begin(); it < clients.end(); it++) {
 		if (it->getNickname() == name && it->getFd() != clientFd)
 			return true;
@@ -55,8 +56,8 @@ void	Server::setNick(Client* currentUser, std::string name) {
 }
 
 //Probleme de NickName a gerer: _ gerer pour un client, mais pas pour +...
-void	Server::nick(int client_fd) {
-	std::string	name					=	_msg.command.substr(5);
+void	Server::nick(const int client_fd) {
+	const std::string	name			=	_msg.command.substr(5);
 	Client		*currentUser			=	&_clients[_msg.currentIndex];
 	currentUser->setOldname(currentUser->getNickname());
 

@@ -45,7 +45,7 @@ bool	Server::errorModes(STR_VEC& split)
 		else {
 			return (errorLenModes(split)); }
 	}
-	return true;
+	return true;	
 }
 
 /* 

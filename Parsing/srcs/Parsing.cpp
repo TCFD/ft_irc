@@ -67,7 +67,7 @@ Parsing::Parsing(void)
 	_cmd["JOIN"]		= pair_it(0, "// ## P");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");
 	_cmd["PASS"]		= pair_it(0, "// PP");
-	_cmd["QUIT"]		= pair_it(0, "// M");
+	_cmd["QUIT"]		= pair_it(0, "// MM");
 
 	_cmd["KILL"]		= pair_it(0, "// UU MM");
 	_cmd["NICK"]		= pair_it(0, "// UU");
@@ -203,9 +203,10 @@ void	Parsing::cmdTreatTest(std::string brut_cmd)
 
 	//errMissElmt(string_split);
 
-	std::string const command = byidx(string_split, 0);
+	std::string command = byidx(string_split, 0);
+	std::cout <<  "COMMAND == " << command << std::endl;
 	if (byidx(string_split, 0)[0] == '/')
-		std::string const command = command.substr(1);
+		command = command.substr(1);
 
 	cmdResetStatus();
 

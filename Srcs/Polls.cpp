@@ -19,6 +19,7 @@ void	Polls::signalHandler(int sig)
 
 void	Polls::erasePoll(int i) {
 	_pollFds.erase(_pollFds.begin() + i);
+	// close (_pollFds[i].fd);
 }
 
 void Polls::mainPoll(Server& server)

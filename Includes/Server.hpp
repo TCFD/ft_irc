@@ -48,7 +48,7 @@ class Server {
 		int			 				createClient(Polls &poll);
 		void						socketDataSet(void);
 		void						clientDisconnected(int id, Client *currentUser);
-		void						handleClientCommand(int client_fd);
+		void						handleClientCommand(const int client_fd);
 		bool						isClientTryingToConnect(Client &currentUser, std:: string command);
 		void 						sendResponse(int client_fd);
 		void						sendResponse(int client_fd, std::string name);
@@ -74,7 +74,7 @@ class Server {
 
 	// NICK
 		void			nickCommand(Client *currentUser);
-		void			nick(int client_fd);
+		void			nick(const int client_fd);
 		void			setNick(Client* currentUser, std::string name);
 
 	// JOIN

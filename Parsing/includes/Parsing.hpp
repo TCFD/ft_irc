@@ -39,7 +39,7 @@
 			~Parsing(void);
 
 		// GETTERS
-			std::string parsingGetCommand(void);
+			std::string parsingGetCommand(void) const;
 			std::string parsingGetMessage(void);
 			std::string parsingGetPassword(void);
 			std::string parsingGetOption(void);

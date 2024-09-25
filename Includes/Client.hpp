@@ -22,17 +22,17 @@ class Client
 		~Client(void) {};
 
 	// Getters
-		std::string 	getUsername(void) const 		{ return _username; };
-		std::string 	getNickname(void) const 		{ if (!_nickname.empty()) return _nickname; else return ("");};
-		std::string 	getRealname(void) const 		{ return _realname; };
-		std::string 	getOldname(void) const 			{ return _oldname; };
-		std::string 	getHostname(void) const 		{ return _hostname; };
-		std::string 	getId(void) const 				{ return _id; };
+		const std::string 	getUsername(void) const 		{ return _username; };
+		const std::string 	getNickname(void) const 		{ if (!_nickname.empty()) return _nickname; else return ("");};
+		const std::string 	getRealname(void) const 		{ return _realname; };
+		const std::string 	getOldname(void) const 			{ return _oldname; };
+		const std::string 	getHostname(void) const 		{ return _hostname; };
+		const std::string 	getId(void) const 				{ return _id; };
 		bool			getRegistered(void) const 		{ return _registered; };
 		bool			getPasswd(void) const			{ return _passwd; };
-		int				getFd(void) const 				{ return _fd; };
-		int				getFdC(void) const 				{ return _fd; };
-		int				getActualClientFd(void) const	{ return _actualClientFd; };
+		int			getFd(void) const 				{ return _fd; };
+		int			getFdC(void) const 				{ return _fd; };
+		int			getActualClientFd(void) const	{ return _actualClientFd; };
 		
 	// Setters
 		void			setId(std::string identity) 	{ _id = identity; };
@@ -42,7 +42,7 @@ class Client
 		void			setHostname(std::string name) 	{ _hostname = name; };
 		void			setOldname(std::string name) 	{ _oldname = name; };
 		void			setRegistered(bool type) 		{ _registered = type; };
-		void			setActualClientFd(int c_fd)		{ _actualClientFd = c_fd; };
+		void			setActualClientFd(const int c_fd)		{ _actualClientFd = c_fd; };
 		void			setPasswd(bool arg)				{ _passwd = arg; };
 		
 	// Main Methods

@@ -80,8 +80,10 @@ void Server::clientDisconnected(int id, Client *currentUser) {
 			it->dltClient(currentUser->getNickname());
 		}
 	}
+	std::cout << RED "ID : " << id << NC << std::endl; 
 	_clients.erase(_clients.begin() + id);
-	// close(currentUser->getFd());
+	close(currentUser->getFd());
+	_poll.erasePoll(_msg.currentIndex);
 }
 
 
@@ -93,7 +95,7 @@ bool	Server::isClientTryingToConnect(Client &currentUser, std:: string command) 
 	return true;
 }
 
-void	Server::handleClientCommand(int client_fd)
+void	Server::handleClientCommand(const int client_fd)
 {
 	// Recuperation du dictionnaire de commandes
 	DICOCMD	dico = getDicoCmd();
@@ -102,6 +104,7 @@ void	Server::handleClientCommand(int client_fd)
 	Client	*currentUser = &_clients[_msg.currentIndex];
 	_msg.prefixNick = ":" + currentUser->getNickname();
 
+	std::cout << RED "CLIENT FD: " << client_fd << NC << std::endl;
 	currentUser->setActualClientFd(client_fd); // Pour nick
 	// Verification pour voir si la commande envoyee existe dans le dico
 	DICOCMD::iterator it = dico.begin();

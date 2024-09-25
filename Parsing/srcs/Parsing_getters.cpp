@@ -1,6 +1,6 @@
 #include "../includes/Parsing.hpp"
 
-std::string Parsing::parsingGetCommand(void)
+std::string Parsing::parsingGetCommand(void)  const
 {
     return (this->_actualCmd);
 }
