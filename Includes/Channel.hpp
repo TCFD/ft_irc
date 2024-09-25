@@ -11,6 +11,7 @@ class Channel {
 		std::string 	_topic;
 		std::string 	_topicName;
 		std::string 	_password;
+		bool			_active;
 		int				_limit;
 		int				_lenClients;
 		CHAR_VEC    	_modes;
