@@ -31,7 +31,11 @@ void Polls::mainPoll(Server& server)
         _pollCount = poll(_pollFds.data(), _pollFds.size(), -1);
 
         if (_pollCount == -1 || _quit == true)
-			throw std::exception();
+		{
+			// disconnectClient(_pollFds.size() -1, server);
+			// close(server.getServerSocket());
+			throw StrerrorException("Poll Error");
+		}
 
 		server.setMsg();	
         for (size_t i = 0; i < _pollFds.size(); i++)
