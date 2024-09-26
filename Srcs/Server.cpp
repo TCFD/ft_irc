@@ -61,7 +61,7 @@ int	Server::createClient(Polls &poll)
 
 	if (clientFd == -1) perror("accept");
 
-	fcntl(clientFd, F_SETFD, O_NONBLOCK);
+	// fcntl(clientFd, F_SETFL, O_NONBLOCK); //? May not stay that way. I havent found any issues, but it still does need more testing.
 	poll.addClientPoll(clientFd);
 
 	Client	client(clientFd);
@@ -83,7 +83,7 @@ void Server::clientDisconnected(int id, Client *currentUser) {
 	std::cout << RED "ID : " << id << NC << std::endl; 
 	_clients.erase(_clients.begin() + id);
 	close(currentUser->getFd());
-	_poll.erasePoll(_msg.currentIndex);
+	_poll.erasePoll(_msg.currentIndex + 1);
 }
 
 
