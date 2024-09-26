@@ -82,8 +82,6 @@ void Server::clientDisconnected(int id, Client *currentUser) {
 	}
 	std::cout << RED "ID : " << id << NC << std::endl; 
 	_clients.erase(_clients.begin() + id);
-	close(currentUser->getFd());
-	_poll.erasePoll(_msg.currentIndex);
 }
 
 

@@ -82,10 +82,15 @@ void			Server::modeT(STR_VEC& split) {
 
 	if (split[2].find("+") != std::string::npos) {
 		if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
-			_channels[_msg.currentChan].addMode('t'); }
+			_channels[_msg.currentChan].addMode('t');
+			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
+		else
+			std::cout << BOLD MAGENTA << split[1] << NC " mode is already activated" << std::endl;
+
 	}
 	else {
-		_channels[_msg.currentChan].dltMode('t'); } 
+		_channels[_msg.currentChan].dltMode('t');
+		std::cout << BOLD MAGENTA << split[1] << NC " mode is already desactivated" << std::endl; }
 }
 
 /* Handle L mode
