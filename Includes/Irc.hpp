@@ -14,6 +14,7 @@
 
 # include <algorithm>
 # include <arpa/inet.h>
+# include <cctype>
 # include <csignal>
 # include <cstdio>
 # include <cstdlib>
