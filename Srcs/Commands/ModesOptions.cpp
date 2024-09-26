@@ -28,16 +28,20 @@ void	Server::modesOptions(STR_VEC& split)
 void	Server::modeK(STR_VEC& split)
 {
 	Channel *current = &_channels[_msg.currentChan];
+	std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
 
 	if (split[2].find("+") != std::string::npos) {
 		current->sPwd(split[3]);
 		if (!found_mode_in_chan(split[2][1], current->gModes())) {
 			current->addMode('k'); }
-	}
+		_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
 	else {
 		if (found_mode_in_chan(split[2][1], current->gModes())) {
 			current->sPwd("");
-			current->dltMode('k'); }
+			current->dltMode('k');
+			_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
+		else
+			std::cout << BOLD MAGENTA << split[2] << NC " mode is already desactivated" << std::endl;
 	}
 }
 
@@ -49,26 +53,40 @@ void	Server::modeK(STR_VEC& split)
 */
 void	Server::modeO(STR_VEC& split)
 {
-	if (is_user_in_chan(split[3], _channels[_msg.currentChan])) {
+	Channel *curr = &_channels[_msg.currentChan];
+
+	std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
+	if (is_user_in_chan(split[3], *curr)) {
 		if (split[2].find("+") != std::string::npos) {
-			_channels[_msg.currentChan].addOperatorByName(split[3], _clients);
-			if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
-				_channels[_msg.currentChan].addMode('o'); }
-		}
+			if (!is_user_an_operator(split[3], *curr)) {
+				curr->addOperatorByName(split[3], _clients);
+				_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
+			else
+				std::cout << BOLD MAGENTA << split[3] << NC " is already an operator" << std::endl; }
 		else {
-			_channels[_msg.currentChan].dltOperator(split[3]);
-			_channels[_msg.currentChan].dltMode('o');
-		}
+			if (is_user_an_operator(split[3], _channels[_msg.currentChan])) {
+				curr->dltOperator(split[3]);
+				_msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
+			else
+				std::cout << BOLD MAGENTA << split[3] << NC " is already a normal client" << std::endl; }
 	}
 }
 // Just add 'i' to the modList
 void			Server::modeI(STR_VEC& split) {
 	if (split[2].find("+") != std::string::npos) {
 		if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
-			_channels[_msg.currentChan].addMode('i'); }
+			_channels[_msg.currentChan].addMode('i');
+			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
+		else
+			std::cout << BOLD MAGENTA << split[2] << NC " mode is already activated" << std::endl;
 	}
 	else {
-		_channels[_msg.currentChan].dltMode('i'); }
+		if (found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
+			_channels[_msg.currentChan].dltMode('i');
+			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
+		else
+			std::cout << BOLD MAGENTA << split[2] << NC " mode is already desactivated" << std::endl;
+	}
 }
 
 // Just add 't' to the modList
@@ -76,28 +94,46 @@ void			Server::modeT(STR_VEC& split) {
 
 	if (split[2].find("+") != std::string::npos) {
 		if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
-			_channels[_msg.currentChan].addMode('t'); }
-	}
+			_channels[_msg.currentChan].addMode('t');
+			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
+		else
+			std::cout << BOLD MAGENTA << split[2] << NC " mode is already activated" << std::endl; }
 	else {
-		_channels[_msg.currentChan].dltMode('t'); } 
+		if (found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
+			_channels[_msg.currentChan].dltMode('t');
+			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
+
+		else
+			std::cout << BOLD MAGENTA << split[2] << NC " mode is already desactivated" << std::endl; }
 }
 
 /* Handle L mode
  * Check if its an add or a delete
+ * If the argue isn't a number --> error
  * If +l --> add the mode and the limit to the chan
  * If -l --> remove the mode and the limit */
 void			Server::modeL(STR_VEC& split)
 {
 	if (split[2].find("+") != std::string::npos) {
+
+		for (size_t i=0; i < split[3].size(); i++) {
+			if (!std::isdigit(split[3][i])) {
+				std::cout << RED "ERR: Bad argument" NC << std::endl;
+				return ; }
+		}
+
 		_channels[_msg.currentChan].sLimit(atoi(split[3].c_str()));
 		if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].addMode('l'); }
-	}
+			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
 	else {
 		if (found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].dltMode('l');
 			_channels[_msg.currentChan].sLimit(0);
+			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n";
 		}
+		else
+			std::cout << BOLD MAGENTA << split[2] << NC " mode is already desactivated" << std::endl;
 	}
 }
 
