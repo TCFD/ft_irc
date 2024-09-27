@@ -13,6 +13,8 @@ class Polls
 		static bool						_quit;
 		std::map<int, std::string>		_clientsBuffer;
 		std::vector<struct pollfd>		_pollFds;
+
+		std::vector<int>				fdsToDelete;
 	public:
 		Polls(void) {};
 		Polls(int fd) ;

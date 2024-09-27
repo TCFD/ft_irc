@@ -228,11 +228,11 @@ void	Parsing::cmdTreatTest(std::string brut_cmd)
 			_actual_split_form = form_split;
 			if(!formVerification(string_split, form_split))
 			{
-				Parsing::cmdStatus();
+				// Parsing::cmdStatus();
 				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");
 			}
 		}
-		Parsing::cmdStatus();
+		// Parsing::cmdStatus();
 
 		//::::::::::::::::::://
 

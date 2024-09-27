@@ -84,6 +84,7 @@ void Server::clientDisconnected(int id, Client *currentUser) {
 	_clients.erase(_clients.begin() + id);
 	// close(currentUser->getFd());
 	// _poll.erasePoll(_msg.currentIndex + 1);
+	throw std::runtime_error("QUIT WITH NC");
 }
 
 
