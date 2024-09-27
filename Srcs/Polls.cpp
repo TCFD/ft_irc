@@ -3,7 +3,6 @@
 
 Polls::Polls(int fd)
 {
-	// _quit = false;
     _serverPollFds.fd = fd;
     _serverPollFds.events = POLLIN;
 	_serverPollFds.revents = 0;
@@ -22,7 +21,6 @@ void	Polls::signalHandler(int sig)
 void	Polls::erasePoll(int i)
 {
 	_pollFds.erase(_pollFds.begin() + i);
-	// close (_pollFds[i].fd);
 }
 
 void Polls::mainPoll(Server& server)
@@ -33,7 +31,6 @@ void Polls::mainPoll(Server& server)
 
         if (_pollCount == -1 || _quit == true)
 		{
-			// disconnectClient(_pollFds.size() -1, server);
 			close(server.getServerSocket());
 			for (std::vector<int>::iterator it = fdsToDelete.begin(); it != fdsToDelete.end(); it++)
 				close(*it);
@@ -85,8 +82,6 @@ void Polls::mainPoll(Server& server)
 							}
 							catch (std::exception &e)
 							{
-//								std::cout << e.what() << std::endl;
-								// parsingtools.cmdStatus();
 								parsingtools.errWriteCorrectForm("");
 								continue;
 							}
@@ -100,9 +95,10 @@ void Polls::mainPoll(Server& server)
 								std::cout << BLUE << nickOfCurrentUser << "'s command buffer is empty\n" << NC;
 							std::cout << GREEN <<  "Received command: '" << NC << server.getMsg().command << GREEN << "'" << NC << std::endl;
 							try {
-								server.handleClientCommand(_pollFds[i].fd);
+							server.handleClientCommand(_pollFds[i].fd);
 							}
 							catch (std::runtime_error &e) {
+								std::cout << "exception catched\n";
 								erasePoll(i);
 							}
 						}
