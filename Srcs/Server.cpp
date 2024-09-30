@@ -1,4 +1,5 @@
 # include "../Includes/Server.hpp"
+#include "../Parsing/includes/Parsing.hpp"
 
 Server::Server(int port, std::string mdp) :  _mdp(mdp), _port(port)
 {
@@ -100,7 +101,6 @@ void	Server::handleClientCommand(const int client_fd)
 {
 	// Recuperation du dictionnaire de commandes
 	DICOCMD	dico = getDicoCmd();
-	bool founded = false;
 
 	Client	*currentUser = &_clients[_msg.currentIndex];
 	_msg.prefixNick = ":" + currentUser->getNickname();
@@ -108,24 +108,30 @@ void	Server::handleClientCommand(const int client_fd)
 	std::cout << RED "CLIENT FD: " << client_fd << NC << std::endl;
 	currentUser->setActualClientFd(client_fd); // Pour nick
 	// Verification pour voir si la commande envoyee existe dans le dico
-	DICOCMD::iterator it = dico.begin();
 	//* Si le client n'essaye pas de s'enregistrer alors qu'il ne l'est pas, ciao.
 	if (isClientTryingToConnect(*currentUser, _msg.command))
 	{
-		while (it != dico.end())
+		Parsing	parsingtools;
+		try
 		{
-			if (_msg.command.rfind(it->first, 0) == 0)
-			{
-				ServerMemberFunction func = it->second;
-				(this->*func)(currentUser);
-				founded = true;
-				break;
-			}
-			it++ ;
+			std::string concat = getMsg().command;
+			std::string cmd = parsingtools.cmdTreatTest(concat);
+
+			DICOCMD::iterator it = dico.find(cmd);
+
+			ServerMemberFunction func = it->second;
+			(this->*func)(currentUser);
 		}
-		if (!founded)
+		catch (Parsing::ParsingInvalidSyntax &e)
+		{
+			parsingtools.errWriteCorrectForm("");
+		}
+		catch (Parsing::ParsingInvalidCommand &e)
+		{
 			_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
+		}
 	}
+	
 	sendResponse(client_fd);
 	std::cout << "\n===========================================\n\n";
 

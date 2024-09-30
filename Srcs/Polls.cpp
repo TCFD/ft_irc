@@ -1,5 +1,4 @@
 #include "../Includes/Server.hpp"
-#include "../Parsing/includes/Parsing.hpp"
 
 Polls::Polls(int fd)
 {
@@ -74,22 +73,7 @@ void Polls::mainPoll(Server& server)
 								pos--;
 							server.setMsgCmd(_clientsBuffer[_pollFds[i].fd].substr(0, pos));
 							_clientsBuffer[_pollFds[i].fd].erase(0, pos + 2); 
-							Parsing	parsingtools;
 
-							try
-							{
-								std::string concat = server.getMsg().command;
-								if (concat == "/HELP")
-									parsingtools.parsingHelp();
-								parsingtools.cmdTreatTest(concat);
-							}
-							catch (std::exception &e)
-							{
-//								std::cout << e.what() << std::endl;
-								// parsingtools.cmdStatus();
-								parsingtools.errWriteCorrectForm("");
-								continue;
-							}
 							server.setMsgIdx(i - 1);
 							std::string nickOfCurrentUser = server.gNickClient();
 							if (nickOfCurrentUser == "")
@@ -99,12 +83,11 @@ void Polls::mainPoll(Server& server)
 							else
 								std::cout << BLUE << nickOfCurrentUser << "'s command buffer is empty\n" << NC;
 							std::cout << GREEN <<  "Received command: '" << NC << server.getMsg().command << GREEN << "'" << NC << std::endl;
-							try {
-								server.handleClientCommand(_pollFds[i].fd);
-							}
-							catch (std::runtime_error &e) {
-								erasePoll(i);
-							}
+
+							try 
+							{	server.handleClientCommand(_pollFds[i].fd);	}
+							catch (std::runtime_error &e) 
+							{	erasePoll(i);	}
 						}
 					}
 				}

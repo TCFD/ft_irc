@@ -49,12 +49,12 @@
 			void		cmdStatus(void);
 
 		// MAIN METHODS
-			void    	parsingHelp();
-			void		errMissElmt(PARSING_VECTOR_SPLIT& cmd_split);
-			void		errWriteCorrectForm(std::string gap);
-			void		cmdTreatTest(std::string brut_cmd);
-			bool		formVerification(PARSING_VECTOR_SPLIT& cmd_split,
-							PARSING_VECTOR_SPLIT& form_split);
+			void    		parsingHelp();
+			void			errMissElmt(PARSING_VECTOR_SPLIT& cmd_split);
+			void			errWriteCorrectForm(std::string gap);
+			std::string		cmdTreatTest(std::string brut_cmd);
+			bool			formVerification(PARSING_VECTOR_SPLIT& cmd_split,
+								PARSING_VECTOR_SPLIT& form_split);
 
 			std::pair<std::string, std::string> parsingGetCmd(void);
 
@@ -72,6 +72,25 @@
 			  		}
 
 					 virtual ~ParsingInvalidSyntax(void) throw() {}
+				
+				private:
+					
+					std::string	_mMsg;
+			};
+			
+			class ParsingInvalidCommand : public std::exception
+			{
+				public:
+
+			  		ParsingInvalidCommand(const std::string& str1)
+			    		: _mMsg(str1){}
+
+			  		virtual const char* what() const throw()
+			  		{
+			    		return (_mMsg.c_str());
+			  		}
+
+					 virtual ~ParsingInvalidCommand(void) throw() {}
 				
 				private:
 					
