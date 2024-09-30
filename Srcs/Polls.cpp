@@ -80,7 +80,7 @@ void	Polls::isClientHere(Server &server, int i)
 		memset(buffer, 0, sizeof(buffer));
 		int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
 		if (bytes_received <= 0)
-			erasePoll(i);
+			erasePoll(i, server);
 		else {
 			_clientsBuffer[_pollFds[i].fd].append(buffer, bytes_received);
 			memset(buffer, 0, sizeof(buffer));
