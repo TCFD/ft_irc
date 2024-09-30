@@ -127,7 +127,7 @@ void	Server::handleClientCommand(const int client_fd)
 		}
 		catch (Parsing::ParsingInvalidCommand &e)
 		{
-			_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command\r\n";
+			_msg.response = _msg.prefixServer + "421 " + _msg.command.substr(0, _msg.command.find(' ')) + " :Unknown command " + getRandomEmoji(false) + "\r\n";
 		}
 	}
 	

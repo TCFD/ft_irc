@@ -145,5 +145,7 @@ PARSING_VECTOR_SPLIT remove_between_angles(const PARSING_VECTOR_SPLIT& input)
             inAngleBrackets = true;
         }
     }
+    if (!inAngleBrackets)
+        throw Parsing::ParsingInvalidSyntax(std::string(FORM_ERR) + "Invalid syntax.");
     return (result);
 }

@@ -7,8 +7,12 @@
 	#include <sstream>
 	#include <utility>
 	#include <map>
+	#include <cstdlib>  // Pour rand() et srand()
+	#include <ctime>    // Pour time()
+
 
 	#define PARSING_VECTOR_SPLIT	std::vector<std::string>
+	#define EMOJI					std::vector<std::string>
 
 	#define PARSING_MAP_OPT			std::map<std::string, int>
 	#define PARSING_MAP_ERR			std::map<std::string, std::string>
@@ -158,3 +162,10 @@
 	{
 	    return std::make_pair(a, b);
 	}
+
+
+	// Pour les emojis
+
+	std::string getRandomEmoji(bool GoodOrNot);
+	const EMOJI get_fail_emoji();
+	const EMOJI get_good_emoji();
