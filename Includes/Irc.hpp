@@ -14,6 +14,7 @@
 
 # include <algorithm>
 # include <arpa/inet.h>
+# include <cctype>
 # include <csignal>
 # include <cstdio>
 # include <cstdlib>
@@ -67,7 +68,7 @@ bool			found_mode_in_chan(char mod, CHAR_VEC modList);
 bool			is_user_an_operator(std::string target, Channel chan);
 bool			is_four_args(STR_VEC& split);
 bool			is_valid_nick(const std::string& nick);
-bool			is_already_exists(std::string name, int clientFd, CLIENT_VEC clients);
+bool			is_already_exists(const std::string name, const int clientFd, CLIENT_VECC clients);
 
 std::string		int_to_str(int nb);
 std::string		char_to_str(char nb);

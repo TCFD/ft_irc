@@ -1,9 +1,7 @@
 #include "../Includes/Server.hpp"
-#include "../Parsing/includes/Parsing.hpp"
 
 Polls::Polls(int fd)
 {
-	// _quit = false;
     _serverPollFds.fd = fd;
     _serverPollFds.events = POLLIN;
 	_serverPollFds.revents = 0;
@@ -32,8 +30,9 @@ void Polls::mainPoll(Server& server)
 
         if (_pollCount == -1 || _quit == true)
 		{
-			// disconnectClient(_pollFds.size() -1, server);
-			// close(server.getServerSocket());
+			close(server.getServerSocket());
+			for (std::vector<int>::iterator it = fdsToDelete.begin(); it != fdsToDelete.end(); it++)
+				close(*it);
 			throw StrerrorException("Poll Error");
 		}
 
@@ -71,22 +70,7 @@ void Polls::mainPoll(Server& server)
 								pos--;
 							server.setMsgCmd(_clientsBuffer[_pollFds[i].fd].substr(0, pos));
 							_clientsBuffer[_pollFds[i].fd].erase(0, pos + 2); 
-							Parsing	parsingtools;
 
-							try
-							{
-								std::string concat = server.getMsg().command;
-								if (concat == "/HELP")
-									parsingtools.parsingHelp();
-								parsingtools.cmdTreatTest(concat);
-							}
-							catch (std::exception &e)
-							{
-//								std::cout << e.what() << std::endl;
-								parsingtools.cmdStatus();
-								parsingtools.errWriteCorrectForm("");
-								continue;
-							}
 							server.setMsgIdx(i - 1);
 							std::string nickOfCurrentUser = server.gNickClient();
 							if (nickOfCurrentUser == "")
@@ -96,7 +80,11 @@ void Polls::mainPoll(Server& server)
 							else
 								std::cout << BLUE << nickOfCurrentUser << "'s command buffer is empty\n" << NC;
 							std::cout << GREEN <<  "Received command: '" << NC << server.getMsg().command << GREEN << "'" << NC << std::endl;
-							server.handleClientCommand(_pollFds[i].fd);
+
+							try 
+							{	server.handleClientCommand(_pollFds[i].fd);	}
+							catch (std::runtime_error &e) 
+							{	erasePoll(i);	}
 						}
 					}
 				}
@@ -111,4 +99,5 @@ void	Polls::addClientPoll(int clientFd)
 	_clientPollFds.fd = clientFd;
     _clientPollFds.events = POLLIN;
     _pollFds.push_back(_clientPollFds);
+	fdsToDelete.push_back(clientFd);
 }

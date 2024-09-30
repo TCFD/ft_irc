@@ -67,7 +67,7 @@ Parsing::Parsing(void)
 	_cmd["JOIN"]		= pair_it(0, "// ## P");
 	_cmd["OPER"]		= pair_it(0, "// UU PP");
 	_cmd["PASS"]		= pair_it(0, "// PP");
-	_cmd["QUIT"]		= pair_it(0, "// M");
+	_cmd["QUIT"]		= pair_it(0, "// MM");
 
 	_cmd["KILL"]		= pair_it(0, "// UU MM");
 	_cmd["NICK"]		= pair_it(0, "// UU");
@@ -195,7 +195,7 @@ void	Parsing::cmdStatus(void)
 	std::cout << "\n" << std::endl;
 }
 
-void	Parsing::cmdTreatTest(std::string brut_cmd)
+std::string	Parsing::cmdTreatTest(std::string brut_cmd)
 {
 	_brutCmd = brut_cmd;
 
@@ -203,9 +203,9 @@ void	Parsing::cmdTreatTest(std::string brut_cmd)
 
 	//errMissElmt(string_split);
 
-	std::string const command = byidx(string_split, 0);
+	std::string command = byidx(string_split, 0);
 	if (byidx(string_split, 0)[0] == '/')
-		std::string const command = command.substr(1);
+		command = command.substr(1);
 
 	cmdResetStatus();
 
@@ -226,18 +226,12 @@ void	Parsing::cmdTreatTest(std::string brut_cmd)
 			PARSING_VECTOR_SPLIT form_split = split(result.second, ' ');
 			_actual_split_form = form_split;
 			if(!formVerification(string_split, form_split))
-			{
-				Parsing::cmdStatus();
-				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");		
-			}
+				throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR) + "Invalid syntax.");
 		}
-		Parsing::cmdStatus();
-
-		//::::::::::::::::::://
-
-		return ;
+		return result.first ;
 	}
 	std::cout << CMD_ERR << (string_split[0]) << " > Command not found." << std::endl;
-	throw Parsing::ParsingInvalidSyntax(std::string(CMD_ERR));
+	throw Parsing::ParsingInvalidCommand(std::string(CMD_ERR));
+	return "";
 }
 

@@ -9,8 +9,9 @@ void			Server::namesHandle(void)
 	STR_VEC split = cutModeCommand();
 	if (!&_channels[_msg.currentChan])
 		std::cout << RED "ERR SERVER:" NC " No channel detected\n";
-	else if (split.size() <= 1)
+	else if (split.size() <= 1 || (split.size() == 2 && isChanExists(split[1]) && is_user_in_chan(_clients[_msg.currentIndex].getNickname(), _channels[_msg.currentChan])))
 	{
+		std::cout << "je suis la\n";
 		Channel *chan = &_channels[_msg.currentChan];
 		std::string nicks = "";
 		for (CLIENT_ITC it = chan->gClients().begin(); it != chan->gClients().end(); ++it){
