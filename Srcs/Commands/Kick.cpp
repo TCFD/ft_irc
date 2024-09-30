@@ -11,7 +11,7 @@ void	Server::kick(std::string senderNick) {
 	}
 	
 	std::string reason;
-	if (_msg.command.find(':')) { //* L'user qui kick donne une raison 
+	if (_msg.command.find(':')) { //* L'user qui kick donne une raison
 		reason = _msg.command.substr(_msg.command.find(':'));
 	}
 
