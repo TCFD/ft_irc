@@ -2,7 +2,6 @@
 
 Polls::Polls(int fd)
 {
-	// _quit = false;
     _serverPollFds.fd = fd;
     _serverPollFds.events = POLLIN;
 	_serverPollFds.revents = 0;
@@ -21,7 +20,6 @@ void	Polls::signalHandler(int sig)
 void	Polls::erasePoll(int i)
 {
 	_pollFds.erase(_pollFds.begin() + i);
-	// close (_pollFds[i].fd);
 }
 
 void Polls::mainPoll(Server& server)
@@ -32,7 +30,6 @@ void Polls::mainPoll(Server& server)
 
         if (_pollCount == -1 || _quit == true)
 		{
-			// disconnectClient(_pollFds.size() -1, server);
 			close(server.getServerSocket());
 			for (std::vector<int>::iterator it = fdsToDelete.begin(); it != fdsToDelete.end(); it++)
 				close(*it);
