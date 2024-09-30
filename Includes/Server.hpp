@@ -30,6 +30,7 @@ class Server {
 		~Server(void) {};
 
 	// Getters
+		CLIENT_VEC	&	getClients() {return _clients;}
 		int				getFdOfUser(std::string nick);
 		int			 	getPort(void)					{return(_port); };
 		int			 	getServerSocket(void)			{return(_serverSocket); };
@@ -134,6 +135,7 @@ class Server {
 	// PASS
 		void	    	pass(Client *currenUser);
 
+		Client *		getClient() {return &_clients[_msg.currentIndex];};
 		std::string		gNickClient(void) {return _clients[_msg.currentIndex].getNickname();};
 		bool			gResgistrationStatusClient(void) {return _clients[_msg.currentIndex].getRegistered();};
 

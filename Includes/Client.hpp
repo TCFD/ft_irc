@@ -46,6 +46,6 @@ class Client
 		void			setPasswd(bool arg)				{ _passwd = arg; };
 		
 	// Main Methods
-		int		 		parseNickname(std::string name);
+		int		 			parseNickname(std::string name);
 };
 		

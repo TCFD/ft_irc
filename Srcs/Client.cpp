@@ -2,15 +2,15 @@
 
 Client::Client(int clientFd)
 {
-	_fd			= clientFd;
-	_registered	= false;
-	_username	= "";
-	_nickname	= "";
-	_realname	= "";
-	_oldname	= "";
-	_id			= "";
-	_hostname	= "server";
-	_passwd 	= false;
+	_fd					= clientFd;
+	_registered			= false;
+	_username			= "";
+	_nickname			= "";
+	_realname			= "";
+	_oldname			= "";
+	_id					= "";
+	_hostname			= "server";
+	_passwd 			= false;
 }
 
 int Client::parseNickname(std::string name)

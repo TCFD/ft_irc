@@ -74,18 +74,20 @@ int	Server::createClient(Polls &poll)
 // Pas fini: gros travaux !!!
 void Server::clientDisconnected(int id, Client *currentUser) {
 	std::cout << "Client disconnected" << std::endl;
-	//* Cleaning the channels he was in.
-	for (CHAN_IT it = _channels.begin(); it < _channels.end(); it++) {
-		if (is_user_in_chan(currentUser->getNickname(), *it)) {
-			sendToChan(":" + currentUser->getNickname() + " QUIT :leaving\r\n");
-			it->dltClient(currentUser->getNickname());
+		//* Cleaning the channels he was in.
+	if (_poll.isDeleted == -1)
+	{
+		for (CHAN_IT it = _channels.begin(); it < _channels.end(); it++) {
+			if (is_user_in_chan(currentUser->getNickname(), *it)) {
+				sendToChan(":" + currentUser->getNickname() + " QUIT :leaving\r\n");
+				it->dltClient(currentUser->getNickname());
+			}
 		}
+		std::cout << RED "ID : " << id << NC << std::endl; 
+		_clients.erase(_clients.begin() + id);
+		_poll.isDeleted = 1;
 	}
-	std::cout << RED "ID : " << id << NC << std::endl; 
-	_clients.erase(_clients.begin() + id);
-	// close(currentUser->getFd());
-	// _poll.erasePoll(_msg.currentIndex + 1);
-	throw std::runtime_error("QUIT WITH NC");
+	throw std::runtime_error("");
 }
 
 
@@ -105,7 +107,6 @@ void	Server::handleClientCommand(const int client_fd)
 	Client	*currentUser = &_clients[_msg.currentIndex];
 	_msg.prefixNick = ":" + currentUser->getNickname();
 
-	std::cout << RED "CLIENT FD: " << client_fd << NC << std::endl;
 	currentUser->setActualClientFd(client_fd); // Pour nick
 	// Verification pour voir si la commande envoyee existe dans le dico
 	//* Si le client n'essaye pas de s'enregistrer alors qu'il ne l'est pas, ciao.

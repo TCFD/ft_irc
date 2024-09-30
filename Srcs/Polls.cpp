@@ -6,6 +6,7 @@ Polls::Polls(int fd)
     _serverPollFds.events = POLLIN;
 	_serverPollFds.revents = 0;
     _pollFds.push_back(_serverPollFds);
+	isDeleted = -1;
 }
 
 void	Polls::signalHandler(int sig)
@@ -17,8 +18,15 @@ void	Polls::signalHandler(int sig)
 	}
 }
 
-void	Polls::erasePoll(int i)
+void	Polls::erasePoll(int i, Server & server)
 {
+	std::cout << RED << "Ereasing someone from pollFds.\n" << NC;
+	std::cout << "isdeleted is equal to " << isDeleted << std::endl;
+	if (isDeleted == -1) {
+		try {server.clientDisconnected(i + 1, server.getClient());}
+		catch (std::runtime_error &e) {}
+	}
+	isDeleted = -1;
 	_pollFds.erase(_pollFds.begin() + i);
 }
 
@@ -48,12 +56,14 @@ void Polls::mainPoll(Server& server)
 				}
 				else
 				{
+					server.setMsgIdx(i - 1);
+
 					char buffer[1024];
 					memset(buffer, 0, sizeof(buffer));
 					int bytes_received = recv(_pollFds[i].fd, buffer, sizeof(buffer), 0);
           
 					if (bytes_received <= 0)
-						erasePoll(i);
+						erasePoll(i, server);
 					else
 					{
 
@@ -70,8 +80,6 @@ void Polls::mainPoll(Server& server)
 								pos--;
 							server.setMsgCmd(_clientsBuffer[_pollFds[i].fd].substr(0, pos));
 							_clientsBuffer[_pollFds[i].fd].erase(0, pos + 2); 
-
-							server.setMsgIdx(i - 1);
 							std::string nickOfCurrentUser = server.gNickClient();
 							if (nickOfCurrentUser == "")
 								nickOfCurrentUser = "new user";
@@ -84,7 +92,7 @@ void Polls::mainPoll(Server& server)
 							try 
 							{	server.handleClientCommand(_pollFds[i].fd);	}
 							catch (std::runtime_error &e) 
-							{	erasePoll(i);	}
+							{	erasePoll(i, server);	}
 						}
 					}
 				}
