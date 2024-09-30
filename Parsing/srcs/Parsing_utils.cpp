@@ -220,8 +220,6 @@ void Parsing::errFormWriting(PARSING_VECTOR_SPLIT& form)
 {
 	std::string	cara;
 
-	std::cout << "\n";
-
 	if (_duplicates_found)
 		std::cout << "\t";
 	
