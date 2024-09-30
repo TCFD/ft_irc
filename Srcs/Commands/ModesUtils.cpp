@@ -32,7 +32,6 @@ bool	is_user_exists(std::string target, CLIENT_VEC clients)
 // Check if the target is already in the channel or not
 bool	is_user_in_chan(std::string target, Channel & chan)
 {	
-	// if (!chan)
 	for (CLIENT_ITC it=chan.gClients().begin(); it != chan.gClients().end(); ++it) {
 		if (it->getNickname() == target) {
 			return true; }
@@ -50,9 +49,7 @@ bool	found_mode_in_chan(char mod, CHAR_VEC modList)
 	return false;
 }
 
-/* 
- * Check if the third arg is +k, +l or +/-o
-*/
+// Check if the third arg is +k, +l or +/-o
 bool	is_four_args(STR_VEC& split)
 {
 	if (split.size() > 2 && (split[2] == "+k" || split[2] == "-k"|| split[2] == "+l" || split[2] == "+o" || split[2] == "-o"))
@@ -60,10 +57,8 @@ bool	is_four_args(STR_VEC& split)
 	return false;
 }
 
-/* 
- * Get the command line and split it per part
- * Exception when the third arg == -l --> forced split
-*/
+/* Get the command line and split it per part
+ * Exception when the third arg == -l --> forced split */
 STR_VEC	Server::cutModeCommand(void)
 {
 	std::string delim = " ";
@@ -81,6 +76,7 @@ STR_VEC	Server::cutModeCommand(void)
 	return split;
 }
 
+// Return the fd of a client that is in a chan
 int	user_in_chan_fd(std::string nick, CLIENT_VEC clients)
 {
 	int i = 0;
@@ -91,6 +87,7 @@ int	user_in_chan_fd(std::string nick, CLIENT_VEC clients)
 	return (-1);
 }
 
+// Check if a client is an operator in a channel
 bool	is_user_an_operator(std::string target, Channel chan)
 {
 	for (CLIENT_ITC it = chan.gOperators().begin(); it != chan.gOperators().end(); ++it) {

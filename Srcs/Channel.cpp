@@ -6,8 +6,10 @@ Channel::Channel(std::string name): _name(name)
 	_limit = 0;
 }
 
-void	Channel::addMode(char mod) {
-	_modes.push_back(mod); }
+void	Channel::addMode(char mod)
+{
+	_modes.push_back(mod);
+}
 
 void	Channel::addOperator(Client& client)
 {
@@ -69,28 +71,21 @@ void	Channel::dltClient(std::string name)
 	}
 }
 
-void	Channel::addInvite(Client& client) {
+void	Channel::addInvite(Client& client)
+{
 	_invite.push_back(client);
 }
 
-void	Channel::dltInvite(std::string name) {
-	for (CLIENT_IT it = _invite.begin(); it != _invite.end(); ++it) {
+void	Channel::dltInvite(std::string name)
+{
+	for (CLIENT_IT it = _invite.begin(); it != _invite.end(); ++it)
+	{
 		if (it->getNickname() == name) {
 			_invite.erase(it); return ; }
 	}
 }
 
-// std::string	Channel::getTime(void)
-// {
-// 	std::time_t currentTime = std::time(0);
-// 	std::tm*	localTime = std::localtime(&currentTime);
-// 	char buffer[100];
-
-// 	std::strftime(buffer, sizeof(buffer), "%a %b  %d %H:%M:%S %Y", localTime);
-	
-// 	return std::string(buffer); 
-// }
-
+// Print all actives modes
 std::string		Channel::gModesActives(void) {
 	std::string mods = "+";
 	int limit=0;
@@ -105,7 +100,6 @@ std::string		Channel::gModesActives(void) {
 		else
 			mods += *it; 
 	}
-	
 	if (limit == 1 && key == 1)
 		mods += "lk " + int_to_str(_limit) + " " + _password;
 	else if (key == 1)
@@ -115,6 +109,7 @@ std::string		Channel::gModesActives(void) {
 	return mods;
 }
 
+///////////////////////////
 //**** Utils in chan ****//
 bool	Channel::isUserOnMe(std::string nick) const
 {

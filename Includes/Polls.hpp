@@ -19,11 +19,15 @@ class Polls
 		Polls(int fd) ;
 		~Polls(void) {};
 
+		int							isDeleted;
 		void			            mainPoll(Server& server);
 		void			            addClientPoll(int clientFd);
 		void						erasePoll(int i, Server & server);
 		void            			disconnectClient(int i, Server &server);
 		static void					signalHandler(int sig);
 		std::vector<struct pollfd>	getPollFds(void){return(_pollFds);};
-		int							isDeleted;
+		void						pollError(Server &server);
+		void						receivedCommandBuffer(Server &server, int i);
+		void						isClientHere(Server &server, int i);
+
 };

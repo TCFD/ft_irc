@@ -3,7 +3,6 @@
 
 Server::Server(int port, std::string mdp) :  _mdp(mdp), _port(port)
 {
-	// _quit = false;
 	socketDataSet();
 }
 
@@ -30,6 +29,7 @@ DICOCMD Server::getDicoCmd()
 	return (dico);
 }
 
+// Server's creation (socket, port, bind, listen, no-block)
 void	Server::socketDataSet(void)
 {
 	_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -53,7 +53,7 @@ void	Server::socketDataSet(void)
 	fcntl(_serverSocket, F_SETFL, O_NONBLOCK);
 }
 
-//Creer classe ClientPoll en lien avec Polls
+// Create a client's poll when a client try to connect
 int	Server::createClient(Polls &poll)
 {
 	struct sockaddr_in clientAddr;
@@ -62,7 +62,6 @@ int	Server::createClient(Polls &poll)
 
 	if (clientFd == -1) perror("accept");
 
-	// fcntl(clientFd, F_SETFL, O_NONBLOCK); //? May not stay that way. I havent found any issues, but it still does need more testing.
 	poll.addClientPoll(clientFd);
 
 	Client	client(clientFd);
@@ -71,17 +70,18 @@ int	Server::createClient(Polls &poll)
 	return (clientFd);
 }
 
-// Pas fini: gros travaux !!!
+/* Disconnected properly a client
+	 -> quit all the channels where he was
+	 -> clean all the datas
+	 -> throw an exception to close */
 void Server::clientDisconnected(int id, Client *currentUser) {
 	std::cout << "Client disconnected" << std::endl;
-		//* Cleaning the channels he was in.
 	if (_poll.isDeleted == -1)
 	{
 		for (CHAN_IT it = _channels.begin(); it < _channels.end(); it++) {
 			if (is_user_in_chan(currentUser->getNickname(), *it)) {
 				sendToChan(":" + currentUser->getNickname() + " QUIT :leaving\r\n");
-				it->dltClient(currentUser->getNickname());
-			}
+				it->dltClient(currentUser->getNickname()); }
 		}
 		std::cout << RED "ID : " << id << NC << std::endl; 
 		_clients.erase(_clients.begin() + id);
@@ -89,7 +89,6 @@ void Server::clientDisconnected(int id, Client *currentUser) {
 	}
 	throw std::runtime_error("");
 }
-
 
 bool	Server::isClientTryingToConnect(Client &currentUser, std:: string command) {
 	if (command.rfind("NICK", 0) == std::string::npos && command.rfind("USER", 0) == std::string::npos && command.rfind("PASS", 0) == std::string::npos && command.rfind("QUIT", 0) == std::string::npos && !currentUser.getRegistered()) {
@@ -99,17 +98,16 @@ bool	Server::isClientTryingToConnect(Client &currentUser, std:: string command) 
 	return true;
 }
 
+// Check in the dico if the command exists
+// Works only if the client is already registered
 void	Server::handleClientCommand(const int client_fd)
 {
-	// Recuperation du dictionnaire de commandes
 	DICOCMD	dico = getDicoCmd();
 
 	Client	*currentUser = &_clients[_msg.currentIndex];
 	_msg.prefixNick = ":" + currentUser->getNickname();
 
-	currentUser->setActualClientFd(client_fd); // Pour nick
-	// Verification pour voir si la commande envoyee existe dans le dico
-	//* Si le client n'essaye pas de s'enregistrer alors qu'il ne l'est pas, ciao.
+	currentUser->setActualClientFd(client_fd);
 	if (isClientTryingToConnect(*currentUser, _msg.command))
 	{
 		Parsing	parsingtools;
@@ -138,6 +136,7 @@ void	Server::handleClientCommand(const int client_fd)
 
 }
 
+// Send server's response to a target client
 void Server::sendResponse(int client_fd, std::string name)
 {
 
@@ -149,6 +148,7 @@ void Server::sendResponse(int client_fd, std::string name)
 	_msg.response.erase();
 }
 
+// Send server's response to the client
 void Server::sendResponse(int client_fd)
 {
 	if (_msg.response == "")
