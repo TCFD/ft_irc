@@ -29,7 +29,7 @@ bool	Server::errorsTopic(STR_VEC split, Client *currentUser)
 		_msg.response = _msg.prefixNick + " 403 " + currentUser->getNickname() + " " + split[1] + " :No such channel\r\n"; }
 	else if (isChanExists(split[1]) && !is_user_in_chan(currentUser->getNickname(), *current)) {
 		_msg.response = _msg.prefixNick + " 442 " + currentUser->getNickname() + " " + split[1] + " :You're not on that channel\r\n"; }
-	else if (found_mode_in_chan('t', current->gModes()) && !is_user_an_operator(currentUser->getNickname(), split[1])) {
+	else if (found_mode_in_chan('t', current->gModes()) && !is_user_an_operator(currentUser->getNickname(), *current)) {
 		_msg.response = _msg.prefixNick + " 482 " + currentUser->getNickname() + " " + current->gName() + " :You're not channel operator\r\n"; }
 	else
 		return false;

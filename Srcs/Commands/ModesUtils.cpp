@@ -90,9 +90,10 @@ int	user_in_chan_fd(std::string nick, CLIENT_VEC clients)
 // Check if a client is an operator in a channel
 bool	is_user_an_operator(std::string target, Channel chan)
 {
-	for (CLIENT_ITC it = chan.gOperators().begin(); it != chan.gOperators().end(); ++it) {
-		if (target == it->getNickname())
-			return true;
+	for (CLIENT_ITC it = chan.gOperators().begin(); it != chan.gOperators().end(); it++) {
+		std::cout << "coucou je suis la bolosse\n";
+		if (target == it->getNickname()) {
+			return true; }
 	}
 	return false;
 }
