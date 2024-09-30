@@ -55,6 +55,7 @@ bool	Server::errorModes(STR_VEC& split)
  * GOOD TO KNOW:
 	* There is 2 types of Modes: CHANNEL and USER
 	* We use ONLY the CHANNEL mode
+	* Except for +/- o whose for clients
 	* Errors Modes with a code
 	* Modes +/-k, +/-l, +/-i, +/-t, +/-o to handle
  * Add User/Channel modes to their respective structures
@@ -66,14 +67,7 @@ int	Server::modesHandle(void)
 	
 	if (!errorModes(split) && _msg.response.find("MODE") == std::string::npos)
 	{
-		std::cout << "yo je suis la\n";
 		modesOptions(split);
-
-		// if (split.size() == 4 && split[2] != "-o" && split[2] != "+o") {
-			// std::string linkPrint = split[1] + " " + split[2] + " " + split[3];
-			// _msg.response = _msg.prefixNick + " MODE " + linkPrint + "\r\n"; }
-		// else if (split.size() == 3) {
-			// _msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
 		if (isChanExists(split[1]))
 			sendToEveryone(_msg.response);
 	}

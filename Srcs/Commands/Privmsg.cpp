@@ -1,15 +1,12 @@
 #include "../../Includes/Server.hpp"
 
 // Pour envoyer un privmsg vers un channel
-
 void	Server::sendPrimsgToChannel(std::string senderNick, std::string destinataire, std::string msg)
 {
 	CHAN_ITC targetChan = DoesChanExist(destinataire);
 
 	if (targetChan == _channels.end())
-		return (setMsgResponse(print_message("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel")));
-		//_msg.response = print_message("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel");
-	
+		return (setMsgResponse(print_message("401", _clients[_msg.currentIndex].getNickname(), destinataire + " :No such nick/channel")));	
 	CLIENT_VEC clients = targetChan->gClients();
 	CLIENT_ITC it = clients.begin();
 	for (; it < clients.end(); it++)
@@ -26,7 +23,6 @@ void	Server::sendPrimsgToChannel(std::string senderNick, std::string destinatair
 }
 
 // De même que [sendPrimsgToChannel] à la différence qu'on envoie vers un user
-
 void	Server::sendPrivmsgToUser(std::string senderNick, std::string destinataire, std::string msg)
 {
 	int targetUser = getFdOfUser(destinataire);
@@ -38,7 +34,7 @@ void	Server::sendPrivmsgToUser(std::string senderNick, std::string destinataire,
 	sendResponse(targetUser, destinataire);
 }
 
-
+// Handle of privmsg
 void	Server::privmsg(std::string senderNick)
 {
 	std::string destinataire = _msg.command.substr(8, _msg.command.find(':') - 9);

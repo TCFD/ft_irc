@@ -26,5 +26,8 @@ class Polls
 		void            			disconnectClient(int i, Server &server);
 		static void					signalHandler(int sig);
 		std::vector<struct pollfd>	getPollFds(void){return(_pollFds);};
+		void						pollError(Server &server);
+		void						receivedCommandBuffer(Server &server, int i);
+		void						isClientHere(Server &server, int i);
 
 };

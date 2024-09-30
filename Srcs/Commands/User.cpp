@@ -1,7 +1,6 @@
 #include "../../Includes/Server.hpp"
 
 /* USER registration */
-
 void    Server::userHandle(Client   *currentUser)
 {
     if (currentUser->getPasswd() && !currentUser->getRegistered()) {
