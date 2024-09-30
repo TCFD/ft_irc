@@ -1,5 +1,6 @@
 #include "../../Includes/Server.hpp"
 
+// Handle of PASS command
 void    	Server::pass(Client *currenUser)
 {
     STR_VEC cmdVec(splitCmd(_msg.command));

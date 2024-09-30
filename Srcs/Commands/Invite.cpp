@@ -11,7 +11,7 @@ CHAN_ITC Server::DoesChanExist (std::string target) {
 	return it;
 }
 
-// returns the fd of asked user, -1 if not found
+// Returns the fd of asked user, -1 if not found
 int	Server::getFdOfUser(std::string nick) {
 	CLIENT_ITC it = _clients.begin();
 

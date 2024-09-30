@@ -1,11 +1,20 @@
 #include "../Includes/Server.hpp"
-// #include "../Client.hpp"
 
 bool	Polls::_quit = false;
 
+bool	is_digit_in_str(std::string str)
+{
+	for (size_t i=0; i < str.size(); i++)
+	{
+		if (!std::isdigit(str[i])) {
+			return false; }
+	}
+	return true;
+}
+
 int main(int ac, char **av)
 {
-	if (ac != 3)
+	if (ac != 3 || (ac == 3 && !is_digit_in_str(av[1])))
 	{
 		std::cout << "./ircserv <port> <password>" << std::endl;
 		return 1;

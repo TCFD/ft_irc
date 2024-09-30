@@ -5,8 +5,8 @@ void	printChanInfos(const Channel & chan , int idx)
 	std::cout << "\nCHAN INFOS:\n";
 	std::cout << MAGENTA "- Name: " << chan.gName() << std::endl;
 	std::cout << "- Users: ";
-	//for (CLIENT_ITC it = chan.gClients().begin(); it != chan.gClients().end(); ++it) {
-	//	std::cout << it->getNickname() << " "; }
+	for (CLIENT_ITC it = chan.gClients().begin(); it != chan.gClients().end(); ++it) {
+		std::cout << it->getNickname() << " "; }
 	std::cout << "\n- Limit: " << chan.gLimit() << std::endl;
 	std::cout << "- Nb of users: " << chan.gLenClients() << std::endl;
 	if (chan.gPassword() != "")

@@ -37,6 +37,7 @@ bool	Server::errorsTopic(STR_VEC split, Client *currentUser)
 	return true;
 }
 
+// Handle of Topic command
 void	Server::topicHandle(Client *currentUser)
 {
 	STR_VEC split = cutTopicCmd();

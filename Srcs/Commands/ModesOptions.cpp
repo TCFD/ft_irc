@@ -1,10 +1,8 @@
 #include "../../Includes/Server.hpp"
-// #include "../../Includes/Channel.hpp"
 
 /* Use of function pointer
  * Access of each mode by their own functions
- * For now, there is only modeO and modeK
-*/
+ * For now, there is only modeO and modeK */
 void	Server::modesOptions(STR_VEC& split)
 {
 	std::string init[10] = {"+k", "-k", "+l", "-l", "+i", "-i", "+t", "-t", "+o", "-o"};
@@ -20,11 +18,9 @@ void	Server::modesOptions(STR_VEC& split)
 		}
 }
 
-/* 
- * Handle k MODE
+/* Handle k MODE
  * If +k --> add the password to the vector; add the mode to the channel
- * If -k --> remove the password from the vector; if mode was active, remove it from the channel
-*/
+ * If -k --> remove the password from the vector; if mode was active, remove it from the channel */
 void	Server::modeK(STR_VEC& split)
 {
 	Channel *current = &_channels[_msg.currentChan];
@@ -45,12 +41,10 @@ void	Server::modeK(STR_VEC& split)
 	}
 }
 
-/* 
- * Handle o MODE
+/* Handle o MODE
  * Check if the nick chosen exists and is in the channel
  * If +o --> add the operator status to nick; add the mode to the channel;
- * If -o --> remove the operator status to nick; if mode was active, remove it from the channel
-*/
+ * If -o --> remove the operator status to nick; if mode was active, remove it from the channel */
 void	Server::modeO(STR_VEC& split)
 {
 	Channel *curr = &_channels[_msg.currentChan];
@@ -115,17 +109,13 @@ void			Server::modeT(STR_VEC& split) {
 void			Server::modeL(STR_VEC& split)
 {
 	if (split[2].find("+") != std::string::npos) {
-
-		for (size_t i=0; i < split[3].size(); i++) {
-			if (!std::isdigit(split[3][i])) {
-				std::cout << RED "ERR: Bad argument" NC << std::endl;
-				return ; }
-		}
-
+		if (!is_digit_in_str(split[3])) {
+			std::cout << RED "ERR: Bad argument" NC << std::endl; return ; }
 		_channels[_msg.currentChan].sLimit(atoi(split[3].c_str()));
 		if (!found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].addMode('l'); }
-			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n"; }
+			_msg.response = _msg.prefixNick + " MODE " + split[1] + " " + split[2] + "\r\n";
+	}
 	else {
 		if (found_mode_in_chan(split[2][1], _channels[_msg.currentChan].gModes())) {
 			_channels[_msg.currentChan].dltMode('l');
@@ -137,6 +127,7 @@ void			Server::modeL(STR_VEC& split)
 	}
 }
 
+// Send to everyone in a particular chan
 void	Server::sendToChan(std::string message)
 {
 	for (CLIENT_ITC it = _channels[_msg.currentChan].gClients().begin(); it != _channels[_msg.currentChan].gClients().end(); it ++)
